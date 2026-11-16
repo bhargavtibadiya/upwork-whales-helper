@@ -112,9 +112,8 @@ try {
       );
       check(
         `${tag}: new brand name, old name gone`,
-        (await page.locator("header.site-header").innerText()).includes(
-          "Upwork Thumbnail Maker",
-        ) && !(await page.locator("body").innerText()).includes("Thumbnail Studio"),
+        (await page.locator("header.site-header").innerText()).includes("Upwork Helper") &&
+          !(await page.locator("body").innerText()).includes("Thumbnail Studio"),
       );
       check(
         `${tag}: owner name in header and footer`,
@@ -139,8 +138,7 @@ try {
         );
         check(
           `${tag}: expected preset count`,
-          (await page.locator(".style-options .style-option").count()) ===
-            (mode === "portfolio" ? 7 : 8),
+          (await page.locator(".style-options .style-option").count()) === 10,
         );
         check(
           `${tag}: style picker capped at two rows`,

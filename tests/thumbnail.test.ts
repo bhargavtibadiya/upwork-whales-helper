@@ -12,7 +12,7 @@ import {
 } from "../src/lib/thumbnail/model";
 
 describe("reference contract", () => {
-  it("offers all eight intro presets with the reference four first", () =>
+  it("offers all ten intro presets with the reference four first", () =>
     expect(STYLES.filter((s) => s.mode === "intro").map((s) => s.name)).toEqual([
       "Meet me",
       "Title banner",
@@ -22,16 +22,21 @@ describe("reference contract", () => {
       "Center stage",
       "Stats strip",
       "Title + skills",
+      "The specialist",
+      "Personal brand",
     ]));
-  it("provides seven portfolio layouts and one profile ring", () => {
+  it("provides ten portfolio layouts and one profile ring", () => {
     expect(STYLES.filter((s) => s.mode === "portfolio").map((s) => s.name)).toEqual([
       "Result + screenshot",
       "Face + big stat",
       "Client results",
       "Client quote",
-      "Checklist",
+      "Service blueprint",
       "Project cover",
-      "Result card",
+      "Impact report",
+      "Project spotlight",
+      "The transformation",
+      "Minimal showcase",
     ]);
     expect(STYLES.filter((s) => s.mode === "profile")).toHaveLength(1);
   });

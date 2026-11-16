@@ -80,7 +80,7 @@ try {
       .textContent()
       .then((t) => t.includes("Intro video")),
   );
-  check("all eight intro styles", (await page.locator(".style-options button").count()) === 8);
+  check("all ten intro styles", (await page.locator(".style-options button").count()) === 10);
   const initial = await pixels();
   await page.locator("#upload-face").setInputFiles(`${fixtures}/fixture-face.png`);
   await settle();
@@ -122,6 +122,8 @@ try {
     "Center stage",
     "Stats strip",
     "Title + skills",
+    "The specialist",
+    "Personal brand",
   ];
   const rendered = [];
   for (const name of introStyles) {
@@ -134,7 +136,7 @@ try {
     const png = await download(name.replaceAll(" ", "-"));
     check(`intro dimensions: ${name}`, png.width === 1280 && png.height === 720);
   }
-  check("eight presets produce distinct outputs", new Set(rendered).size === 8);
+  check("ten presets produce distinct outputs", new Set(rendered).size === 10);
   await style("Title banner");
   await page.getByRole("textbox", { name: "Skill 1 label" }).fill("APPS");
   const icons = [];
@@ -201,9 +203,12 @@ try {
     "Face + big stat",
     "Client results",
     "Client quote",
-    "Checklist",
+    "Service blueprint",
     "Project cover",
-    "Result card",
+    "Impact report",
+    "Project spotlight",
+    "The transformation",
+    "Minimal showcase",
   ]) {
     await style(name);
     const png = await download(name.replaceAll(" ", "-"));
