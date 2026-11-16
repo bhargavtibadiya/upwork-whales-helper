@@ -10,11 +10,11 @@ interface ExportBarProps {
 }
 
 const btnPrimary =
-  "border-2 border-ink bg-drum-pink px-4 py-2 text-sm font-bold text-ink shadow-dropdown transition-transform active:translate-x-[3px] active:translate-y-[3px] active:shadow-none disabled:opacity-50";
+  "riso-btn border-2 border-ink bg-drum-pink px-4 py-2 text-sm font-bold text-ink shadow-dropdown hover:bg-drum-pink-hover";
 const btnSecondary =
-  "border-2 border-ink bg-drum-blue px-4 py-2 text-sm font-bold text-surface shadow-card active:translate-x-[3px] active:translate-y-[3px] active:shadow-none disabled:opacity-50";
+  "riso-btn border-2 border-ink bg-drum-blue px-4 py-2 text-sm font-bold text-surface shadow-card hover:bg-drum-blue-hover";
 const btnPlain =
-  "border-2 border-ink bg-surface px-3 py-2 text-sm font-bold hover:shadow-btn-hover";
+  "riso-btn border-2 border-ink bg-surface px-3 py-2 text-sm font-bold hover:bg-sunken hover:shadow-btn-hover";
 
 export function ExportBar({ state, dispatch }: ExportBarProps) {
   const [busy, setBusy] = useState<boolean>(false);
@@ -31,7 +31,10 @@ export function ExportBar({ state, dispatch }: ExportBarProps) {
   }
 
   return (
-    <div className="flex flex-col gap-4 border-2 border-ink bg-surface p-4 shadow-card">
+    <div className="riso-card flex flex-col gap-4 p-4">
+      <h3 className="riso-kicker">
+        <span>06</span>Download
+      </h3>
       <div className="flex flex-wrap items-center gap-3">
         <button
           type="button"
@@ -56,13 +59,15 @@ export function ExportBar({ state, dispatch }: ExportBarProps) {
       </div>
 
       <div className="border-t-2 border-ink pt-3">
-        <h3 className="mb-2 text-sm font-bold">Brand presets</h3>
+        <h3 className="riso-kicker mb-2">
+          <span>07</span>Brand presets
+        </h3>
         <div className="flex flex-wrap gap-2">
           <input
             type="text"
             value={presetName}
             placeholder="Preset name"
-            className="border-2 border-ink bg-sunken px-3 py-2 text-sm"
+            className="rounded-riso border-2 border-ink bg-sunken px-3 py-2 text-sm"
             onChange={(e) => setPresetName(e.target.value)}
           />
           <button
@@ -102,13 +107,15 @@ export function ExportBar({ state, dispatch }: ExportBarProps) {
       </div>
 
       <div className="border-t-2 border-ink pt-3">
-        <h3 className="mb-2 text-sm font-bold">Batch export ({state.batch.length})</h3>
+        <h3 className="riso-kicker mb-2">
+          <span>08</span>Batch export ({state.batch.length})
+        </h3>
         <div className="flex flex-wrap gap-2">
           <input
             type="text"
             value={batchLabel}
             placeholder="Label for this version"
-            className="border-2 border-ink bg-sunken px-3 py-2 text-sm"
+            className="rounded-riso border-2 border-ink bg-sunken px-3 py-2 text-sm"
             onChange={(e) => setBatchLabel(e.target.value)}
           />
           <button
