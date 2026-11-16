@@ -138,7 +138,7 @@ export function CanvasStage({ document: doc, imageData, selectedId, dispatch }: 
         width={doc.width}
         height={doc.height}
         style={{ width: displayWidth, height: displayHeight }}
-        className="block border-2 border-ink bg-surface shadow-card touch-none cursor-move"
+        className="block rounded-riso border-2 border-ink bg-surface shadow-card touch-none cursor-move"
         onPointerDown={onPointerDown}
         onPointerMove={onPointerMove}
         onPointerUp={onPointerUp}

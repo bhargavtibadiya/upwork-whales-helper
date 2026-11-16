@@ -10,7 +10,7 @@ interface PropertiesPanelProps {
   dispatch: React.Dispatch<EditorAction>;
 }
 
-const inputCls = "w-full border-2 border-ink bg-sunken px-3 py-2 text-sm text-ink";
+const inputCls = "w-full rounded-riso border-2 border-ink bg-sunken px-3 py-2 text-sm text-ink";
 const labelCls = "mb-1 block text-xs font-bold tracking-wide text-ink-soft";
 
 function TextFields({ el, dispatch }: { el: TextElement; dispatch: React.Dispatch<EditorAction> }) {
@@ -299,20 +299,26 @@ function ShapeFields({
 export function PropertiesPanel({ element, dispatch }: PropertiesPanelProps) {
   if (element === null) {
     return (
-      <div className="border-2 border-ink bg-surface p-4 text-sm text-ink-muted shadow-card">
+      <div className="text-sm text-ink-muted">
+        <h3 className="riso-kicker mb-2">
+          <span>+</span>Element
+        </h3>
         Select an element on the canvas to edit it. Drag elements to move them.
       </div>
     );
   }
   return (
-    <div className="flex flex-col gap-4 border-2 border-ink bg-surface p-4 shadow-card">
+    <div className="flex flex-col gap-4">
       <div className="flex items-center justify-between">
-        <h3 className="text-base font-bold capitalize">{element.kind}</h3>
+        <h3 className="riso-kicker capitalize">
+          <span>+</span>
+          {element.kind}
+        </h3>
         <div className="flex gap-2">
           <button
             type="button"
             title="Bring forward"
-            className="border-2 border-ink bg-sunken px-2 py-1 text-xs font-bold"
+            className="riso-btn border-2 border-ink bg-sunken px-2 py-1 text-xs font-bold hover:shadow-btn-hover"
             onClick={() => dispatch({ type: "reorderElement", id: element.id, direction: "up" })}
           >
             Up
@@ -320,14 +326,14 @@ export function PropertiesPanel({ element, dispatch }: PropertiesPanelProps) {
           <button
             type="button"
             title="Send backward"
-            className="border-2 border-ink bg-sunken px-2 py-1 text-xs font-bold"
+            className="riso-btn border-2 border-ink bg-sunken px-2 py-1 text-xs font-bold hover:shadow-btn-hover"
             onClick={() => dispatch({ type: "reorderElement", id: element.id, direction: "down" })}
           >
             Down
           </button>
           <button
             type="button"
-            className="border-2 border-ink bg-drum-pink px-2 py-1 text-xs font-bold"
+            className="riso-btn border-2 border-ink bg-drum-pink px-2 py-1 text-xs font-bold hover:bg-drum-pink-hover"
             onClick={() => dispatch({ type: "removeElement", id: element.id })}
           >
             Delete
