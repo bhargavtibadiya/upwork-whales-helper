@@ -9,7 +9,8 @@
     "lint": "biome check .",
     "test": "vitest run",
     "lint:fix": "biome check --write .",
-    "test:e2e": "node scripts/verify-browser.mjs"
+    "test:e2e": "node scripts/verify-browser.mjs",
+    "test:compare": "node scripts/compare-reference.mjs"
   },
   "dependencies": {
     "next": "16.4.6",

@@ -271,6 +271,74 @@ try {
   check("mobile touch changes crop", Number(await slider.inputValue()) > 100);
   await mobile.screenshot({ path: `${output}/mobile-touch-edit.png`, fullPage: true });
   await mobile.close();
+  await page.setViewportSize({ width: 1440, height: 1000 });
+  await mode("Profile picture");
+  await page.locator("#upload-face").setInputFiles({
+    name: "not-image.txt",
+    mimeType: "text/plain",
+    buffer: Buffer.from("not an image"),
+  });
+  await settle();
+  check(
+    "invalid files show a clear error",
+    await page
+      .locator(".error-message[role=alert]")
+      .textContent()
+      .then((text) => text.includes("not an image")),
+  );
+  await page.locator("#upload-face").setInputFiles(`${fixtures}/fixture-face.png`);
+  await settle();
+  await page.getByLabel("Custom ring colour", { exact: true }).fill("#f5a524");
+  await settle();
+  const custom = await pixels();
+  await page.getByRole("button", { name: "Top Rated", exact: true }).click();
+  await settle();
+  check("custom ring changes artwork", custom !== (await pixels()));
+  check(
+    "custom ring value survives badge change",
+    (await page.getByLabel("Custom ring colour", { exact: true }).inputValue()) === "#f5a524",
+  );
+  const gaps = [];
+  for (const label of ["No gap", "White gap", "Dark gap"]) {
+    await page.getByRole("button", { name: label, exact: true }).click();
+    await settle();
+    gaps.push(await pixels());
+  }
+  check("all gap options differ", new Set(gaps).size === 3);
+  const backgrounds = [];
+  for (const label of ["Keep photo", "Solid colour", "Soft gradient"]) {
+    await page.getByRole("button", { name: label, exact: true }).click();
+    await settle();
+    backgrounds.push(await pixels());
+  }
+  check("background modes differ with transparent photo", new Set(backgrounds).size === 3);
+  await mode("Intro video thumbnail");
+  await page
+    .locator(".upload-zone")
+    .last()
+    .evaluate(async (element, data) => {
+      const blob = await fetch(data).then((response) => response.blob());
+      const transfer = new DataTransfer();
+      transfer.items.add(new File([blob], "dropped.png", { type: "image/png" }));
+      element.dispatchEvent(
+        new DragEvent("drop", { dataTransfer: transfer, bubbles: true, cancelable: true }),
+      );
+    }, pasted);
+  await settle();
+  check(
+    "drop loads an image",
+    (await page.locator(".file-line").filter({ hasText: "dropped.png" }).count()) === 1,
+  );
+  for (const hash of ["profile", "portfolio", "intro"]) {
+    const tab = await browser.newPage();
+    await tab.goto(`${base}/#${hash}`, { waitUntil: "networkidle" });
+    await tab.waitForTimeout(150);
+    check(
+      `direct hash opens ${hash}`,
+      (await tab.locator("[data-mode]").getAttribute("data-mode")) === hash,
+    );
+    await tab.close();
+  }
   check("no browser exceptions", errors.length === 0);
   check("no image uploads or server writes", badRequests.length === 0);
   console.log(
