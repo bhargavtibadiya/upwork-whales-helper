@@ -1,27 +1,21 @@
-# Docs
+# Project documentation
 
-## Rules (how code is written here)
+## Active design system
 
-| File | Covers |
-| ---- | ------ |
-| [rules/project-rules.md](rules/project-rules.md) | Project-specific rules: stack, styling, no-backend, branches |
-| [rules/typescript-standards.md](rules/typescript-standards.md) | Universal TypeScript rules for every `.ts` / `.tsx` file |
-| [rules/frontend-folder-structure.md](rules/frontend-folder-structure.md) | Where files live in the Next.js app |
-| [rules/comments.md](rules/comments.md) | The four allowed comment formats and placement |
-| [rules/commit.md](rules/commit.md) | Conventional commit message format |
-| [rules/test-standards.md](rules/test-standards.md) | Test-driven development standards |
+- [Nordic Calm specification](design-system/design-system.md)
+- [Nordic Calm construction instructions](design-system/instructions.md)
 
-Provenance: these rule files were supplied by the project owner on 2026-11-16 and originate from his existing projects (portfolio-next). Backend-specific sections of `test-standards.md` (NestJS, API layers) do not apply here - this project has no backend. SEO rule files from the other projects were intentionally not carried over.
+The supplied files are preserved verbatim. Interface colours, typography, radii, shadows, and focus states use scoped `--ds-*` tokens under `[data-ds="nordic-calm"]`. The reference's coloured artwork is user content, not the interface theme.
 
-## Design system
+## Engineering
 
-| File | Covers |
-| ---- | ------ |
-| [design-system/risograph-print-design-system.md](design-system/risograph-print-design-system.md) | Risograph Print tokens: color, type, spacing, shadows, components |
-| [design-system/risograph-print-instructions.md](design-system/risograph-print-instructions.md) | Construction rules and pre-ship checklist for the Risograph system |
+- [Project rules](rules/project-rules.md)
+- [TypeScript standards](rules/typescript-standards.md)
+- [Folder structure](rules/frontend-folder-structure.md)
+- [Comments](rules/comments.md)
+- [Commits](rules/commit.md)
+- [Tests](rules/test-standards.md)
+- [Deployment](deployment.md)
+- [Verification and screenshots](verification.md)
 
-The whole app UI follows the Risograph Print system (Tailwind utilities mapped to its `--ds-*` tokens), responsive across desktop, tablet and mobile.
-
-## Plans
-
-- [plans/plan.md](plans/plan.md) - what we are building and in what order
+The older [plan](plans/plan.md) records the first implementation scope. The November 16 reference-parity correction supersedes its speculative freeform, brand-preset and batch features. It does not authorize changes to production.
