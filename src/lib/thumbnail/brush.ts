@@ -186,7 +186,8 @@ export class Brush {
     }
   }
   font(size: number, weight = 700, family = "Montserrat"): void {
-    this.ctx.font = `${weight} ${size}px ${family}, Arial, sans-serif`;
+    const selected = this.state.font && this.state.font !== "original" ? this.state.font : family;
+    this.ctx.font = `${selected === "Anton" ? 400 : weight} ${size}px ${selected}, Arial, sans-serif`;
   }
   fit(text: string, size: number, width: number, weight = 700, family = "Montserrat"): number {
     this.font(size, weight, family);

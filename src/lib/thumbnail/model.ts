@@ -15,7 +15,8 @@ export type Style =
   | "split"
   | "centered"
   | "statline"
-  | "tagline";
+  | "tagline"
+  | "spotlight" | "beforeafter" | "minimal" | "editorial" | "signature";
 export type Palette = "purple" | "green" | "blue" | "black" | "red" | "orange" | "teal" | "pink";
 export type ImageKind = "face" | "shot";
 export interface Crop {
@@ -47,6 +48,10 @@ export interface ThumbnailState {
   shot: Crop;
   arrow: boolean;
   play: boolean;
+  font: "original" | "Montserrat" | "Manrope" | "Anton";
+  sparkles: boolean;
+  stars: boolean;
+  border: boolean;
   ring: Ring;
 }
 export interface StyleSpec {
@@ -90,6 +95,7 @@ export const STYLES: StyleSpec[] = [
     mode: "portfolio",
     name: "Face + big stat",
     fields: ["pill", "headline", "subline", "stats", "services"],
+    statCount: 3,
     images: ["face"],
     extras: ["play"],
     defaults: {
@@ -100,6 +106,8 @@ export const STYLES: StyleSpec[] = [
       stat1l: "Impressions",
       stat2v: "900+",
       stat2l: "Daily Clicks",
+      stat3v: "3×",
+      stat3l: "Growth",
       services: "SEO · Google Ads · Content Writing",
     },
     labels: {
@@ -114,6 +122,7 @@ export const STYLES: StyleSpec[] = [
     mode: "portfolio",
     name: "Client results",
     fields: ["pill", "headline", "subline", "badge", "stats"],
+    statCount: 3,
     images: ["face"],
     extras: ["play", "arrow"],
     defaults: {
@@ -124,6 +133,8 @@ export const STYLES: StyleSpec[] = [
       stat1l: "Total earned",
       stat2v: "100%",
       stat2l: "Job success",
+      stat3v: "50+",
+      stat3l: "Projects",
       pill: "Click to watch",
     },
     labels: {
@@ -154,7 +165,7 @@ export const STYLES: StyleSpec[] = [
   {
     id: "checklist",
     mode: "portfolio",
-    name: "Checklist",
+    name: "Service blueprint",
     fields: ["headline", "services"],
     images: ["face"],
     extras: ["arrow"],
@@ -188,8 +199,9 @@ export const STYLES: StyleSpec[] = [
   {
     id: "duo",
     mode: "portfolio",
-    name: "Result card",
+    name: "Impact report",
     fields: ["headline", "subline", "stats"],
+    statCount: 3,
     images: ["face"],
     extras: ["play"],
     defaults: {
@@ -199,6 +211,8 @@ export const STYLES: StyleSpec[] = [
       stat1l: "Impressions",
       stat2v: "900+",
       stat2l: "Daily Clicks",
+      stat3v: "3×",
+      stat3l: "Growth",
     },
     labels: {
       headline: "Big result",
@@ -331,6 +345,12 @@ export const STYLES: StyleSpec[] = [
       headline2: "Title line 2 (coloured)",
     },
   },
+  { id: "spotlight", mode: "portfolio", name: "Project spotlight", fields: ["pill", "headline", "subline"], images: ["shot", "face"], extras: ["arrow", "play"], defaults: {pill: "FEATURED PROJECT", headline: "Built for growth", subline: "Strategy · Design · Development"}, labels: {pill: "Project label", headline: "Project headline", subline: "Supporting line"} },
+  { id: "beforeafter", mode: "portfolio", name: "The transformation", fields: ["headline", "headline2", "subline", "stats"], images: ["shot"], extras: ["arrow", "play"], statCount: 3, defaults: {headline: "FROM IDEA", headline2: "TO IMPACT", subline: "A better experience, built from scratch", stat1v: "3×", stat1l: "Faster", stat2v: "98", stat2l: "Performance", stat3v: "50+", stat3l: "Screens"}, labels: {headline: "First line", headline2: "Accent line", subline: "Supporting line"} },
+  { id: "minimal", mode: "portfolio", name: "Minimal showcase", fields: ["pill", "headline", "subline"], images: ["shot"], extras: ["arrow", "play"], defaults: {pill: "SELECTED WORK", headline: "Less noise. More impact.", subline: "A product experience that works"}, labels: {pill: "Small label", headline: "Headline", subline: "Supporting line"} },
+  { id: "editorial", mode: "intro", name: "The specialist", fields: ["pill", "name", "role", "services"], images: ["face"], extras: ["arrow", "play"], defaults: {pill: "MEET YOUR DEVELOPER", name: "Alex R.", role: "Full-stack developer", services: "Web apps · APIs · AI"}, labels: {pill: "Small intro", name: "Your name", role: "What you do", services: "Specialties"} },
+  { id: "signature", mode: "intro", name: "Personal brand", fields: ["headline", "name", "role", "stats"], images: ["face"], extras: ["arrow", "play"], statCount: 3, defaults: {headline: "YOUR NEXT PARTNER", name: "Alex R.", role: "Ideas into products.", stat1v: "50+", stat1l: "Projects", stat2v: "5.0", stat2l: "Rating", stat3v: "3+", stat3l: "Years"}, labels: {headline: "Small intro", name: "Your name", role: "Your promise"} },
+
 ];
 const SHARED = new Set([
   "name",
@@ -388,6 +408,10 @@ export function initialState(mode: Mode = "portfolio"): ThumbnailState {
     icons: ["code", "database", "ai", "cloud"],
     face: { image: null, name: "", zoom: 100, x: 50, y: 30 },
     shot: { image: null, name: "", zoom: 100, x: 50, y: 0 },
+    font: "original",
+    sparkles: false,
+    stars: false,
+    border: false,
     arrow: true,
     play: true,
     ring: {
