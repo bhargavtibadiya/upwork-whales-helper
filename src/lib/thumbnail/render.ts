@@ -1,0 +1,1007 @@
+import { Brush, blend, translucent } from "./brush";
+import { dimensions, fieldValue, type Style, type ThumbnailState } from "./model";
+
+function words(b: Brush, key: string, style: Style = b.state.style): string {
+  return fieldValue(b.state, key, style).replace(/\s+/g, " ").trim();
+}
+function statRows(b: Brush, count = 2): [string, string][] {
+  return Array.from({ length: count }, (_, i): [string, string] => [
+    words(b, `stat${i + 1}v`),
+    words(b, `stat${i + 1}l`),
+  ]).filter((row) => row.some(Boolean));
+}
+function service(
+  b: Brush,
+  text: string,
+  x: number,
+  y: number,
+  w: number,
+  h: number,
+  size: number,
+  opacity = 0.38,
+): void {
+  const s = b.scale,
+    c = b.ctx;
+  b.rect([x, y, w, h], `rgba(0,0,0,${opacity})`, h / 2);
+  c.beginPath();
+  c.roundRect(x + 1.5 * s, y + 1.5 * s, w - 3 * s, h - 3 * s, h / 2);
+  c.strokeStyle = b.palette.line;
+  c.lineWidth = 3 * s;
+  c.stroke();
+  const fitted = b.fit(text, size, w - 56 * s, 600);
+  b.text(text, x + w / 2, y + h / 2 + b.cap() / 2, fitted, "#fff", Infinity, 600, "center");
+}
+function wrapped(b: Brush, text: string, maxWidth: number): string[] {
+  const chunks = text.split(" "),
+    out: string[] = [];
+  let line = "";
+  for (const chunk of chunks) {
+    const next = line ? `${line} ${chunk}` : chunk;
+    if (line && out.length === 0 && b.ctx.measureText(next).width > maxWidth) {
+      out.push(line);
+      line = chunk;
+    } else line = next;
+  }
+  if (line) out.push(line);
+  return out;
+}
+function meet(b: Brush): void {
+  const { width: w, height: h } = b,
+    s = b.scale,
+    t = b.palette,
+    c = b.ctx,
+    m = 44 * s;
+  b.background(w * 0.24, h * 0.5, Math.max(w, h) * 0.36);
+  const fade = c.createLinearGradient(0, h * 0.5, 0, h);
+  fade.addColorStop(0, "transparent");
+  fade.addColorStop(1, "rgba(0,0,0,.78)");
+  b.face([0, 0, w * 0.5, h], "right");
+  c.fillStyle = fade;
+  c.fillRect(0, h * 0.5, w * 0.56, h * 0.5);
+  const x = w * 0.5,
+    cw = w - m - x;
+  const title = words(b, "headline").toUpperCase();
+  let y = m,
+    cap = 0,
+    left = x;
+  if (title) {
+    b.fit(title, 108 * s, cw, 800);
+    cap = b.cap();
+    left = x + (cw - c.measureText(title).width) / 2;
+    b.shadow("rgba(0,0,0,.35)", 22 * s, 4 * s);
+    b.text(title, left, y + cap, 108 * s, "#fff", cw, 800);
+    b.noShadow();
+    y += cap + 34 * s;
+  }
+  const fh = h - m - y;
+  b.frame([x, y, cw, fh], 16 * s, 6 * s, b.state.play ? 134 * s : 0);
+  const px = x + cw / 2,
+    py = y + fh / 2;
+  if (b.state.play) b.play(px, py, 50 * s);
+  if (b.state.arrow && title)
+    b.arrow(
+      [left - 18 * s, m + cap * 0.5],
+      b.state.play ? [px - 66 * s, py] : [x + cw * 0.3, y + fh * 0.35],
+      -150 * s,
+      24 * s,
+    );
+  let bottom = h - m;
+  const role = words(b, "role"),
+    name = words(b, "name"),
+    max = w * 0.46 - m;
+  if (role) {
+    const size = b.fit(role, 25 * s, max - 40 * s, 600),
+      rc = b.cap(),
+      rw = c.measureText(role).width,
+      rh = rc + 30 * s;
+    b.rect([m, bottom - rh, rw + 40 * s, rh], t.accent, rh / 2);
+    b.text(role, m + 20 * s, bottom - rh / 2 + rc / 2, size, t.foreground, Infinity, 600);
+    bottom -= rh + 18 * s;
+  }
+  if (name) {
+    b.font(64 * s, 700);
+    const prefix = c.measureText("Meet ").width;
+    b.font(64 * s, 900);
+    const nw = c.measureText(name).width;
+    const size = Math.min(64 * s, (64 * s * max) / (prefix + nw));
+    b.font(size, 700);
+    const pw = c.measureText("Meet ").width;
+    b.shadow("rgba(0,0,0,.6)", 18 * s, 3 * s);
+    b.text("Meet ", m, bottom, size, "#fff", Infinity, 700);
+    b.text(name, m + pw, bottom, size, t.highlight, Infinity, 900);
+    b.noShadow();
+  }
+}
+function hello(b: Brush): void {
+  const { width: w, height: h } = b,
+    s = b.scale,
+    t = b.palette,
+    c = b.ctx;
+  b.background(w * 0.5, h * 0.5, Math.max(w, h) * 0.48);
+  const r = Math.min(h * 0.34, w * 0.21),
+    cx = w - 82 * s - r,
+    cy = h / 2;
+  b.circle(cx, cy, r + 26 * s, "transparent", translucent(t.highlight, 0.2), 2 * s);
+  b.shadow(translucent(t.highlight, 0.75), 56 * s);
+  b.circle(cx, cy, r, t.surface);
+  b.noShadow();
+  b.face([cx - r, cy - r, r * 2, r * 2], "none", true);
+  b.shadow(translucent(t.highlight, 0.9), 26 * s);
+  b.circle(cx, cy, r - 4 * s, "transparent", t.highlight, 8 * s);
+  b.noShadow();
+  const max = w * 0.47 - 60 * s;
+  const headline = words(b, "headline"),
+    name = words(b, "name"),
+    role = words(b, "role");
+  const items = [
+    { text: headline, size: 320 * s, weight: 900, color: "#fff" },
+    { text: name, size: 62 * s, weight: 800, color: "#fff" },
+    { text: role, size: 30 * s, weight: 600, color: t.highlight },
+  ].map((item, index) => {
+    const size = b.fit(item.text, item.size, max, item.weight);
+    const metrics = c.measureText(item.text);
+    return {
+      ...item,
+      size,
+      ascent: index === 0 ? metrics.actualBoundingBoxAscent : b.cap(),
+      descent: index === 0 ? Math.max(0, metrics.actualBoundingBoxDescent) : 0,
+      left: metrics.actualBoundingBoxLeft,
+      width:
+        index === 0
+          ? metrics.actualBoundingBoxLeft + metrics.actualBoundingBoxRight
+          : metrics.width,
+    };
+  });
+  const gap1 = headline && (name || role) ? 48 * s : 0,
+    gap2 = name && role ? 22 * s : 0;
+  const total =
+    items.reduce((sum, item) => sum + (item.text ? item.ascent + item.descent : 0), 0) +
+    gap1 +
+    gap2;
+  const x = 60 * s + (max - Math.max(...items.map((item) => item.width))) / 2;
+  let y = (h - total) / 2;
+  items.forEach((item, index) => {
+    if (!item.text) return;
+    const xx = x + (index === 0 ? item.left : 0);
+    if (index === 0) {
+      b.shadow(translucent(t.highlight, 0.8), 64 * s);
+      b.text(item.text, xx, y + item.ascent, item.size, item.color, Infinity, item.weight);
+      b.shadow(translucent(t.highlight, 0.9), 16 * s);
+    } else if (index === 1) b.shadow("rgba(0,0,0,.5)", 16 * s, 3 * s);
+    b.text(item.text, xx, y + item.ascent, item.size, item.color, Infinity, item.weight);
+    b.noShadow();
+    y += item.ascent + item.descent + (index === 0 ? gap1 : index === 1 ? gap2 : 0);
+  });
+}
+function proof(b: Brush): void {
+  const { width: w, height: h } = b,
+    s = b.scale,
+    t = b.palette,
+    c = b.ctx;
+  b.background(w * 0.66, h * 0.42, Math.max(w, h) * 0.42);
+  b.face([0, 0, w * 0.48, h], "right");
+  const x = w * 0.45,
+    cw = w - 46 * s - x,
+    cx = x + cw / 2,
+    rows = statRows(b, 3),
+    n = rows.length;
+  const label = words(b, "pill").toUpperCase(),
+    svc = words(b, "services"),
+    hasPill = Boolean(label || b.state.play);
+  const ph = hasPill ? 108 * s : 0,
+    pad = 30 * s,
+    ir = b.state.play ? 35.64 * s : 0,
+    ig = b.state.play && label ? 18 * s : 0,
+    iw = b.state.play ? ir * 2 + ig : 0;
+  const psize = b.fit(label, 80 * s, cw - pad * 2 - iw, 800),
+    pw = c.measureText(label).width + iw + pad * 2;
+  const bw = n ? Math.min(270 * s, (cw - 18 * s * (n - 1)) / n) : 0,
+    inner = bw - 44 * s;
+  let vs = 80 * s,
+    ls = 23 * s;
+  for (const [v] of rows) if (v) vs = Math.min(vs, b.fit(v, 80 * s, inner, 400, "Anton"));
+  b.font(ls, 600);
+  for (const [, labelText] of rows)
+    for (const line of wrapped(b, labelText, inner)) {
+      const mw = c.measureText(line).width;
+      if (mw > inner) ls = Math.min(ls, (23 * s * inner) / mw);
+    }
+  b.font(ls, 600);
+  const labs = rows.map(([, labelText]) => wrapped(b, labelText, inner)),
+    lc = b.cap(),
+    lh = lc * 1.5;
+  b.font(vs, 400, "Anton");
+  const vc = b.cap(),
+    lines = Math.max(0, ...labs.map((a) => a.length)),
+    hasVal = rows.some((a) => a[0]);
+  const content = (hasVal ? vc : 0) + (lines ? (hasVal ? 20 * s : 0) + lc + (lines - 1) * lh : 0),
+    bh = n ? Math.max(178 * s, content + 72 * s) : 0;
+  const sh = svc ? 66 * s : 0,
+    ss = b.fit(svc, 26 * s, cw - 70 * s, 600),
+    sw = svc ? Math.min(cw, Math.max(c.measureText(svc).width + 90 * s, cw * 0.62)) : 0;
+  const heights = [ph, bh, sh].filter(Boolean),
+    sum = heights.reduce((a, b) => a + b, 0),
+    gap =
+      heights.length > 1
+        ? Math.min(56 * s, Math.max(26 * s, (h - 92 * s - sum) / (heights.length - 1)))
+        : 0;
+  let y = (h - sum - gap * (heights.length - 1)) / 2;
+  if (hasPill) {
+    b.shadow("rgba(0,0,0,.4)", 30 * s, 8 * s);
+    b.rect([cx - pw / 2, y, pw, ph], t.accent, 24 * s);
+    b.noShadow();
+    let xx = cx - pw / 2 + pad;
+    if (b.state.play) {
+      b.play(xx + ir, y + ph / 2, ir, true);
+      xx += iw;
+    }
+    b.font(psize, 800);
+    b.text(label, xx, y + ph / 2 + b.cap() / 2, psize, t.foreground, Infinity, 800);
+    y += ph + gap;
+  }
+  rows.forEach(([value], i) => {
+    const xx = cx - (n * bw + (n - 1) * 18 * s) / 2 + i * (bw + 18 * s);
+    b.shadow(translucent(t.line, 0.5), 26 * s);
+    b.rect([xx, y, bw, bh], t.surface, 20 * s);
+    b.noShadow();
+    const g = c.createLinearGradient(0, y, 0, y + bh);
+    g.addColorStop(0, translucent(t.glow, 0.32));
+    g.addColorStop(1, translucent(t.glow, 0.05));
+    b.rect([xx + 1.5 * s, y + 1.5 * s, bw - 3 * s, bh - 3 * s], g, 18.5 * s, t.line, 3 * s);
+    let yy = y + (bh - content) / 2;
+    if (hasVal) {
+      b.shadow("rgba(0,0,0,.35)", 14 * s);
+      b.text(value, xx + bw / 2, yy + vc, vs, "#fff", Infinity, 400, "center", "Anton");
+      b.noShadow();
+      yy += vc + (lines ? 20 * s : 0);
+    }
+    labs[i].forEach((line, k) => {
+      b.text(
+        line,
+        xx + bw / 2,
+        yy + lc + k * lh,
+        ls,
+        "rgba(255,255,255,.82)",
+        Infinity,
+        600,
+        "center",
+      );
+    });
+  });
+  if (n) y += bh + gap;
+  if (svc) service(b, svc, cx - sw / 2, y, sw, sh, ss);
+}
+function skillIcon(b: Brush, kind: string, cx: number, cy: number, r: number): void {
+  const c = b.ctx;
+  c.save();
+  c.translate(cx, cy);
+  c.scale(r / 40, r / 40);
+  c.lineWidth = 3.4;
+  c.strokeStyle = b.palette.highlight;
+  c.fillStyle = b.palette.highlight;
+  c.lineCap = "round";
+  c.lineJoin = "round";
+  const path = (points: number[][]) => {
+    c.beginPath();
+    points.forEach(([x, y], i) => {
+      if (i) c.lineTo(x, y);
+      else c.moveTo(x, y);
+    });
+    c.stroke();
+  };
+  if (kind === "database") {
+    for (const y of [-12, 0, 12]) {
+      c.beginPath();
+      c.ellipse(0, y, 16, 5.2, 0, 0, y === -12 ? Math.PI * 2 : Math.PI);
+      c.stroke();
+    }
+    path([
+      [-16, -12],
+      [-16, 12],
+    ]);
+    path([
+      [16, -12],
+      [16, 12],
+    ]);
+  } else if (kind === "code") {
+    c.strokeRect(-19, -16, 38, 26);
+    path([
+      [0, 10],
+      [0, 17],
+      [-8, 17],
+      [8, 17],
+    ]);
+    path([
+      [-6, -8],
+      [-11, -3],
+      [-6, 2],
+    ]);
+    path([
+      [6, -8],
+      [11, -3],
+      [6, 2],
+    ]);
+    path([
+      [2, -9],
+      [-2, 3],
+    ]);
+  } else if (kind === "ai") {
+    for (const [x, y, rr] of [
+      [-4, 2, 15],
+      [12, -12, 7],
+      [12, 12, 4],
+    ]) {
+      c.beginPath();
+      c.moveTo(x, y - rr);
+      c.quadraticCurveTo(x + rr * 0.2, y - rr * 0.2, x + rr, y);
+      c.quadraticCurveTo(x + rr * 0.2, y + rr * 0.2, x, y + rr);
+      c.quadraticCurveTo(x - rr * 0.2, y + rr * 0.2, x - rr, y);
+      c.quadraticCurveTo(x - rr * 0.2, y - rr * 0.2, x, y - rr);
+      c.fill();
+    }
+  } else if (kind === "cloud") {
+    c.beginPath();
+    c.arc(-12, 5, 8, Math.PI * 0.5, Math.PI * 1.5);
+    c.arc(0, -1, 11, Math.PI * 1.1, Math.PI * 1.95);
+    c.arc(12, 5, 7, Math.PI * 1.4, Math.PI * 2.5);
+    c.closePath();
+    c.stroke();
+  } else if (kind === "check") {
+    c.beginPath();
+    c.arc(0, 0, 17, 0, Math.PI * 2);
+    c.stroke();
+    path([
+      [-8, 0],
+      [-2, 6],
+      [9, -6],
+    ]);
+  } else if (kind === "mail") {
+    c.strokeRect(-18, -12, 36, 24);
+    path([
+      [-17, -10],
+      [0, 2],
+      [17, -10],
+    ]);
+  } else if (kind === "mobile") {
+    c.strokeRect(-10, -18, 20, 36);
+    path([
+      [-3, 12],
+      [3, 12],
+    ]);
+  } else if (kind === "search") {
+    c.beginPath();
+    c.arc(-3, -3, 11, 0, Math.PI * 2);
+    c.stroke();
+    path([
+      [5, 5],
+      [16, 16],
+    ]);
+  } else if (kind === "chart") {
+    path([
+      [-17, -17],
+      [-17, 16],
+      [18, 16],
+    ]);
+    for (let i = 0; i < 3; i++) c.fillRect(-10 + i * 9, 6 - i * 8, 5, 7 + i * 8);
+  } else if (kind === "bolt") {
+    path([
+      [4, -19],
+      [-12, 2],
+      [-1, 2],
+      [-4, 19],
+      [12, -4],
+      [1, -4],
+      [4, -19],
+    ]);
+  } else if (kind === "chat") {
+    c.beginPath();
+    c.roundRect(-18.4, -15.6, 36.8, 25.2, 6);
+    c.stroke();
+    path([
+      [-9, 10],
+      [-12, 18],
+      [-1, 10],
+    ]);
+    for (const x of [-8.4, 0, 8.4]) {
+      c.beginPath();
+      c.arc(x, -3, 2, 0, Math.PI * 2);
+      c.fill();
+    }
+  } else if (kind === "gear") {
+    for (const radius of [5.2, 12]) {
+      c.beginPath();
+      c.arc(0, 0, radius, 0, Math.PI * 2);
+      c.stroke();
+    }
+    c.lineWidth = 6.12;
+    for (let i = 0; i < 8; i++) {
+      const a = (i * Math.PI) / 4;
+      path([
+        [Math.cos(a) * 14, Math.sin(a) * 14],
+        [Math.cos(a) * 18, Math.sin(a) * 18],
+      ]);
+    }
+  } else if (kind === "video") {
+    c.beginPath();
+    c.roundRect(-18.4, -12, 25, 24, 3.2);
+    c.stroke();
+    path([
+      [8.4, -3],
+      [18.4, -9.6],
+      [18.4, 9.6],
+      [8.4, 3],
+      [8.4, -3],
+    ]);
+  } else if (kind === "cart") {
+    path([
+      [-19, -14.4],
+      [-13.6, -14.4],
+      [-8.4, 7.2],
+      [12, 7.2],
+      [17.2, -8.4],
+      [-11.2, -8.4],
+    ]);
+    for (const x of [-6, 9.6]) {
+      c.beginPath();
+      c.arc(x, 14.4, 2.6, 0, Math.PI * 2);
+      c.fill();
+    }
+  } else if (kind === "pen") {
+    path([
+      [-16.4, 16.4],
+      [-14.8, 8.4],
+      [9.2, -15.6],
+      [15.6, -9.2],
+      [-8.4, 14.8],
+      [-16.4, 16.4],
+    ]);
+    path([
+      [4.4, -10.8],
+      [10.8, -4.4],
+    ]);
+  }
+
+  c.restore();
+}
+function banner(b: Brush): void {
+  const { width: w, height: h } = b,
+    s = b.scale,
+    t = b.palette,
+    c = b.ctx;
+  b.background(w * 0.75, h * 0.42, Math.max(w, h) * 0.38);
+  const grid = c.createLinearGradient(w * 0.3, 0, w, 0);
+  grid.addColorStop(0, translucent(t.line, 0));
+  grid.addColorStop(1, translucent(t.line, 0.14));
+  c.strokeStyle = grid;
+  c.lineWidth = Math.max(1, 1.2 * s);
+  c.beginPath();
+  for (let x = w * 0.3 + 56 * s; x <= w; x += 56 * s) {
+    c.moveTo(x, 0);
+    c.lineTo(x, h);
+  }
+  for (let y = 28 * s; y <= h; y += 56 * s) {
+    c.moveTo(w * 0.3, y);
+    c.lineTo(w, y);
+  }
+  c.stroke();
+  b.face([w * 0.5, 0, w * 0.5, h], "left");
+  const x = 54 * s,
+    cw = w * 0.55 - x;
+  const l1 = words(b, "headline").toUpperCase(),
+    l2 = words(b, "headline2").toUpperCase(),
+    tag = words(b, "subline").toUpperCase(),
+    b1 = words(b, "badge").toUpperCase(),
+    b2 = words(b, "badge2");
+  const p2 = b.fit(l2, 124 * s, cw, 900),
+    c2 = l2 ? b.cap() : 0,
+    p1 = b.fit(l1, l2 ? Math.min(86 * s, p2 * 0.82) : 112 * s, cw, 800),
+    c1 = l1 ? b.cap() : 0;
+  let y = 52 * s;
+  b.shadow("rgba(0,0,0,.5)", 20 * s, 4 * s);
+  if (l1) {
+    b.text(l1, x, y + c1, p1, "#fff", Infinity, 800);
+    y += c1 + (l2 ? 22 * s : 0);
+  }
+  if (l2) {
+    b.text(l2, x, y + c2, p2, t.highlight, Infinity, 900);
+    y += c2;
+  }
+  b.noShadow();
+  if (tag) {
+    b.shadow("rgba(0,0,0,.4)", 18 * s, 5 * s);
+    y += l1 || l2 ? 32 * s : 0;
+    let tp = 21 * s;
+    b.font(tp, 700);
+    const tracked = (text: string, space: number) =>
+      Array.from(text).reduce((sum, ch) => sum + c.measureText(ch).width, 0) +
+      Math.max(0, Array.from(text).length - 1) * space;
+    const max = cw - 72 * s;
+    if (tracked(tag, tp * 0.16) > max) {
+      tp = (tp * max) / tracked(tag, tp * 0.16);
+      b.font(tp, 700);
+    }
+    const tw = tracked(tag, tp * 0.16) + 72 * s;
+    c.fillStyle = t.accent;
+    c.beginPath();
+    c.moveTo(x + 16 * s, y);
+    c.lineTo(x + tw, y);
+    c.lineTo(x + tw - 16 * s, y + 52 * s);
+    c.lineTo(x, y + 52 * s);
+    c.closePath();
+    c.fill();
+    b.noShadow();
+    let xx = x + 36 * s;
+    c.fillStyle = t.foreground;
+    for (const ch of tag) {
+      c.fillText(ch, xx, y + 26 * s + b.cap() / 2);
+      xx += c.measureText(ch).width + tp * 0.16;
+    }
+    y += 52 * s;
+  }
+  const chips = [1, 2, 3, 4]
+    .map((i) => ({ text: words(b, `chip${i}`).toUpperCase(), icon: b.state.icons[i - 1] }))
+    .filter((item) => item.text);
+  const badgeH = b1 || b2 ? 96 * s : 0,
+    badgeY = h - 48 * s - badgeH;
+  const cell = cw / Math.max(3, chips.length);
+  let cp = 18 * s;
+  for (const chip of chips) cp = Math.min(cp, b.fit(chip.text, 18 * s, cell - 16 * s, 700));
+  b.font(cp, 700);
+  const cc = b.cap(),
+    rh = 88 * s + 18 * s + cc,
+    top = y + Math.max(24 * s, ((badgeH ? badgeY : h - 48 * s) - y - rh) / 2);
+  chips.forEach((chip, i) => {
+    const cx = x + cell * (i + 0.5),
+      cy = top + 44 * s;
+    b.shadow(translucent(t.line, 0.55), 22 * s);
+    b.circle(cx, cy, 44 * s, t.surface);
+    b.noShadow();
+    const g = c.createRadialGradient(cx, cy - 22 * s, 0, cx, cy, 44 * s);
+    g.addColorStop(0, translucent(t.glow, 0.42));
+    g.addColorStop(1, translucent(t.glow, 0.08));
+    b.circle(cx, cy, 42.75 * s, g, t.line, 2.5 * s);
+    skillIcon(b, chip.icon, cx, cy, 43.12 * s);
+    b.text(chip.text, cx, cy + 44 * s + 18 * s + cc, cp, "#fff", Infinity, 700, "center");
+    if (i) {
+      c.fillStyle = translucent(t.line, 0.3);
+      c.fillRect(x + cell * i - s, cy - 33 * s, 2 * s, 77 * s + 18 * s + cc);
+    }
+  });
+  if (badgeH) {
+    const pp1 = b.fit(b1, 34 * s, cw * 0.62, 800),
+      bc1 = b1 ? b.cap() : 0,
+      tw1 = c.measureText(b1).width,
+      pp2 = b.fit(b2, 22 * s, cw * 0.62, 600),
+      bc2 = b2 ? b.cap() : 0;
+    const bw = 128 * s + Math.max(tw1, c.measureText(b2).width);
+    b.shadow("rgba(0,0,0,.45)", 24 * s, 6 * s);
+    b.rect([x, badgeY, bw, badgeH], "rgba(0,0,0,.5)", 20 * s);
+    b.noShadow();
+    c.beginPath();
+    c.roundRect(x + 1.25 * s, badgeY + 1.25 * s, bw - 2.5 * s, badgeH - 2.5 * s, 19 * s);
+    c.strokeStyle = translucent(t.highlight, 0.7);
+    c.lineWidth = 2.5 * s;
+    c.stroke();
+    b.circle(x + 52 * s, badgeY + 48 * s, 30 * s, translucent(t.highlight, 0.16));
+    b.star(x + 52 * s, badgeY + 49.5 * s, 19.2 * s, t.highlight);
+    let yy = badgeY + 48 * s - (bc1 + bc2 + (b1 && b2 ? 14 * s : 0)) / 2;
+    if (b1) {
+      b.text(b1, x + 100 * s, yy + bc1, pp1, t.highlight, Infinity, 800);
+      yy += bc1 + (b2 ? 14 * s : 0);
+    }
+    if (b2) b.text(b2, x + 100 * s, yy + bc2, pp2, "rgba(255,255,255,.88)", Infinity, 600);
+  }
+}
+function profile(b: Brush): void {
+  const { width: w, height: h } = b,
+    c = b.ctx,
+    s = b.scale,
+    r = b.state.ring;
+  const outer = Math.min(w, h) / 2,
+    thick = r.thickness * s,
+    gap = r.gap === "none" ? 0 : Math.max(9 * s, thick * 0.26),
+    inner = outer - thick,
+    photo = inner - gap;
+  let fill: string | CanvasGradient = r.color;
+  if (r.gradient) {
+    const g = c.createLinearGradient(0, 0, w, h);
+    const gradients: Record<string, readonly [string, string]> = {
+      toprated: ["#4D94F8", "#1F57C3"],
+      trplus: ["#F45AA0", "#BF1363"],
+      whales: ["#A184FF", "#6D3EF0"],
+      rising: ["#3EC520", "#0D8A00"],
+    };
+    const stops = gradients[r.preset] ?? [
+      blend(r.color, "#ffffff", 0.32),
+      blend(r.color, "#000000", 0.22),
+    ];
+    g.addColorStop(0, stops[0]);
+    g.addColorStop(1, stops[1]);
+    fill = g;
+  }
+  b.rect([0, 0, w, h], fill);
+  if (gap) b.circle(w / 2, h / 2, inner, r.gap === "dark" ? "#15111F" : "#fff");
+  c.save();
+  c.beginPath();
+  c.arc(w / 2, h / 2, photo, 0, Math.PI * 2);
+  c.clip();
+  const bg = r.backgroundMode === "keep" ? "#E4E1EC" : r.background;
+  let background: string | CanvasGradient = bg;
+  if (r.backgroundMode === "gradient") {
+    const g = c.createRadialGradient(w / 2, h / 2 - photo * 0.3, 0, w / 2, h / 2, photo * 1.05);
+    g.addColorStop(0, blend(bg, "#ffffff", 0.55));
+    g.addColorStop(0.6, bg);
+    g.addColorStop(1, blend(bg, "#000000", 0.18));
+    background = g;
+  }
+  b.rect([0, 0, w, h], background);
+  if (b.state.face.image)
+    b.cover(b.state.face, [w / 2 - photo, h / 2 - photo, photo * 2, photo * 2]);
+  else {
+    const rgb = Number.parseInt(bg.slice(1), 16),
+      light = ((rgb >> 16) & 255) * 0.299 + ((rgb >> 8) & 255) * 0.587 + (rgb & 255) * 0.114 > 150;
+    const head = photo * 0.34,
+      hy = h / 2 - photo * 0.12;
+    b.circle(w / 2, hy, head, light ? "rgba(21,17,31,.13)" : "rgba(255,255,255,.17)");
+    const top = hy + head * 1.28;
+    b.rect(
+      [w / 2 - head * 2.1, top, head * 4.2, h / 2 + photo - top + 20 * s],
+      light ? "rgba(21,17,31,.13)" : "rgba(255,255,255,.17)",
+      head * 1.6,
+    );
+    b.text(
+      "Your photo here",
+      w / 2,
+      hy - head - 36 * s,
+      40 * s,
+      light ? "rgba(21,17,31,.55)" : "rgba(255,255,255,.75)",
+      photo * 1.2,
+      700,
+      "center",
+    );
+  }
+  c.restore();
+}
+function result(b: Brush): void {
+  const { width: w, height: h } = b,
+    s = b.scale,
+    t = b.palette,
+    c = b.ctx,
+    m = 44 * s;
+  b.background(w / 2, h * 0.36, Math.max(w, h) * 0.42);
+  const max = w - 2 * (m + (b.state.arrow ? 92 * s : 0));
+  const pill = words(b, "pill").toUpperCase(),
+    title = words(b, "headline").toUpperCase(),
+    sub = words(b, "subline");
+  let y = 26 * s,
+    pr = w / 2;
+  const has = Boolean(pill || b.state.play);
+  if (has) {
+    const ir = 40.6 * s,
+      iw = b.state.play ? ir * 2 + (pill ? 20 * s : 0) : 0,
+      px = b.fit(pill, 88 * s, max - 64 * s - iw, 800),
+      pw = c.measureText(pill).width + iw + 64 * s,
+      x = (w - pw) / 2;
+    pr = x + pw;
+    b.shadow("rgba(0,0,0,.4)", 30 * s, 8 * s);
+    b.rect([x, 38 * s, pw, 116 * s], t.accent, 24 * s);
+    b.noShadow();
+    let xx = x + 32 * s;
+    if (b.state.play) {
+      b.play(xx + ir, 96 * s, ir, true);
+      xx += iw;
+    }
+    b.font(px, 800);
+    b.text(pill, xx, 96 * s + b.cap() / 2, px, t.foreground, Infinity, 800);
+    y = 154 * s;
+  }
+  const top = y + 50 * s;
+  let hr = w / 2,
+    hc = 0;
+  if (title) {
+    const p = b.fit(title, 128 * s, max, 800);
+    hc = b.cap();
+    const hw = c.measureText(title).width;
+    hr = (w + hw) / 2;
+    b.shadow("rgba(0,0,0,.35)", 24 * s, 4 * s);
+    b.text(title, (w - hw) / 2, top + hc, p, "#fff", Infinity, 800);
+    b.noShadow();
+    y = top + hc;
+  }
+  if (sub) {
+    const px = b.fit(sub, 34 * s, w - 2 * m, 600),
+      cap = b.cap();
+    b.text(sub, w / 2, y + 24 * s + cap, px, "rgba(255,255,255,.85)", Infinity, 600, "center");
+    y += 24 * s + cap;
+  }
+  const fx = w * (w / h > 1.45 ? 0.15 : 0.07),
+    fy = y + 44 * s;
+  b.frame([fx, fy, w - 2 * fx, h - fy + 60 * s], 18 * s, 6 * s, 0, h - fy);
+  if (b.state.arrow && title) {
+    const from: [number, number] = has
+        ? [pr + 12 * s, 72.8 * s]
+        : [hr + 40 * s, Math.max(14 * s, top - 90 * s)],
+      to: [number, number] = [hr + 16 * s, top + hc * 0.5],
+      peak = Math.min(w - 18 * s, Math.max(from[0], to[0]) + 70 * s);
+    b.arrow(from, to, (to[1] >= from[1] ? 1 : -1) * 2 * (peak - (from[0] + to[0]) / 2), 30 * s);
+  }
+}
+function stat(b: Brush): void {
+  const { width: w, height: h } = b,
+    s = b.scale,
+    t = b.palette,
+    c = b.ctx;
+  b.background(w * 0.22, h * 0.55, Math.max(w, h) * 0.36);
+  b.face([0, 0, w * 0.5, h], "right");
+  const x = w * 0.5,
+    cw = w - 44 * s - x,
+    cx = x + cw / 2,
+    inner = cw - 68 * s;
+  const top = words(b, "pill").toUpperCase(),
+    num = words(b, "headline"),
+    sub = words(b, "subline"),
+    rows = statRows(b),
+    svc = words(b, "services");
+  const ir = b.state.play ? 34 * s : 0,
+    iw = b.state.play ? 84 * s : 0,
+    tp = b.fit(top, 90 * s, cw - iw, 800),
+    tc = top ? b.cap() : ir * 2,
+    tw = c.measureText(top).width;
+  const np = b.fit(num, 164 * s, inner, 800),
+    nc = num ? b.cap() : 0,
+    sp = b.fit(sub, 34 * s, inner, 600),
+    sc = sub ? b.cap() : 0;
+  let vs = 46 * s,
+    ls = 23 * s;
+  for (const [v, l] of rows) {
+    vs = Math.min(vs, b.fit(v, 46 * s, rows.length === 2 ? inner / 2 - 18 * s : inner, 800));
+    ls = Math.min(ls, b.fit(l, 23 * s, rows.length === 2 ? inner / 2 - 18 * s : inner, 500));
+  }
+  b.font(vs, 800);
+  const vc = b.cap();
+  b.font(ls, 500);
+  const lc = b.cap();
+  const rh = rows.length ? vc + 18 * s + lc * 1.3 : 0;
+  const ph =
+    num || sub || rows.length
+      ? 42 * s +
+        nc +
+        (sub ? (num ? 30 * s : 0) + sc * 1.25 : 0) +
+        (rows.length ? 68 * s + rh : 0) +
+        34 * s
+      : 0;
+  const g1 = (top || b.state.play) && ph ? 34 * s : 0,
+    g2 = svc && (ph || top) ? 24 * s : 0,
+    sh = svc ? 64 * s : 0;
+  let y = Math.max(44 * s, (h - tc - g1 - ph - g2 - sh) / 2);
+  if (top || b.state.play) {
+    let xx = cx - (iw + tw - (top ? 0 : 16 * s)) / 2;
+    if (b.state.play) {
+      b.play(xx + ir, y + tc / 2, ir, true);
+      xx += iw;
+    }
+    b.shadow("rgba(0,0,0,.35)", 20 * s);
+    b.text(top, xx, y + tc, tp, "#fff", Infinity, 800);
+    b.noShadow();
+    y += tc + g1;
+  }
+  if (ph) {
+    const grad = c.createLinearGradient(0, y, 0, y + ph);
+    grad.addColorStop(0, translucent(t.glow, 0.22));
+    grad.addColorStop(1, translucent(t.glow, 0.04));
+    b.shadow("rgba(0,0,0,.45)", 40 * s, 12 * s);
+    b.rect([x, y, cw, ph], t.surface, 24 * s);
+    b.noShadow();
+    b.rect([x + 1.5 * s, y + 1.5 * s, cw - 3 * s, ph - 3 * s], grad, 23 * s, t.line, 3 * s);
+    let yy = y + 42 * s;
+    if (num) {
+      b.shadow("rgba(0,0,0,.3)", 18 * s);
+      b.text(num, cx, yy + nc, np, "#fff", Infinity, 800, "center");
+      b.noShadow();
+      yy += nc;
+    }
+    if (sub) {
+      yy += num ? 30 * s : 0;
+      b.text(sub, cx, yy + sc, sp, "rgba(255,255,255,.92)", Infinity, 600, "center");
+      yy += sc * 1.25;
+    }
+    if (rows.length) {
+      yy += 34 * s;
+      c.fillStyle = translucent(t.line, 0.45);
+      c.fillRect(x + 34 * s, yy, inner, 2 * s);
+      yy += 34 * s;
+      rows.forEach(([v, l], i) => {
+        const xx = rows.length === 2 ? x + 34 * s + inner * (i ? 0.75 : 0.25) : cx;
+        b.text(v, xx, yy + vc, vs, "#fff", Infinity, 800, "center");
+        b.text(l, xx, yy + vc + 18 * s + lc, ls, "rgba(255,255,255,.66)", Infinity, 500, "center");
+      });
+      if (rows.length === 2) {
+        c.fillStyle = translucent(t.line, 0.45);
+        c.fillRect(cx - s, yy - 4 * s, 2 * s, rh + 8 * s);
+      }
+    }
+    y += ph + g2;
+  } else y += g2;
+  if (svc) service(b, svc, x, y, cw, sh, 26 * s, 0.3);
+}
+function reviews(b: Brush): void {
+  const { width: w, height: h } = b,
+    s = b.scale,
+    t = b.palette,
+    c = b.ctx,
+    m = 44 * s;
+  b.background(w * 0.74, h * 0.42, Math.max(w, h) * 0.4);
+  b.face([w * 0.42, 0, w * 0.58, h], "left");
+  const cw = w * 0.56 - m,
+    l1 = words(b, "headline").toUpperCase(),
+    l2 = words(b, "subline").toUpperCase(),
+    badge = words(b, "badge").toUpperCase(),
+    rows = statRows(b),
+    bar = words(b, "pill");
+  let tp = 116 * s;
+  for (const line of [l1, l2]) if (line) tp = Math.min(tp, b.fit(line, 116 * s, cw, 400, "Anton"));
+  b.font(tp, 400, "Anton");
+  const cap = b.cap(),
+    titleH = (l1 ? cap : 0) + (l2 ? cap : 0) + (l1 && l2 ? 18 * s : 0),
+    rh = badge ? 96 * s : 44 * s,
+    sh = rows.length ? 132 * s : 0,
+    bh = bar || b.state.play ? 92 * s : 0,
+    by = h - m - bh;
+  const gap = Math.max(
+    14 * s,
+    ((bh ? by : h - m) - (m + 6 * s + titleH) - rh - sh) / ((sh ? 2 : 1) + 1),
+  );
+  let y = m + 6 * s;
+  if (l1) {
+    b.text(l1, m, y + cap, tp, "#fff", Infinity, 400, "left", "Anton");
+    y += cap + (l2 ? 18 * s : 0);
+  }
+  if (l2) {
+    b.text(l2, m, y + cap, tp, t.highlight, Infinity, 400, "left", "Anton");
+    y += cap;
+  }
+  y += gap;
+  let starsX = m;
+  if (badge) {
+    const x = m,
+      ww = 82 * s;
+    c.beginPath();
+    c.moveTo(x + ww / 2, y);
+    c.lineTo(x + ww, y + rh * 0.15);
+    c.lineTo(x + ww, y + rh * 0.52);
+    c.quadraticCurveTo(x + ww, y + rh * 0.86, x + ww / 2, y + rh);
+    c.quadraticCurveTo(x, y + rh * 0.86, x, y + rh * 0.52);
+    c.lineTo(x, y + rh * 0.15);
+    c.closePath();
+    c.fillStyle = "rgba(0,0,0,.55)";
+    c.fill();
+    c.strokeStyle = t.highlight;
+    c.lineWidth = 3 * s;
+    c.stroke();
+    b.star(x + ww / 2, y + rh * 0.22, 9 * s, t.highlight);
+    const split = badge.split(" "),
+      lines = split.length > 3 ? [split[0], split[1], split.slice(2).join(" ")] : split;
+    let size = 15 * s;
+    for (const line of lines) size = Math.min(size, b.fit(line, 15 * s, ww * 0.72, 800));
+    b.font(size, 800);
+    const ch = b.cap(),
+      lh = ch * 1.35,
+      top = y + rh * 0.56 - (lh * (lines.length - 1) + ch) / 2;
+    lines.forEach((line, index) => {
+      b.text(line, x + ww / 2, top + ch + index * lh, size, "#fff", Infinity, 800, "center");
+    });
+    starsX += 104 * s;
+  }
+  for (let i = 0; i < 5; i++)
+    b.star(starsX + 21 * s + i * 50 * s, y + rh / 2 + 2 * s, 21 * s, t.highlight);
+  y += rh + gap;
+  const bw = rows.length === 2 ? (cw - 16 * s) / 2 : cw * 0.6;
+  rows.forEach(([v, l], i) => {
+    const xx = m + i * (bw + 16 * s);
+    b.rect([xx, y, bw, sh], "rgba(0,0,0,.5)", 16 * s);
+    c.beginPath();
+    c.roundRect(xx + s, y + s, bw - 2 * s, sh - 2 * s, 15 * s);
+    c.strokeStyle = translucent(t.highlight, 0.6);
+    c.lineWidth = 2 * s;
+    c.stroke();
+    const vp = b.fit(v, 46 * s, bw - 30 * s, 800),
+      vc = v ? b.cap() : 0,
+      lp = b.fit(l.toUpperCase(), 17 * s, bw - 30 * s, 700),
+      lc = l ? b.cap() : 0;
+    let yy = y + (sh - vc - lc - (v && l ? 16 * s : 0)) / 2;
+    if (v) {
+      b.text(v, xx + bw / 2, yy + vc, vp, "#fff", Infinity, 800, "center");
+      yy += vc + (l ? 16 * s : 0);
+    }
+    if (l)
+      b.text(
+        l.toUpperCase(),
+        xx + bw / 2,
+        yy + lc,
+        lp,
+        "rgba(255,255,255,.7)",
+        Infinity,
+        700,
+        "center",
+      );
+  });
+  if (bh) {
+    const ww = Math.min(w * 0.64, w - 2 * m - (b.state.arrow ? 90 * s : 0)),
+      cy = by + bh / 2;
+    b.shadow(translucent(t.line, 0.55), 26 * s);
+    b.rect([m, by, ww, bh], "rgba(10,8,18,.86)", 20 * s);
+    b.noShadow();
+    c.strokeStyle = t.line;
+    c.lineWidth = 3 * s;
+    c.beginPath();
+    c.roundRect(m + 1.5 * s, by + 1.5 * s, ww - 3 * s, bh - 3 * s, 19 * s);
+    c.stroke();
+    let tx = m + 30 * s;
+    if (b.state.play) {
+      b.play(tx + 28 * s, cy, 28 * s, false, t.accent, t.foreground);
+      tx += 78 * s;
+      if (bar) {
+        c.fillStyle = "rgba(255,255,255,.22)";
+        c.fillRect(tx - 11 * s, cy - 24 * s, 2 * s, 48 * s);
+        tx += 10 * s;
+      }
+    }
+    if (bar) {
+      const px = b.fit(bar, 38 * s, m + ww - 30 * s - tx, 700);
+      b.text(bar, tx, cy + b.cap() / 2, px, "#fff", Infinity, 700);
+    }
+    if (b.state.arrow)
+      b.arrow([m + ww + 74 * s, by - 66 * s], [m + ww + 14 * s, cy - 4 * s], -34 * s, 16 * s);
+  }
+}
+export async function artworkFonts(): Promise<boolean> {
+  const specs = [
+    "500 40px Montserrat",
+    "600 40px Montserrat",
+    "700 40px Montserrat",
+    "800 40px Montserrat",
+    "900 40px Montserrat",
+    "400 40px Anton",
+  ];
+  await Promise.all(
+    specs.map((font) =>
+      document.fonts
+        .load(font, "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789$%+&·")
+        .catch(() => []),
+    ),
+  );
+  return specs.every((font) => document.fonts.check(font, "A"));
+}
+export function drawThumbnail(
+  canvas: HTMLCanvasElement,
+  state: ThumbnailState,
+  style: Style = state.style,
+): void {
+  const chosen = { ...state, style };
+  const [w, h] = dimensions(chosen);
+  if (canvas.width !== w || canvas.height !== h) {
+    canvas.width = w;
+    canvas.height = h;
+  }
+  const c = canvas.getContext("2d");
+  if (!c) return;
+  c.save();
+  c.clearRect(0, 0, w, h);
+  c.textAlign = "left";
+  c.textBaseline = "alphabetic";
+  c.imageSmoothingEnabled = true;
+  c.imageSmoothingQuality = "high";
+  const b = new Brush(c, chosen, w, h);
+  const painters: Record<Style, (brush: Brush) => void> = {
+    profile,
+    result,
+    stat,
+    reviews,
+    meet,
+    banner,
+    hello,
+    proof,
+  };
+  painters[style](b);
+  c.restore();
+}
