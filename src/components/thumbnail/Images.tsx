@@ -25,6 +25,31 @@ export async function readLocalImage(file: File): Promise<HTMLImageElement> {
     URL.revokeObjectURL(url);
   }
 }
+interface UploadThumbProps {
+  image: HTMLImageElement;
+}
+function UploadThumb({ image }: UploadThumbProps): React.JSX.Element {
+  const ref = useRef<HTMLCanvasElement>(null);
+  useEffect(() => {
+    const c = ref.current?.getContext("2d");
+    if (!c) return;
+    const scale = Math.max(80 / image.naturalWidth, 80 / image.naturalHeight),
+      w = image.naturalWidth * scale,
+      h = image.naturalHeight * scale;
+    c.clearRect(0, 0, 80, 80);
+    c.drawImage(image, (80 - w) / 2, (80 - h) / 2, w, h);
+  }, [image]);
+  return (
+    <canvas
+      ref={ref}
+      width={80}
+      height={80}
+      className="h-10 w-10 rounded-[var(--ds-radius-sm)]"
+      role="img"
+      aria-label="Uploaded image thumbnail"
+    />
+  );
+}
 export function ImageUpload({
   kind,
   crop,
@@ -74,7 +99,9 @@ export function ImageUpload({
         }}
       >
         <span className="upload-icon" aria-hidden="true">
-          {kind === "face" ? (
+          {crop.image ? (
+            <UploadThumb image={crop.image} />
+          ) : kind === "face" ? (
             <svg viewBox="0 0 24 24" aria-hidden="true">
               <circle cx="12" cy="8" r="4" />
               <path d="M4 21a8 8 0 0 1 16 0" />

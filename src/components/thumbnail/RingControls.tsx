@@ -1,20 +1,8 @@
 "use client";
 
-import type { Ring, ThumbnailState } from "@/lib/thumbnail/model";
+import { customRingGradient } from "@/lib/thumbnail/brush";
+import { BACKGROUNDS, RING_COLORS, type Ring, type ThumbnailState } from "@/lib/thumbnail/model";
 
-export const RING_COLORS = [
-  { id: "toprated", name: "Top Rated", color: "#2563EB", gradient: ["#4D94F8", "#1F57C3"] },
-  { id: "trplus", name: "Top Rated Plus", color: "#E3247B", gradient: ["#F45AA0", "#BF1363"] },
-  { id: "whales", name: "Whales purple", color: "#8360F5", gradient: ["#A184FF", "#6D3EF0"] },
-  { id: "rising", name: "Rising Talent", color: "#14A800", gradient: ["#3EC520", "#0D8A00"] },
-] as const;
-const BACKGROUNDS = [
-  { name: "White", color: "#FFFFFF" },
-  { name: "Light grey", color: "#E9EAEE" },
-  { name: "Soft lavender", color: "#E6DEFF" },
-  { name: "Soft mint", color: "#DDF3E6" },
-  { name: "Dark", color: "#15111F" },
-];
 interface RingProps {
   state: ThumbnailState;
   onRing: (patch: Partial<Ring>) => void;
@@ -37,7 +25,20 @@ export function RingControls({ state, onRing }: RingProps): React.JSX.Element {
             onClick={() => onRing({ preset: item.id, color: item.color })}
           >
             <svg viewBox="0 0 48 48" aria-hidden="true">
-              <circle cx="24" cy="24" r="18" fill="none" stroke={item.color} strokeWidth="8" />
+              <defs>
+                <linearGradient id={`ring-${item.id}`}>
+                  <stop stopColor={item.gradient[0]} />
+                  <stop offset="1" stopColor={item.gradient[1]} />
+                </linearGradient>
+              </defs>
+              <circle
+                cx="24"
+                cy="24"
+                r="18"
+                fill="none"
+                stroke={ring.gradient ? `url(#ring-${item.id})` : item.color}
+                strokeWidth="8"
+              />
             </svg>
             <span>{item.name}</span>
           </button>
@@ -46,7 +47,20 @@ export function RingControls({ state, onRing }: RingProps): React.JSX.Element {
           className={`choice ring-option custom-color ${ring.preset === "custom" ? "is-selected" : ""}`}
         >
           <svg viewBox="0 0 48 48" aria-hidden="true">
-            <circle cx="24" cy="24" r="18" fill="none" stroke={ring.customColor} strokeWidth="8" />
+            <defs>
+              <linearGradient id="ring-custom">
+                <stop stopColor={customRingGradient(ring.customColor)[0]} />
+                <stop offset="1" stopColor={customRingGradient(ring.customColor)[1]} />
+              </linearGradient>
+            </defs>
+            <circle
+              cx="24"
+              cy="24"
+              r="18"
+              fill="none"
+              stroke={ring.gradient ? "url(#ring-custom)" : ring.customColor}
+              strokeWidth="8"
+            />
             <path d="M17 24h14m-7-7v14" />
           </svg>
           <span>Custom</span>

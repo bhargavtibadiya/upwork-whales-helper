@@ -272,3 +272,17 @@ export const MODES: ModeSpec[] = [
   { id: "portfolio", name: "Portfolio thumbnail", description: "For a project in your portfolio" },
   { id: "intro", name: "Intro video thumbnail", description: "For the video on your profile" },
 ];
+
+export const RING_COLORS = [
+  { id: "toprated", name: "Top Rated", color: "#2563EB", gradient: ["#4D94F8", "#1F57C3"] },
+  { id: "trplus", name: "Top Rated Plus", color: "#E3247B", gradient: ["#F45AA0", "#BF1363"] },
+  { id: "whales", name: "Whales purple", color: "#8360F5", gradient: ["#A184FF", "#6D3EF0"] },
+  { id: "rising", name: "Rising Talent", color: "#14A800", gradient: ["#3EC520", "#0D8A00"] },
+] as const;
+export const BACKGROUNDS = [
+  { name: "White", color: "#FFFFFF" },
+  { name: "Light grey", color: "#E9EAEE" },
+  { name: "Soft lavender", color: "#E6DEFF" },
+  { name: "Soft mint", color: "#DDF3E6" },
+  { name: "Dark", color: "#15111F" },
+];

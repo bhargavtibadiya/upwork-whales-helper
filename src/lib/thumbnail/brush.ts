@@ -78,6 +78,9 @@ export function blend(hex: string, target: string, amount: number): string {
     )
     .join("")}`;
 }
+export function customRingGradient(color: string): readonly [string, string] {
+  return [blend(color, "#ffffff", 0.32), blend(color, "#000000", 0.22)];
+}
 export function cropPlacement(
   sourceWidth: number,
   sourceHeight: number,
