@@ -1,8 +1,10 @@
 import type { Metadata } from "next";
 import "./globals.css";
+import "./theme.css";
+import "./studio.css";
 
 export const metadata: Metadata = {
-  title: "Profile Picture & Thumbnail Maker | Upwork Whales",
+  title: "Profile Picture & Thumbnail Maker | Thumbnail Studio",
   description:
     "Make a ringed profile picture, portfolio thumbnail or intro-video thumbnail. Your images stay in your browser.",
 };
@@ -13,7 +15,17 @@ interface RootLayoutProps {
 
 export default function RootLayout({ children }: Readonly<RootLayoutProps>): React.JSX.Element {
   return (
-    <html lang="en" data-ds="nordic-calm">
+    <html lang="en" data-ds="nordic-calm" data-theme="dark" suppressHydrationWarning>
+      <head>
+        {/* [WHY] Runs before paint so a saved light choice never flashes dark. Dark is the default. */}
+        <script
+          // biome-ignore lint/security/noDangerouslySetInnerHtml: static theme bootstrap, no user input
+          dangerouslySetInnerHTML={{
+            __html:
+              'try{document.documentElement.dataset.theme=localStorage.getItem("theme")==="light"?"light":"dark"}catch(e){}',
+          }}
+        />
+      </head>
       <body>{children}</body>
     </html>
   );
