@@ -1,28 +1,20 @@
 import type { Metadata } from "next";
-import { Anton, Montserrat, Space_Grotesk, Work_Sans } from "next/font/google";
 import "./globals.css";
 
-const spaceGrotesk = Space_Grotesk({ subsets: ["latin"], variable: "--font-space-grotesk" });
-const workSans = Work_Sans({ subsets: ["latin"], variable: "--font-work-sans" });
-// [WHY] Anton and Montserrat are canvas artwork fonts; they must load in the
-// page so canvas text and PNG exports render with the right faces.
-const anton = Anton({ subsets: ["latin"], weight: "400", variable: "--font-anton" });
-const montserrat = Montserrat({ subsets: ["latin"], variable: "--font-montserrat" });
-
 export const metadata: Metadata = {
-  title: "Upwork Whales Helper",
+  title: "Profile Picture & Thumbnail Maker | Upwork Whales",
   description:
-    "Browser-local image editor for Upwork profile pictures, portfolio thumbnails and intro-video thumbnails.",
+    "Make a ringed profile picture, portfolio thumbnail or intro-video thumbnail. Your images stay in your browser.",
 };
 
-export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
+interface RootLayoutProps {
+  children: React.ReactNode;
+}
+
+export default function RootLayout({ children }: Readonly<RootLayoutProps>): React.JSX.Element {
   return (
-    <html lang="en" data-ds="risograph-print">
-      <body
-        className={`${spaceGrotesk.variable} ${workSans.variable} ${anton.variable} ${montserrat.variable}`}
-      >
-        {children}
-      </body>
+    <html lang="en" data-ds="nordic-calm">
+      <body>{children}</body>
     </html>
   );
 }

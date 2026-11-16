@@ -1,5 +1,5 @@
-import { EditorShell } from "@/components/editor/EditorShell";
+import { ThumbnailEditor } from "@/components/thumbnail/ThumbnailEditor";
 
-export default function Home() {
-  return <EditorShell />;
+export default function Home(): React.JSX.Element {
+  return <ThumbnailEditor />;
 }
