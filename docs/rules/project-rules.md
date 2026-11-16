@@ -17,7 +17,7 @@ A fully client-side image editor for Upwork profile assets (profile picture, por
 
 ## 3. No backend
 
-- **Never** add API routes, server actions that persist data, a database, or an upload endpoint.
+- In the current scope there is **no backend**: do not add API routes, server actions that persist data, a database, or an upload endpoint. A future backend is possible only if the owner explicitly approves it.
 - Image processing (including any future background removal) must run client-side or be explicitly approved before adding any server dependency.
 - `frontend-folder-structure.md` sections about `app/api/` and backend folders do not apply.
 
