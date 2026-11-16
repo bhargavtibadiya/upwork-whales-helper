@@ -4,11 +4,19 @@ export type Style =
   | "result"
   | "stat"
   | "reviews"
+  | "quote"
+  | "checklist"
+  | "cover"
+  | "duo"
   | "meet"
   | "banner"
   | "hello"
-  | "proof";
-export type Palette = "purple" | "green" | "blue" | "black";
+  | "proof"
+  | "split"
+  | "centered"
+  | "statline"
+  | "tagline";
+export type Palette = "purple" | "green" | "blue" | "black" | "red" | "orange" | "teal" | "pink";
 export type ImageKind = "face" | "shot";
 export interface Crop {
   image: HTMLImageElement | null;
@@ -126,6 +134,78 @@ export const STYLES: StyleSpec[] = [
     },
   },
   {
+    id: "quote",
+    mode: "portfolio",
+    name: "Client quote",
+    fields: ["quote", "name", "badge"],
+    images: ["face"],
+    extras: ["play"],
+    defaults: {
+      quote: "Bhargav delivered exactly what we needed, faster than promised.",
+      name: "Happy client",
+      badge: "5.0",
+    },
+    labels: {
+      quote: "Client quote",
+      name: "Client name",
+      badge: "Rating (leave empty to hide the stars)",
+    },
+  },
+  {
+    id: "checklist",
+    mode: "portfolio",
+    name: "Checklist",
+    fields: ["headline", "services"],
+    images: ["face"],
+    extras: ["arrow"],
+    defaults: {
+      headline: "WHAT YOU GET",
+      services: "Web app · API · Database · Launch",
+    },
+    labels: {
+      headline: "Title",
+      services: "Checklist items, separated by ·",
+    },
+  },
+  {
+    id: "cover",
+    mode: "portfolio",
+    name: "Project cover",
+    fields: ["pill", "headline", "subline"],
+    images: ["shot"],
+    extras: ["play", "arrow"],
+    defaults: {
+      pill: "CASE STUDY",
+      headline: "SaaS Dashboard",
+      subline: "Next.js · Stripe · Postgres",
+    },
+    labels: {
+      pill: "Top label",
+      headline: "Project name",
+      subline: "Small line under it (optional)",
+    },
+  },
+  {
+    id: "duo",
+    mode: "portfolio",
+    name: "Result card",
+    fields: ["headline", "subline", "stats"],
+    images: ["face"],
+    extras: ["play"],
+    defaults: {
+      headline: "120K CLICKS",
+      subline: "Delivered in 90 days",
+      stat1v: "4.2M",
+      stat1l: "Impressions",
+      stat2v: "900+",
+      stat2l: "Daily Clicks",
+    },
+    labels: {
+      headline: "Big result",
+      subline: "What the result means",
+    },
+  },
+  {
     id: "meet",
     mode: "intro",
     name: "Meet me",
@@ -190,6 +270,66 @@ export const STYLES: StyleSpec[] = [
       services: "AI Agents · Automation · Web Apps",
     },
     labels: { pill: "Top text", services: "Tools or services bar (optional)" },
+  },
+  {
+    id: "split",
+    mode: "intro",
+    name: "Split intro",
+    fields: ["pill", "name", "role"],
+    images: ["face"],
+    extras: ["play", "arrow"],
+    defaults: { pill: "WATCH THIS", name: "Alex R.", role: "AI Automation Specialist" },
+    labels: { pill: "Button text", name: "Your name", role: "What you do" },
+  },
+  {
+    id: "centered",
+    mode: "intro",
+    name: "Center stage",
+    fields: ["headline", "name", "role"],
+    images: ["face"],
+    extras: ["play"],
+    defaults: { headline: "HI, I'M", name: "Alex R.", role: "AI Automation Specialist" },
+    labels: { headline: "Small intro line", name: "Your name", role: "What you do" },
+  },
+  {
+    id: "statline",
+    mode: "intro",
+    name: "Stats strip",
+    fields: ["headline", "stats", "services"],
+    images: ["face"],
+    extras: ["play"],
+    statCount: 3,
+    defaults: {
+      headline: "RESULTS THAT SPEAK",
+      stat1v: "50+",
+      stat1l: "Projects delivered",
+      stat2v: "5.0",
+      stat2l: "Client rating",
+      stat3v: "$100K+",
+      stat3l: "Earned on Upwork",
+      services: "AI Agents · Automation · Web Apps",
+    },
+    labels: { headline: "Big text", services: "Bottom line (optional)" },
+  },
+  {
+    id: "tagline",
+    mode: "intro",
+    name: "Title + skills",
+    fields: ["headline", "headline2", "chips"],
+    images: ["face"],
+    extras: ["arrow"],
+    defaults: {
+      headline: "FULL STACK",
+      headline2: "DEVELOPER",
+      chip1: "Web apps",
+      chip2: "AI agents",
+      chip3: "APIs",
+      chip4: "Cloud",
+    },
+    labels: {
+      headline: "Title line 1",
+      headline2: "Title line 2 (coloured)",
+    },
   },
 ];
 const SHARED = new Set([
@@ -278,7 +418,21 @@ export const RING_COLORS = [
   { id: "trplus", name: "Top Rated Plus", color: "#E3247B", gradient: ["#F45AA0", "#BF1363"] },
   { id: "whales", name: "Whales purple", color: "#8360F5", gradient: ["#A184FF", "#6D3EF0"] },
   { id: "rising", name: "Rising Talent", color: "#14A800", gradient: ["#3EC520", "#0D8A00"] },
+  { id: "gold", name: "Gold", color: "#F5A524", gradient: ["#FFC53D", "#D9850B"] },
+  { id: "red", name: "Red", color: "#E11D48", gradient: ["#F8547C", "#B4123A"] },
+  { id: "teal", name: "Teal", color: "#0D9488", gradient: ["#2DD4BF", "#0F766E"] },
+  { id: "orange", name: "Orange", color: "#EA580C", gradient: ["#FB923C", "#C2410C"] },
 ] as const;
+export const PALETTES: { id: Palette; name: string }[] = [
+  { id: "purple", name: "Whales purple" },
+  { id: "green", name: "Green" },
+  { id: "blue", name: "Blue" },
+  { id: "black", name: "Black" },
+  { id: "red", name: "Red" },
+  { id: "orange", name: "Orange" },
+  { id: "teal", name: "Teal" },
+  { id: "pink", name: "Pink" },
+];
 export const BACKGROUNDS = [
   { name: "White", color: "#FFFFFF" },
   { name: "Light grey", color: "#E9EAEE" },
