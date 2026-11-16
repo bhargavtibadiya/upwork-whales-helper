@@ -26,6 +26,7 @@ npm run build
 npm start -- --port 3100
 # In another terminal:
 CHROME_PATH=/usr/bin/google-chrome npm run test:e2e
+CHROME_PATH=/usr/bin/google-chrome npm run test:compare
 ```
 
 `APP_URL`, `EVIDENCE_DIR`, and `CHROME_PATH` can override the defaults. The browser test uses the generated fixtures in `tests/fixtures/`, exercises editing and touch controls, and checks downloaded PNGs against preview pixels. See `docs/verification.md` for the latest results and comparison evidence.

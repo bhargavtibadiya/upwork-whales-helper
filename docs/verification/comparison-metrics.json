@@ -1,0 +1,66 @@
+{
+  "default-meet": {
+    "meanRgbError": 0.003666087962962963,
+    "pixelsOver20Percent": 0.005642361111111111
+  },
+  "default-banner": {
+    "meanRgbError": 0.03189055266203704,
+    "pixelsOver20Percent": 0.054361979166666664
+  },
+  "default-hello": {
+    "meanRgbError": 0.18048430266203705,
+    "pixelsOver20Percent": 0.029947916666666664
+  },
+  "default-proof": {
+    "meanRgbError": 0.01004955150462963,
+    "pixelsOver20Percent": 0.0048828125
+  },
+  "default-result": {
+    "meanRgbError": 0.016849333333333334,
+    "pixelsOver20Percent": 0.051866666666666665
+  },
+  "default-stat": {
+    "meanRgbError": 0.247288,
+    "pixelsOver20Percent": 0.026400000000000003
+  },
+  "default-reviews": {
+    "meanRgbError": 0.21626933333333334,
+    "pixelsOver20Percent": 0.03813333333333334
+  },
+  "default-profile": {
+    "meanRgbError": 0.0029216666666666666,
+    "pixelsOver20Percent": 0.0044
+  },
+  "uploaded-meet": {
+    "meanRgbError": 0.004656032986111111,
+    "pixelsOver20Percent": 0.0078125
+  },
+  "uploaded-banner": {
+    "meanRgbError": 0.03171730324074074,
+    "pixelsOver20Percent": 0.054361979166666664
+  },
+  "uploaded-hello": {
+    "meanRgbError": 0.01990089699074074,
+    "pixelsOver20Percent": 0.01898871527777778
+  },
+  "uploaded-proof": {
+    "meanRgbError": 0.0100390625,
+    "pixelsOver20Percent": 0.0048828125
+  },
+  "uploaded-result": {
+    "meanRgbError": 0.015062222222222222,
+    "pixelsOver20Percent": 0.048
+  },
+  "uploaded-stat": {
+    "meanRgbError": 0.24823866666666666,
+    "pixelsOver20Percent": 0.026400000000000003
+  },
+  "uploaded-reviews": {
+    "meanRgbError": 0.21626933333333334,
+    "pixelsOver20Percent": 0.03813333333333334
+  },
+  "uploaded-profile": {
+    "meanRgbError": 0.009496,
+    "pixelsOver20Percent": 0
+  }
+}
