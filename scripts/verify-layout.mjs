@@ -89,6 +89,71 @@ try {
           return cards.every((c, i) => i === 0 || c.top >= cards[i - 1].bottom - 1);
         }),
       );
+      check(
+        `${tag}: clear gap between control cards`,
+        await page.evaluate(() => {
+          const cards = [...document.querySelectorAll(".controls-column > .surface")].map((c) =>
+            c.getBoundingClientRect(),
+          );
+          return cards.every((c, i) => i === 0 || c.top - cards[i - 1].bottom >= 12);
+        }),
+      );
+      check(
+        `${tag}: clear gap between tabs and panel`,
+        await page.evaluate(() => {
+          const tabs = document.querySelector(".mode-tabs").getBoundingClientRect();
+          const panel = document.querySelector(".studio-panel").getBoundingClientRect();
+          return panel.top - tabs.bottom >= 16;
+        }),
+      );
+      check(
+        `${tag}: slim sticky header`,
+        (await page.locator("header.site-header").boundingBox()).height <= 60,
+      );
+      check(
+        `${tag}: new brand name, old name gone`,
+        (await page.locator("header.site-header").innerText()).includes(
+          "Upwork Thumbnail Maker",
+        ) && !(await page.locator("body").innerText()).includes("Thumbnail Studio"),
+      );
+      check(
+        `${tag}: owner name in header and footer`,
+        (width <= 767 ||
+          (await page.locator("header.site-header").innerText()).includes("Bhargav Tibadiya")) &&
+          (await page.locator("footer.site-footer").innerText()).includes("Bhargav Tibadiya"),
+      );
+      if (mode === "profile") {
+        check(
+          `${tag}: eight ring presets plus custom`,
+          (await page.locator(".ring-options .ring-option").count()) === 9,
+        );
+      } else {
+        check(
+          `${tag}: style and theme in separate sections`,
+          (await page.locator(".style-panel .style-options").count()) === 1 &&
+            (await page.locator(".theme-panel .palette-options").count()) === 1,
+        );
+        check(
+          `${tag}: eight theme colours`,
+          (await page.locator(".palette-options .palette-option").count()) === 8,
+        );
+        check(
+          `${tag}: expected preset count`,
+          (await page.locator(".style-options .style-option").count()) ===
+            (mode === "portfolio" ? 7 : 8),
+        );
+        check(
+          `${tag}: style picker capped at two rows`,
+          await page.evaluate(
+            () =>
+              new Set(
+                [...document.querySelectorAll(".style-options .style-option")].map((b) =>
+                  Math.round(b.getBoundingClientRect().top),
+                ),
+              ).size <= 2,
+          ),
+        );
+      }
       await page.screenshot({ path: `${out}/${size}-${mode}-dark.png`, fullPage: true });
     }
     // header links navigate between modes

@@ -80,7 +80,7 @@ try {
       .textContent()
       .then((t) => t.includes("Intro video")),
   );
-  check("all four intro styles", (await page.locator(".style-options button").count()) === 4);
+  check("all eight intro styles", (await page.locator(".style-options button").count()) === 8);
   const initial = await pixels();
   await page.locator("#upload-face").setInputFiles(`${fixtures}/fixture-face.png`);
   await settle();
@@ -113,7 +113,16 @@ try {
   await page.getByRole("checkbox", { name: "Play button", exact: true }).check();
   await settle();
   check("play toggle changes pixels", noPlay !== (await pixels()));
-  const introStyles = ["Meet me", "Title banner", "Big hello", "Watch this + proof"];
+  const introStyles = [
+    "Meet me",
+    "Title banner",
+    "Big hello",
+    "Watch this + proof",
+    "Split intro",
+    "Center stage",
+    "Stats strip",
+    "Title + skills",
+  ];
   const rendered = [];
   for (const name of introStyles) {
     await style(name);
@@ -125,7 +134,7 @@ try {
     const png = await download(name.replaceAll(" ", "-"));
     check(`intro dimensions: ${name}`, png.width === 1280 && png.height === 720);
   }
-  check("four presets produce distinct outputs", new Set(rendered).size === 4);
+  check("eight presets produce distinct outputs", new Set(rendered).size === 8);
   await style("Title banner");
   await page.getByRole("textbox", { name: "Skill 1 label" }).fill("APPS");
   const icons = [];
@@ -171,14 +180,31 @@ try {
     (await page.getByRole("slider", { name: "Photo Zoom", exact: true }).inputValue()) === "165",
   );
   const paletteOutputs = [];
-  for (const color of ["Whales purple", "Green", "Blue", "Black"]) {
+  for (const color of [
+    "Whales purple",
+    "Green",
+    "Blue",
+    "Black",
+    "Red",
+    "Orange",
+    "Teal",
+    "Pink",
+  ]) {
     await page.locator(".palette-options button").filter({ hasText: color }).click();
     await settle();
     paletteOutputs.push(await pixels());
   }
-  check("all four artwork palettes differ", new Set(paletteOutputs).size === 4);
+  check("all eight artwork palettes differ", new Set(paletteOutputs).size === 8);
   await mode("Portfolio thumbnail");
-  for (const name of ["Result + screenshot", "Face + big stat", "Client results"]) {
+  for (const name of [
+    "Result + screenshot",
+    "Face + big stat",
+    "Client results",
+    "Client quote",
+    "Checklist",
+    "Project cover",
+    "Result card",
+  ]) {
     await style(name);
     const png = await download(name.replaceAll(" ", "-"));
     check(`portfolio size: ${name}`, png.width === 1000 && png.height === 750);
@@ -189,12 +215,21 @@ try {
   check("portfolio wide size", wide.width === 1280 && wide.height === 720);
   await mode("Profile picture");
   const ring = [];
-  for (const name of ["Top Rated", "Top Rated Plus", "Whales purple", "Rising Talent"]) {
+  for (const name of [
+    "Top Rated",
+    "Top Rated Plus",
+    "Whales purple",
+    "Rising Talent",
+    "Gold",
+    "Red",
+    "Teal",
+    "Orange",
+  ]) {
     await page.getByRole("button", { name, exact: true }).click();
     await settle();
     ring.push(await pixels());
   }
-  check("badge ring colours change pixels", new Set(ring).size === 4);
+  check("badge ring colours change pixels", new Set(ring).size === 8);
   await page.getByRole("checkbox", { name: "Gradient ring" }).check();
   await changeRange("Ring thickness", 80);
   await page.getByRole("button", { name: "Dark gap", exact: true }).click();
