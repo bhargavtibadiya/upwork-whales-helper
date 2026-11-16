@@ -14,7 +14,7 @@ interface ControlsPanelProps {
 }
 
 const btnBase =
-  "border-2 border-ink bg-surface px-3 py-2 text-left text-sm font-bold transition-shadow hover:shadow-btn-hover";
+  "riso-btn border-2 border-ink bg-surface px-3 py-2 text-left text-sm font-bold hover:bg-sunken hover:shadow-btn-hover";
 const btnActive = "bg-drum-pink text-ink shadow-dropdown";
 
 export function ControlsPanel({ state, layoutId, onLayout, dispatch }: ControlsPanelProps) {
@@ -25,7 +25,9 @@ export function ControlsPanel({ state, layoutId, onLayout, dispatch }: ControlsP
   return (
     <div className="flex flex-col gap-6">
       <section>
-        <h3 className="mb-2 text-base font-bold">What are you making?</h3>
+        <h3 className="riso-kicker mb-2">
+          <span>01</span>What are you making?
+        </h3>
         <div className="grid grid-cols-1 gap-2">
           {MODES.map((m) => (
             <button
@@ -43,7 +45,9 @@ export function ControlsPanel({ state, layoutId, onLayout, dispatch }: ControlsP
 
       {spec.sizeIds.length > 1 && (
         <section>
-          <h3 className="mb-2 text-base font-bold">Size</h3>
+          <h3 className="riso-kicker mb-2">
+            <span>02</span>Size
+          </h3>
           <div className="flex flex-wrap gap-2">
             {spec.sizeIds.map((id) => {
               const size = SIZES.find((s) => s.id === id);
@@ -64,7 +68,9 @@ export function ControlsPanel({ state, layoutId, onLayout, dispatch }: ControlsP
       )}
 
       <section>
-        <h3 className="mb-2 text-base font-bold">Layout</h3>
+        <h3 className="riso-kicker mb-2">
+          <span>03</span>Layout
+        </h3>
         <div className="grid grid-cols-1 gap-2">
           {layouts.map((l) => (
             <button
@@ -80,7 +86,9 @@ export function ControlsPanel({ state, layoutId, onLayout, dispatch }: ControlsP
       </section>
 
       <section>
-        <h3 className="mb-2 text-base font-bold">Artwork theme</h3>
+        <h3 className="riso-kicker mb-2">
+          <span>04</span>Artwork theme
+        </h3>
         <div className="flex flex-wrap gap-2">
           {CANVAS_THEMES.map((t) => (
             <button
@@ -96,7 +104,9 @@ export function ControlsPanel({ state, layoutId, onLayout, dispatch }: ControlsP
       </section>
 
       <section>
-        <h3 className="mb-2 text-base font-bold">Add elements</h3>
+        <h3 className="riso-kicker mb-2">
+          <span>05</span>Add elements
+        </h3>
         <div className="flex flex-wrap gap-2">
           <button type="button" className={btnBase} onClick={() => dispatch({ type: "addText" })}>
             + Text
