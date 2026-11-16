@@ -610,6 +610,10 @@ function profile(b: Brush): void {
       trplus: ["#F45AA0", "#BF1363"],
       whales: ["#A184FF", "#6D3EF0"],
       rising: ["#3EC520", "#0D8A00"],
+      gold: ["#FFC53D", "#D9850B"],
+      red: ["#F8547C", "#B4123A"],
+      teal: ["#2DD4BF", "#0F766E"],
+      orange: ["#FB923C", "#C2410C"],
     };
     const stops = gradients[r.preset] ?? [
       blend(r.color, "#ffffff", 0.32),
@@ -954,6 +958,458 @@ function reviews(b: Brush): void {
       b.arrow([m + ww + 74 * s, by - 66 * s], [m + ww + 14 * s, cy - 4 * s], -34 * s, 16 * s);
   }
 }
+function quote(b: Brush): void {
+  const { width: w, height: h } = b,
+    s = b.scale,
+    t = b.palette,
+    m = 44 * s;
+  b.background(w * 0.3, h * 0.4, Math.max(w, h) * 0.4);
+  b.face([w * 0.58, 0, w * 0.42, h], "left");
+  const x = m,
+    cw = w * 0.58 - m - 32 * s;
+  const text0 = words(b, "quote"),
+    name = words(b, "name"),
+    badge = words(b, "badge");
+  b.text("\u201C", x - 8 * s, m + 128 * s, 168 * s, t.highlight, Infinity, 900);
+  let y = m + 168 * s;
+  if (text0) {
+    b.font(52 * s, 700);
+    const lines = wrapped(b, text0, cw);
+    let size = 52 * s;
+    for (const line of lines) size = Math.min(size, b.fit(line, 52 * s, cw, 700));
+    b.font(size, 700);
+    const qc = b.cap(),
+      lh = qc * 1.4;
+    b.shadow("rgba(0,0,0,.35)", 16 * s, 3 * s);
+    lines.forEach((line, i) => {
+      b.text(line, x, y + qc + i * lh, size, "#fff", Infinity, 700);
+    });
+    b.noShadow();
+    y += qc + (lines.length - 1) * lh + 34 * s;
+  }
+  if (name) {
+    const size = b.fit(`\u2014 ${name}`, 30 * s, cw, 600);
+    b.font(size, 600);
+    b.text(`\u2014 ${name}`, x, y + b.cap(), size, "rgba(255,255,255,.85)", Infinity, 600);
+    y += b.cap() + 36 * s;
+  }
+  if (badge) {
+    for (let i = 0; i < 5; i++) b.star(x + 18 * s + i * 44 * s, y + 4 * s, 17 * s, t.highlight);
+    const size = b.fit(badge, 34 * s, 90 * s, 800);
+    b.font(size, 800);
+    b.text(
+      badge,
+      x + 5 * 44 * s + 16 * s,
+      y + 4 * s + b.cap() / 2,
+      size,
+      t.highlight,
+      Infinity,
+      800,
+    );
+  }
+  if (b.state.play) b.play(x + 46 * s, h - m - 46 * s, 46 * s);
+}
+function checklist(b: Brush): void {
+  const { width: w, height: h } = b,
+    s = b.scale,
+    t = b.palette,
+    c = b.ctx,
+    m = 44 * s;
+  b.background(w * 0.28, h * 0.45, Math.max(w, h) * 0.38);
+  b.face([w * 0.54, 0, w * 0.46, h], "left");
+  const x = m,
+    cw = w * 0.54 - m - 36 * s;
+  const title = words(b, "headline").toUpperCase();
+  const items = words(b, "services")
+    .split(/[\u00B7,|\n]/)
+    .map((item) => item.trim())
+    .filter(Boolean)
+    .slice(0, 5);
+  let y = m + 8 * s;
+  if (title) {
+    const size = b.fit(title, 84 * s, cw, 800);
+    b.font(size, 800);
+    b.shadow("rgba(0,0,0,.35)", 18 * s, 3 * s);
+    b.text(title, x, y + b.cap(), size, "#fff", Infinity, 800);
+    b.noShadow();
+    y += b.cap() + 42 * s;
+  }
+  const rowH = 62 * s,
+    gap = 18 * s;
+  items.forEach((item, i) => {
+    const yy = y + i * (rowH + gap);
+    b.rect([x, yy, cw, rowH], "rgba(0,0,0,.42)", 16 * s);
+    c.beginPath();
+    c.roundRect(x + 1.25 * s, yy + 1.25 * s, cw - 2.5 * s, rowH - 2.5 * s, 15 * s);
+    c.strokeStyle = translucent(t.line, 0.5);
+    c.lineWidth = 2 * s;
+    c.stroke();
+    skillIcon(b, "check", x + 38 * s, yy + rowH / 2, 19 * s);
+    const size = b.fit(item, 26 * s, cw - 96 * s, 600);
+    b.font(size, 600);
+    b.text(item, x + 68 * s, yy + rowH / 2 + b.cap() / 2, size, "#fff", Infinity, 600);
+  });
+  if (b.state.arrow && title)
+    b.arrow([x + cw * 0.72, m + 30 * s], [w * 0.6, h * 0.32], -50 * s, 18 * s);
+}
+function cover(b: Brush): void {
+  const { width: w, height: h } = b,
+    s = b.scale,
+    t = b.palette,
+    c = b.ctx,
+    m = 44 * s;
+  b.background(w / 2, h * 0.3, Math.max(w, h) * 0.42);
+  const pill = words(b, "pill").toUpperCase(),
+    title = words(b, "headline"),
+    sub = words(b, "subline");
+  const fx = m * 0.8,
+    fy = h * 0.3;
+  b.frame([fx, fy, w - 2 * fx, h - fy + 60 * s], 18 * s, 6 * s, b.state.play ? 120 * s : 0, h - fy);
+  const shade = c.createLinearGradient(0, h * 0.52, 0, h);
+  shade.addColorStop(0, "transparent");
+  shade.addColorStop(1, "rgba(0,0,0,.85)");
+  c.fillStyle = shade;
+  c.fillRect(fx, h * 0.52, w - 2 * fx, h * 0.48);
+  if (b.state.play) b.play(w / 2, fy + (h * 0.5 - fy) / 2, 52 * s);
+  let titleTop = h - m;
+  if (sub) {
+    const size = b.fit(sub, 32 * s, w - 2 * m - 40 * s, 600);
+    b.font(size, 600);
+    b.shadow("rgba(0,0,0,.5)", 14 * s, 3 * s);
+    b.text(sub, m + 20 * s, h - m, size, "rgba(255,255,255,.85)", Infinity, 600);
+    b.noShadow();
+    titleTop = h - m - b.cap() - 30 * s;
+  }
+  if (title) {
+    const size = b.fit(title, 88 * s, w - 2 * m - 40 * s, 800);
+    b.font(size, 800);
+    b.shadow("rgba(0,0,0,.5)", 20 * s, 4 * s);
+    b.text(title, m + 20 * s, titleTop, size, "#fff", Infinity, 800);
+    b.noShadow();
+    titleTop -= b.cap();
+  }
+  if (pill) {
+    const size = b.fit(pill, 42 * s, w * 0.5, 800);
+    b.font(size, 800);
+    const pc = b.cap(),
+      pw = c.measureText(pill).width + 64 * s,
+      ph = pc + 42 * s;
+    b.shadow("rgba(0,0,0,.4)", 26 * s, 6 * s);
+    b.rect([m, m, pw, ph], t.accent, 18 * s);
+    b.noShadow();
+    b.text(pill, m + 32 * s, m + ph / 2 + pc / 2, size, t.foreground, Infinity, 800);
+    if (b.state.arrow && title)
+      b.arrow([m + pw * 0.5, m + ph + 10 * s], [m + 30 * s, titleTop + 24 * s], -46 * s, 18 * s);
+  }
+}
+function duo(b: Brush): void {
+  const { width: w, height: h } = b,
+    s = b.scale,
+    t = b.palette,
+    c = b.ctx,
+    m = 44 * s;
+  b.background(w * 0.26, h * 0.42, Math.max(w, h) * 0.38);
+  b.face([0, 0, w * 0.46, h], "right");
+  const x = w * 0.48,
+    cw = w - x - m,
+    cx = x + cw / 2;
+  const title = words(b, "headline").toUpperCase(),
+    sub = words(b, "subline"),
+    rows = statRows(b);
+  let vs = 52 * s,
+    ls = 23 * s;
+  const cell = (cw - 64 * s) / 2;
+  for (const [v, l] of rows) {
+    vs = Math.min(vs, b.fit(v, 52 * s, cell - 40 * s, 800));
+    ls = Math.min(ls, b.fit(l, 23 * s, cell - 40 * s, 500));
+  }
+  b.font(vs, 800);
+  const vc = rows.length ? b.cap() : 0;
+  b.font(ls, 500);
+  const lc = rows.length ? b.cap() : 0;
+  const statsH = rows.length ? vc + 16 * s + lc + 40 * s : 0;
+  const titleSize = title ? b.fit(title, 92 * s, cw - 60 * s, 800) : 0;
+  b.font(titleSize, 800);
+  const tc = title ? b.cap() : 0;
+  const subSize = sub ? b.fit(sub, 34 * s, cw - 60 * s, 600) : 0;
+  b.font(subSize, 600);
+  const sc = sub ? b.cap() : 0;
+  const ph =
+    48 * s +
+    tc +
+    (sub ? (title ? 26 * s : 0) + sc : 0) +
+    (rows.length ? 44 * s + statsH : 0) +
+    24 * s;
+  const y = Math.max(m, (h - ph) / 2);
+  const grad = c.createLinearGradient(0, y, 0, y + ph);
+  grad.addColorStop(0, translucent(t.glow, 0.24));
+  grad.addColorStop(1, translucent(t.glow, 0.05));
+  b.shadow("rgba(0,0,0,.45)", 40 * s, 12 * s);
+  b.rect([x, y, cw, ph], t.surface, 24 * s);
+  b.noShadow();
+  b.rect([x + 1.5 * s, y + 1.5 * s, cw - 3 * s, ph - 3 * s], grad, 22.5 * s, t.line, 3 * s);
+  let yy = y + 48 * s;
+  if (title) {
+    b.shadow("rgba(0,0,0,.3)", 16 * s);
+    b.text(title, cx, yy + tc, titleSize, "#fff", Infinity, 800, "center");
+    b.noShadow();
+    yy += tc;
+  }
+  if (sub) {
+    yy += title ? 26 * s : 0;
+    b.text(sub, cx, yy + sc, subSize, t.highlight, Infinity, 600, "center");
+    yy += sc;
+  }
+  if (rows.length) {
+    yy += 44 * s;
+    const strip = rows.length * cell - 12 * s,
+      start = cx - strip / 2;
+    rows.forEach(([v, l], i) => {
+      const xx = start + i * cell,
+        bw = cell - 12 * s;
+      b.rect([xx, yy, bw, statsH - 8 * s], "rgba(0,0,0,.42)", 14 * s);
+      c.beginPath();
+      c.roundRect(xx + 1.25 * s, yy + 1.25 * s, bw - 2.5 * s, statsH - 8 * s - 2.5 * s, 13 * s);
+      c.strokeStyle = translucent(t.line, 0.5);
+      c.lineWidth = 2 * s;
+      c.stroke();
+      let iy = yy + (statsH - 8 * s - vc - (v && l ? 14 * s : 0) - lc) / 2;
+      if (v) {
+        b.text(v, xx + bw / 2, iy + vc, vs, "#fff", Infinity, 800, "center");
+        iy += vc + (l ? 14 * s : 0);
+      }
+      if (l) b.text(l, xx + bw / 2, iy + lc, ls, "rgba(255,255,255,.7)", Infinity, 500, "center");
+    });
+  }
+  if (b.state.play) b.play(w * 0.23, h - m - 50 * s, 46 * s);
+}
+function split(b: Brush): void {
+  const { width: w, height: h } = b,
+    s = b.scale,
+    t = b.palette,
+    c = b.ctx,
+    m = 56 * s;
+  b.background(w * 0.28, h * 0.5, Math.max(w, h) * 0.4);
+  b.face([w * 0.55, 0, w * 0.45, h], "left");
+  const x = m,
+    cw = w * 0.55 - m - 48 * s;
+  const pill = words(b, "pill").toUpperCase(),
+    name = words(b, "name"),
+    role = words(b, "role");
+  let y = m;
+  if (pill || b.state.play) {
+    const ir = b.state.play ? 28 * s : 0,
+      iw = b.state.play ? ir * 2 + (pill ? 16 * s : 0) : 0;
+    const size = b.fit(pill, 48 * s, cw - iw - 56 * s, 800);
+    b.font(size, 800);
+    const pc = b.cap(),
+      pw = c.measureText(pill).width + iw + 56 * s,
+      ph = Math.max(pc, ir * 2) + 36 * s;
+    b.shadow("rgba(0,0,0,.4)", 26 * s, 6 * s);
+    b.rect([x, y, pw, ph], t.accent, ph / 2);
+    b.noShadow();
+    let xx = x + 28 * s;
+    if (b.state.play) {
+      b.play(xx + ir, y + ph / 2, ir, true);
+      xx += iw;
+    }
+    b.text(pill, xx, y + ph / 2 + pc / 2, size, t.foreground, Infinity, 800);
+    y += ph + 44 * s;
+  }
+  if (name) {
+    b.font(148 * s, 900);
+    const lines = wrapped(b, name, cw);
+    let size = 148 * s;
+    for (const line of lines) size = Math.min(size, b.fit(line, 148 * s, cw, 900));
+    b.font(size, 900);
+    const nc = b.cap(),
+      lh = nc * 1.15;
+    b.shadow("rgba(0,0,0,.35)", 20 * s, 4 * s);
+    lines.forEach((line, i) => {
+      b.text(line, x, y + nc + i * lh, size, "#fff", Infinity, 900);
+    });
+    b.noShadow();
+    y += nc + (lines.length - 1) * lh + 32 * s;
+  }
+  if (role) {
+    const size = b.fit(role, 34 * s, cw, 600);
+    b.font(size, 600);
+    b.text(role, x, y + b.cap(), size, t.highlight, Infinity, 600);
+    y += b.cap();
+  }
+  if (b.state.arrow && name)
+    b.arrow([x + cw * 0.62, y + 36 * s], [w * 0.62, h * 0.56], 70 * s, 22 * s);
+}
+function centered(b: Brush): void {
+  const { width: w, height: h } = b,
+    s = b.scale,
+    t = b.palette,
+    c = b.ctx;
+  b.background(w / 2, h * 0.4, Math.max(w, h) * 0.46);
+  const headline = words(b, "headline").toUpperCase(),
+    name = words(b, "name"),
+    role = words(b, "role");
+  const r = h * 0.22,
+    cx = w / 2,
+    cy = h * 0.36;
+  if (headline) {
+    const size = b.fit(headline, 38 * s, w * 0.6, 800);
+    b.font(size, 800);
+    b.text(headline, cx, 40 * s + b.cap(), size, t.highlight, Infinity, 800, "center");
+  }
+  b.shadow(translucent(t.highlight, 0.75), 50 * s);
+  b.circle(cx, cy, r, t.surface);
+  b.noShadow();
+  b.face([cx - r, cy - r, r * 2, r * 2], "none", true);
+  b.shadow(translucent(t.highlight, 0.9), 24 * s);
+  b.circle(cx, cy, r - 4 * s, "transparent", t.highlight, 7 * s);
+  b.noShadow();
+  if (b.state.play) b.play(cx, cy, r * 0.44);
+  let y = cy + r + 42 * s;
+  if (name) {
+    const size = b.fit(name, 116 * s, w * 0.7, 900);
+    b.font(size, 900);
+    b.shadow("rgba(0,0,0,.35)", 20 * s, 4 * s);
+    b.text(name, cx, y + b.cap(), size, "#fff", Infinity, 900, "center");
+    b.noShadow();
+    y += b.cap() + 28 * s;
+  }
+  if (role) {
+    const size = b.fit(role, 30 * s, w * 0.6, 600);
+    b.font(size, 600);
+    const rc = b.cap(),
+      rw = c.measureText(role).width + 56 * s,
+      rh = rc + 34 * s;
+    b.rect([cx - rw / 2, y, rw, rh], t.accent, rh / 2);
+    b.text(role, cx, y + rh / 2 + rc / 2, size, t.foreground, Infinity, 600, "center");
+  }
+}
+function statline(b: Brush): void {
+  const { width: w, height: h } = b,
+    s = b.scale,
+    t = b.palette,
+    c = b.ctx,
+    m = 52 * s;
+  b.background(w * 0.68, h * 0.4, Math.max(w, h) * 0.4);
+  b.face([w * 0.6, 0, w * 0.4, h], "left");
+  const x = m,
+    cw = w * 0.6 - m - 40 * s;
+  const title = words(b, "headline").toUpperCase(),
+    svc = words(b, "services"),
+    rows = statRows(b, 3),
+    n = rows.length;
+  const stripH = n ? 148 * s : 0,
+    stripY = h - 36 * s - stripH;
+  let y = 64 * s;
+  if (title) {
+    b.font(100 * s, 800);
+    const lines = wrapped(b, title, cw);
+    let size = 100 * s;
+    for (const line of lines) size = Math.min(size, b.fit(line, 100 * s, cw, 800));
+    b.font(size, 800);
+    const tc = b.cap(),
+      lh = tc * 1.18;
+    b.shadow("rgba(0,0,0,.35)", 20 * s, 4 * s);
+    lines.forEach((line, i) => {
+      b.text(line, x, y + tc + i * lh, size, i === 0 ? "#fff" : t.highlight, Infinity, 800);
+    });
+    b.noShadow();
+    y += tc + (lines.length - 1) * lh;
+  }
+  if (b.state.play) b.play(x + 48 * s, Math.min(y + 68 * s, stripY - 84 * s), 42 * s);
+  if (svc) {
+    const size = b.fit(svc, 24 * s, cw, 600);
+    b.font(size, 600);
+    b.text(svc, x, stripY - 26 * s, size, "rgba(255,255,255,.7)", Infinity, 600);
+  }
+  if (n) {
+    b.rect([36 * s, stripY, w - 72 * s, stripH], "rgba(0,0,0,.55)", 22 * s);
+    c.beginPath();
+    c.roundRect(37.5 * s, stripY + 1.5 * s, w - 75 * s, stripH - 3 * s, 20.5 * s);
+    c.strokeStyle = translucent(t.line, 0.55);
+    c.lineWidth = 2.5 * s;
+    c.stroke();
+    const cell = (w - 72 * s) / n;
+    let vs = 58 * s,
+      ls = 22 * s;
+    for (const [v, l] of rows) {
+      vs = Math.min(vs, b.fit(v, 58 * s, cell - 60 * s, 400, "Anton"));
+      ls = Math.min(ls, b.fit(l, 22 * s, cell - 60 * s, 600));
+    }
+    b.font(vs, 400, "Anton");
+    const vc = b.cap();
+    b.font(ls, 600);
+    const lc = b.cap();
+    rows.forEach(([v, l], i) => {
+      const cx = 36 * s + cell * (i + 0.5);
+      const content = (v ? vc : 0) + (v && l ? 14 * s : 0) + (l ? lc : 0);
+      let yy = stripY + (stripH - content) / 2;
+      if (v) {
+        b.text(v, cx, yy + vc, vs, "#fff", Infinity, 400, "center", "Anton");
+        yy += vc + (l ? 14 * s : 0);
+      }
+      if (l) b.text(l, cx, yy + lc, ls, "rgba(255,255,255,.75)", Infinity, 600, "center");
+      if (i) {
+        c.fillStyle = translucent(t.line, 0.35);
+        c.fillRect(36 * s + cell * i - s, stripY + 24 * s, 2 * s, stripH - 48 * s);
+      }
+    });
+  }
+}
+function tagline(b: Brush): void {
+  const { width: w, height: h } = b,
+    s = b.scale,
+    t = b.palette,
+    c = b.ctx,
+    m = 56 * s;
+  b.background(w * 0.3, h * 0.42, Math.max(w, h) * 0.4);
+  b.face([w * 0.58, 0, w * 0.42, h], "left");
+  const x = m,
+    cw = w * 0.58 - m - 44 * s;
+  const l1 = words(b, "headline").toUpperCase(),
+    l2 = words(b, "headline2").toUpperCase();
+  const chips = [1, 2, 3, 4]
+    .map((i) => ({ text: words(b, `chip${i}`), icon: b.state.icons[i - 1] }))
+    .filter((item) => item.text);
+  let y = h * 0.18;
+  if (l1) {
+    const size = b.fit(l1, 104 * s, cw, 800);
+    b.font(size, 800);
+    b.shadow("rgba(0,0,0,.4)", 20 * s, 4 * s);
+    b.text(l1, x, y + b.cap(), size, "#fff", Infinity, 800);
+    b.noShadow();
+    y += b.cap() + 18 * s;
+  }
+  if (l2) {
+    const size = b.fit(l2, 104 * s, cw, 900);
+    b.font(size, 900);
+    b.shadow(translucent(t.highlight, 0.5), 26 * s);
+    b.text(l2, x, y + b.cap(), size, t.highlight, Infinity, 900);
+    b.noShadow();
+    y += b.cap();
+  }
+  y += 54 * s;
+  const perRow = 2,
+    pillH = 80 * s,
+    gap = 18 * s,
+    pillW = (cw - gap) / perRow;
+  chips.forEach((chip, i) => {
+    const xx = x + (i % perRow) * (pillW + gap),
+      yy = y + Math.floor(i / perRow) * (pillH + gap);
+    b.rect([xx, yy, pillW, pillH], "rgba(0,0,0,.42)", pillH / 2);
+    c.beginPath();
+    c.roundRect(xx + 1.25 * s, yy + 1.25 * s, pillW - 2.5 * s, pillH - 2.5 * s, pillH / 2);
+    c.strokeStyle = translucent(t.line, 0.5);
+    c.lineWidth = 2 * s;
+    c.stroke();
+    skillIcon(b, chip.icon, xx + 44 * s, yy + pillH / 2, 19 * s);
+    const size = b.fit(chip.text, 23 * s, pillW - 96 * s, 700);
+    b.font(size, 700);
+    b.text(chip.text, xx + 74 * s, yy + pillH / 2 + b.cap() / 2, size, "#fff", Infinity, 700);
+  });
+  if (b.state.arrow && (l1 || l2))
+    b.arrow([x + cw * 0.6, h * 0.22], [w * 0.64, h * 0.42], -60 * s, 20 * s);
+}
 export async function artworkFonts(): Promise<boolean> {
   const specs = [
     "500 40px Montserrat",
@@ -997,10 +1453,18 @@ export function drawThumbnail(
     result,
     stat,
     reviews,
+    quote,
+    checklist,
+    cover,
+    duo,
     meet,
     banner,
     hello,
     proof,
+    split,
+    centered,
+    statline,
+    tagline,
   };
   painters[style](b);
   c.restore();
