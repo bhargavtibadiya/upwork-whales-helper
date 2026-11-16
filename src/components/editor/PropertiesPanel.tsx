@@ -41,7 +41,7 @@ function TextFields({ el, dispatch }: { el: TextElement; dispatch: React.Dispatc
       </div>
       <div className="grid grid-cols-2 gap-2">
         <div>
-          <label className={labelCls} htmlFor="prop-size">Size ({el.fontSize}px)</label>
+          <label className={labelCls} htmlFor="prop-size">Size ({Math.round(el.fontSize)}px)</label>
           <input
             id="prop-size"
             type="range"

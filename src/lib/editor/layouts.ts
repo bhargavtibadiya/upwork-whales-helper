@@ -76,7 +76,7 @@ const LAYOUTS: LayoutSpec[] = [
         fontWeight: 800, color: theme.accent, align: "left", lineHeight: 1, maxWidth: w * 0.6, uppercase: true,
       }),
       text({
-        x: w * 0.06, y: h * 0.34, text: "120K CLICKS", fontFamily: DISPLAY_FONT, fontSize: h * 0.17,
+        x: w * 0.06, y: h * 0.34, text: "120K CLICKS", fontFamily: DISPLAY_FONT, fontSize: Math.round(h * 0.17),
         fontWeight: 400, color: theme.ink, align: "left", lineHeight: 1, maxWidth: w * 0.9, uppercase: true,
       }),
       shape({ shape: "rect", x: w * 0.5, y: h * 0.66, width: w, height: h * 0.36, fill: theme.accentAlt, rotation: 0 }),
@@ -98,7 +98,7 @@ const LAYOUTS: LayoutSpec[] = [
         placeholder: "Your photo",
       }),
       text({
-        x: w * 0.56, y: h * 0.34, text: "$48K", fontFamily: DISPLAY_FONT, fontSize: h * 0.24,
+        x: w * 0.56, y: h * 0.34, text: "$48K", fontFamily: DISPLAY_FONT, fontSize: Math.round(h * 0.24),
         fontWeight: 400, color: theme.ink, align: "left", lineHeight: 1, maxWidth: w * 0.42, uppercase: true,
       }),
       text({
@@ -148,7 +148,7 @@ const LAYOUTS: LayoutSpec[] = [
         fontWeight: 700, color: theme.sub, align: "left", lineHeight: 1.1, maxWidth: w * 0.46, uppercase: false,
       }),
       text({
-        x: w * 0.48, y: h * 0.58, text: "CLICK HERE", fontFamily: DISPLAY_FONT, fontSize: h * 0.16,
+        x: w * 0.48, y: h * 0.58, text: "CLICK HERE", fontFamily: DISPLAY_FONT, fontSize: Math.round(h * 0.16),
         fontWeight: 400, color: theme.ink, align: "left", lineHeight: 1, maxWidth: w * 0.48, uppercase: true,
       }),
       shape({ shape: "triangle", x: w * 0.88, y: h * 0.82, width: h * 0.12, height: h * 0.12, fill: theme.accent, rotation: 90 }),
@@ -161,11 +161,11 @@ const LAYOUTS: LayoutSpec[] = [
     build: (w, h, theme) => [
       shape({ shape: "rect", x: w * 0.06, y: h * 0.14, width: w * 0.055, height: h * 0.72, fill: theme.accent, rotation: 0 }),
       text({
-        x: w * 0.15, y: h * 0.32, text: "FULL STACK", fontFamily: DISPLAY_FONT, fontSize: h * 0.19,
+        x: w * 0.15, y: h * 0.32, text: "FULL STACK", fontFamily: DISPLAY_FONT, fontSize: Math.round(h * 0.19),
         fontWeight: 400, color: theme.ink, align: "left", lineHeight: 1, maxWidth: w * 0.7, uppercase: true,
       }),
       text({
-        x: w * 0.15, y: h * 0.56, text: "AI DEVELOPER", fontFamily: DISPLAY_FONT, fontSize: h * 0.19,
+        x: w * 0.15, y: h * 0.56, text: "AI DEVELOPER", fontFamily: DISPLAY_FONT, fontSize: Math.round(h * 0.19),
         fontWeight: 400, color: theme.accent, align: "left", lineHeight: 1, maxWidth: w * 0.7, uppercase: true,
       }),
       text({
@@ -180,7 +180,7 @@ const LAYOUTS: LayoutSpec[] = [
     label: "Watch + proof",
     build: (w, h, theme) => [
       text({
-        x: w * 0.5, y: h * 0.26, text: "WATCH THIS", fontFamily: DISPLAY_FONT, fontSize: h * 0.17,
+        x: w * 0.5, y: h * 0.26, text: "WATCH THIS", fontFamily: DISPLAY_FONT, fontSize: Math.round(h * 0.17),
         fontWeight: 400, color: theme.ink, align: "center", lineHeight: 1, maxWidth: w * 0.8, uppercase: true,
       }),
       shape({ shape: "pill", x: w * 0.5, y: h * 0.47, width: w * 0.2, height: h * 0.1, fill: theme.accent, rotation: 0 }),

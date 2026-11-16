@@ -108,10 +108,11 @@ function drawImage(ctx: CanvasRenderingContext2D, el: ImageElement, images: Imag
     const dh = sh * scale;
     ctx.drawImage(source, el.x - dw / 2, el.y - dh / 2, dw, dh);
   } else {
-    // [WHY] An empty image slot still shows where the photo will sit.
-    ctx.fillStyle = "rgba(127,127,127,0.25)";
+    // [WHY] An empty image slot still shows where the photo will sit. Paper
+    // fill keeps it readable over both light and dark accent shapes.
+    ctx.fillStyle = "rgba(244,241,234,0.92)";
     ctx.fillRect(left, top, el.width, el.height);
-    ctx.strokeStyle = "rgba(127,127,127,0.8)";
+    ctx.strokeStyle = "rgba(60,60,56,0.9)";
     ctx.lineWidth = 3;
     ctx.setLineDash([12, 10]);
     ctx.strokeRect(left + 6, top + 6, el.width - 12, el.height - 12);
