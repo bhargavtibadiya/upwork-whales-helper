@@ -4,15 +4,13 @@ export function LogoMark(): React.JSX.Element {
   return (
     <span className="logo-mark" aria-hidden="true">
       <svg viewBox="0 0 24 24" aria-hidden="true">
-        <rect x="2.5" y="3.5" width="15" height="12" rx="2.5" fill="none" strokeWidth="1.8" />
-        <circle cx="6.8" cy="7.3" r="1.3" stroke="none" />
+        <rect x="3" y="7" width="18" height="14" rx="3" fill="none" strokeWidth="1.8" />
         <path
-          d="m3 13.2 3.6-3.2 3 2.6 3.2-3.6 4.2 4.2"
+          d="M8 7V5a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2M3 12h18M10 12v3h4v-3"
           fill="none"
           strokeWidth="1.8"
           strokeLinejoin="round"
         />
-        <path d="M14.6 13.4l7.4 2.6-3 1-1.7 3.1z" stroke="none" />
       </svg>
     </span>
   );
@@ -25,7 +23,7 @@ export function SiteHeader(): React.JSX.Element {
         <a className="logo" href="#top">
           <LogoMark />
           <span className="logo-text">
-            Upwork Thumbnail Maker
+            Upwork Helper
             <span className="logo-byline">by Bhargav Tibadiya</span>
           </span>
         </a>

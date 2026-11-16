@@ -4,7 +4,7 @@ import "./theme.css";
 import "./studio.css";
 
 export const metadata: Metadata = {
-  title: "Upwork Thumbnail Maker | Profile Picture, Portfolio & Intro Covers",
+  title: "Upwork Helper | Profile Picture, Portfolio & Intro Covers",
   description:
     "Make a ringed profile picture, portfolio thumbnail or intro-video thumbnail. Your images stay in your browser.",
 };
