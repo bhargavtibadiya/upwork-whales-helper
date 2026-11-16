@@ -14,6 +14,7 @@ A fully client-side image editor for Upwork profile assets (profile picture, por
 - **TypeScript 7** - strict, per `typescript-standards.md`
 - **Tailwind CSS v4** - configured in `src/app/globals.css` via `@import "tailwindcss"`; no `tailwind.config.*`
 - Canvas 2D API for all image rendering and PNG export
+- **Biome** for lint + format (`npm run lint`). ESLint was dropped: typescript-eslint has no TypeScript 7 support yet, and the owner chose latest TypeScript over keeping eslint-config-next.
 
 ## 3. No backend
 
