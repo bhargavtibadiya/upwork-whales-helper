@@ -29,7 +29,8 @@ const LIMITS: Record<string, number> = {
   subline: 60,
   badge: 18,
   badge2: 18,
-  services: 48,
+  services: 60,
+  quote: 90,
 };
 interface WordsProps {
   state: ThumbnailState;
@@ -54,7 +55,7 @@ export function Words({ state, setState }: WordsProps): React.JSX.Element | null
   );
   return (
     <section className="surface words">
-      <h2>3. Your words</h2>
+      <h2>4. Your words</h2>
       {style.fields.map((key) =>
         key === "stats" ? (
           <fieldset className="field" key={key}>
@@ -119,6 +120,9 @@ export function Words({ state, setState }: WordsProps): React.JSX.Element | null
             )}
             {key === "services" && (
               <p className="helper">Separate with a dot: · (or just use commas)</p>
+            )}
+            {key === "quote" && (
+              <p className="helper">One or two short sentences from a real client work best.</p>
             )}
             {key === "badge2" && (
               <p className="helper">Leave both badge lines empty to hide the badge.</p>

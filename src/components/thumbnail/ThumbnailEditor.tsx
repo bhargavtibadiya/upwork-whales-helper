@@ -11,7 +11,7 @@ import {
   initialState,
   MODES,
   type Mode,
-  type Palette,
+  PALETTES,
   type Ring,
   STYLES,
   spec,
@@ -84,6 +84,14 @@ export function ThumbnailEditor(): React.JSX.Element {
   const [downloading, setDownloading] = useState(false);
   const stateRef = useRef(state);
   stateRef.current = state;
+  const styleListRef = useRef<HTMLFieldSetElement>(null);
+  useEffect(() => {
+    // [WHY] The picker scrolls sideways; keep the chosen preset visible when it
+    // changes or the mode loads with a preset that sits offscreen.
+    styleListRef.current
+      ?.querySelector('[aria-pressed="true"]')
+      ?.scrollIntoView({ block: "nearest", inline: "nearest" });
+  }, [state.style, state.mode]);
   useEffect(() => {
     const sync = () => {
       const mode = location.hash.slice(1);
@@ -230,71 +238,67 @@ export function ThumbnailEditor(): React.JSX.Element {
                 {profile ? (
                   <RingControls state={state} onRing={onRing} />
                 ) : (
-                  <>
-                    <fieldset className="style-options" aria-label="Style">
-                      {STYLES.filter((item) => item.mode === state.mode).map((item) => (
-                        <button
-                          className="choice style-option"
-                          type="button"
-                          key={item.id}
-                          aria-pressed={state.style === item.id}
-                          onClick={() => setState((current) => changeStyle(current, item.id))}
-                        >
-                          <PreviewCanvas
-                            state={{
-                              ...state,
-                              style: item.id,
-                              size: state.mode === "portfolio" ? "4x3" : state.size,
-                            }}
-                            mini
-                          />
-                          <span>{item.name}</span>
-                        </button>
-                      ))}
-                    </fieldset>
-                    <fieldset className="palette-options" aria-label="Colour">
-                      {(
-                        [
-                          { id: "purple", name: "Whales purple" },
-                          { id: "green", name: "Green" },
-                          { id: "blue", name: "Blue" },
-                          { id: "black", name: "Black" },
-                        ] satisfies { id: Palette; name: string }[]
-                      ).map((item) => (
-                        <button
-                          className="choice palette-option"
-                          key={item.id}
-                          type="button"
-                          aria-pressed={state.palette === item.id}
-                          onClick={() => setState((current) => ({ ...current, palette: item.id }))}
-                        >
-                          <svg viewBox="0 0 32 32" aria-hidden="true">
-                            <defs>
-                              <radialGradient id={`palette-${item.id}`} cx="35%" cy="35%" r="75%">
-                                <stop stopColor={ARTWORK_PALETTES[item.id].glow} />
-                                <stop offset="1" stopColor={ARTWORK_PALETTES[item.id].base} />
-                              </radialGradient>
-                            </defs>
-                            <circle cx="16" cy="16" r="15" fill={`url(#palette-${item.id})`} />
-                            <path
-                              d="M16 16h15a15 15 0 0 1-15 15z"
-                              fill={
-                                item.id === "black"
-                                  ? ARTWORK_PALETTES[item.id].accent
-                                  : ARTWORK_PALETTES[item.id].line
-                              }
-                            />
-                          </svg>
-                          <span>{item.name}</span>
-                        </button>
-                      ))}
-                    </fieldset>
-                  </>
+                  <fieldset className="style-options" aria-label="Style" ref={styleListRef}>
+                    {STYLES.filter((item) => item.mode === state.mode).map((item) => (
+                      <button
+                        className="choice style-option"
+                        type="button"
+                        key={item.id}
+                        aria-pressed={state.style === item.id}
+                        onClick={() => setState((current) => changeStyle(current, item.id))}
+                      >
+                        <PreviewCanvas
+                          state={{
+                            ...state,
+                            style: item.id,
+                            size: state.mode === "portfolio" ? "4x3" : state.size,
+                          }}
+                          mini
+                        />
+                        <span>{item.name}</span>
+                      </button>
+                    ))}
+                  </fieldset>
                 )}
               </section>
+              {!profile && (
+                <section className="surface theme-panel">
+                  <h2>2. Theme</h2>
+                  <fieldset className="palette-options" aria-label="Theme colour">
+                    {PALETTES.map((item) => (
+                      <button
+                        className="choice palette-option"
+                        key={item.id}
+                        type="button"
+                        aria-pressed={state.palette === item.id}
+                        onClick={() => setState((current) => ({ ...current, palette: item.id }))}
+                      >
+                        <svg viewBox="0 0 32 32" aria-hidden="true">
+                          <defs>
+                            <radialGradient id={`palette-${item.id}`} cx="35%" cy="35%" r="75%">
+                              <stop stopColor={ARTWORK_PALETTES[item.id].glow} />
+                              <stop offset="1" stopColor={ARTWORK_PALETTES[item.id].base} />
+                            </radialGradient>
+                          </defs>
+                          <circle cx="16" cy="16" r="15" fill={`url(#palette-${item.id})`} />
+                          <path
+                            d="M16 16h15a15 15 0 0 1-15 15z"
+                            fill={
+                              item.id === "black"
+                                ? ARTWORK_PALETTES[item.id].accent
+                                : ARTWORK_PALETTES[item.id].line
+                            }
+                          />
+                        </svg>
+                        <span>{item.name}</span>
+                      </button>
+                    ))}
+                  </fieldset>
+                </section>
+              )}
               <div className="input-column">
                 <section className="surface">
-                  <h2>{profile ? "2. Your photo" : "2. Your images"}</h2>
+                  <h2>{profile ? "2. Your photo" : "3. Your images"}</h2>
                   {style.images.map((kind) => (
                     <ImageUpload
                       key={kind}
@@ -314,7 +318,7 @@ export function ThumbnailEditor(): React.JSX.Element {
                 )}{" "}
                 {(state.mode === "portfolio" || style.extras.length > 0) && (
                   <section className="surface">
-                    <h2>4. Extras</h2>
+                    <h2>5. Extras</h2>
                     {state.mode === "portfolio" && (
                       <fieldset className="segments" aria-label="Size">
                         {(
