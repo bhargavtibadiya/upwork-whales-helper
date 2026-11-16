@@ -1,11 +1,22 @@
 "use client";
 
 import { useCallback, useEffect, useMemo, useReducer } from "react";
-import type { BatchItem, BrandPreset, EditorDocument, EditorElement, ElementPatch, ModeId } from "@/lib/editor/types";
 import { buildDocument, layoutsForMode } from "@/lib/editor/layouts";
+import {
+  loadPresets,
+  deletePreset as storageDelete,
+  savePreset as storageSave,
+} from "@/lib/editor/presets";
 import { modeById } from "@/lib/editor/sizes";
 import { themeById } from "@/lib/editor/themes";
-import { deletePreset as storageDelete, loadPresets, savePreset as storageSave } from "@/lib/editor/presets";
+import type {
+  BatchItem,
+  BrandPreset,
+  EditorDocument,
+  EditorElement,
+  ElementPatch,
+  ModeId,
+} from "@/lib/editor/types";
 
 export interface EditorState {
   document: EditorDocument;
@@ -57,22 +68,60 @@ function reducer(state: EditorState, action: EditorAction): EditorState {
       const spec = modeById(action.mode);
       const theme = themeById(state.themeId);
       const layout = layoutsForMode(action.mode)[0];
-      return { ...state, layoutId: layout.id, selectedId: null, document: buildDocument(action.mode, spec.defaultSizeId, layout.id, theme) };
+      return {
+        ...state,
+        layoutId: layout.id,
+        selectedId: null,
+        document: buildDocument(action.mode, spec.defaultSizeId, layout.id, theme),
+      };
     }
     case "setSize":
-      return { ...state, selectedId: null, document: buildDocument(state.document.mode, action.sizeId, state.layoutId, themeById(state.themeId)) };
+      return {
+        ...state,
+        selectedId: null,
+        document: buildDocument(
+          state.document.mode,
+          action.sizeId,
+          state.layoutId,
+          themeById(state.themeId),
+        ),
+      };
     case "setLayout":
-      return { ...state, layoutId: action.layoutId, selectedId: null, document: buildDocument(state.document.mode, state.document.sizeId, action.layoutId, themeById(state.themeId)) };
+      return {
+        ...state,
+        layoutId: action.layoutId,
+        selectedId: null,
+        document: buildDocument(
+          state.document.mode,
+          state.document.sizeId,
+          action.layoutId,
+          themeById(state.themeId),
+        ),
+      };
     case "setTheme":
-      return { ...state, themeId: action.themeId, document: { ...state.document, background: themeById(action.themeId).background } };
+      return {
+        ...state,
+        themeId: action.themeId,
+        document: { ...state.document, background: themeById(action.themeId).background },
+      };
     case "select":
       return { ...state, selectedId: action.id };
     case "updateElement":
       return withDocument(state, replaceElement(state.document, action.id, action.patch));
     case "moveElement":
-      return withDocument(state, replaceElement(state.document, action.id, { x: action.x, y: action.y }));
+      return withDocument(
+        state,
+        replaceElement(state.document, action.id, { x: action.x, y: action.y }),
+      );
     case "removeElement":
-      return { ...state, selectedId: null, document: { ...state.document, elements: state.document.elements.filter((el) => el.id !== action.id) } };
+      return {
+        ...state,
+        selectedId: null,
+        document: {
+          ...state.document,
+          elements: state.document.elements.filter((el) => el.id !== action.id),
+        },
+      };
     case "reorderElement": {
       const list = [...state.document.elements];
       const index = list.findIndex((el) => el.id === action.id);
@@ -100,7 +149,10 @@ function reducer(state: EditorState, action: EditorAction): EditorState {
         maxWidth: Math.round(doc.width * 0.8),
         uppercase: false,
       };
-      return { ...withDocument(state, { ...doc, elements: [...doc.elements, el] }), selectedId: el.id };
+      return {
+        ...withDocument(state, { ...doc, elements: [...doc.elements, el] }),
+        selectedId: el.id,
+      };
     }
     case "addImageSlot": {
       const doc = state.document;
@@ -117,7 +169,10 @@ function reducer(state: EditorState, action: EditorAction): EditorState {
         borderWidth: 0,
         placeholder: "Drop an image",
       };
-      return { ...withDocument(state, { ...doc, elements: [...doc.elements, el] }), selectedId: el.id };
+      return {
+        ...withDocument(state, { ...doc, elements: [...doc.elements, el] }),
+        selectedId: el.id,
+      };
     }
     case "setImageSrc": {
       const images = { ...state.images, [action.id]: action.dataUrl };
@@ -147,7 +202,11 @@ function reducer(state: EditorState, action: EditorAction): EditorState {
       return { ...state, presets: storageSave(preset) };
     }
     case "applyPreset":
-      return { ...state, themeId: action.preset.themeId, document: { ...state.document, background: action.preset.background } };
+      return {
+        ...state,
+        themeId: action.preset.themeId,
+        document: { ...state.document, background: action.preset.background },
+      };
     case "deletePreset":
       return { ...state, presets: storageDelete(action.name) };
     case "hydratePresets":

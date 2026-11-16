@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import type { EditorState, EditorAction } from "@/hooks/useEditor";
+import type { EditorAction, EditorState } from "@/hooks/useEditor";
 import { exportBatchZip, exportDocumentPng, loadImageMap } from "@/lib/editor/export";
 
 interface ExportBarProps {
@@ -9,9 +9,12 @@ interface ExportBarProps {
   dispatch: React.Dispatch<EditorAction>;
 }
 
-const btnPrimary = "border-2 border-ink bg-drum-pink px-4 py-2 text-sm font-bold text-ink shadow-dropdown transition-transform active:translate-x-[3px] active:translate-y-[3px] active:shadow-none disabled:opacity-50";
-const btnSecondary = "border-2 border-ink bg-drum-blue px-4 py-2 text-sm font-bold text-surface shadow-card active:translate-x-[3px] active:translate-y-[3px] active:shadow-none disabled:opacity-50";
-const btnPlain = "border-2 border-ink bg-surface px-3 py-2 text-sm font-bold hover:shadow-btn-hover";
+const btnPrimary =
+  "border-2 border-ink bg-drum-pink px-4 py-2 text-sm font-bold text-ink shadow-dropdown transition-transform active:translate-x-[3px] active:translate-y-[3px] active:shadow-none disabled:opacity-50";
+const btnSecondary =
+  "border-2 border-ink bg-drum-blue px-4 py-2 text-sm font-bold text-surface shadow-card active:translate-x-[3px] active:translate-y-[3px] active:shadow-none disabled:opacity-50";
+const btnPlain =
+  "border-2 border-ink bg-surface px-3 py-2 text-sm font-bold hover:shadow-btn-hover";
 
 export function ExportBar({ state, dispatch }: ExportBarProps) {
   const [busy, setBusy] = useState<boolean>(false);
@@ -34,7 +37,16 @@ export function ExportBar({ state, dispatch }: ExportBarProps) {
           type="button"
           className={btnPrimary}
           disabled={busy}
-          onClick={() => void withBusy(async () => { const images = await loadImageMap(state.images); await exportDocumentPng(state.document, images, `${state.document.mode}-${state.document.sizeId}`); })}
+          onClick={() =>
+            void withBusy(async () => {
+              const images = await loadImageMap(state.images);
+              await exportDocumentPng(
+                state.document,
+                images,
+                `${state.document.mode}-${state.document.sizeId}`,
+              );
+            })
+          }
         >
           Download PNG
         </button>
@@ -68,8 +80,13 @@ export function ExportBar({ state, dispatch }: ExportBarProps) {
         {state.presets.length > 0 && (
           <ul className="mt-2 flex flex-wrap gap-2">
             {state.presets.map((p) => (
-              <li key={p.name} className="flex items-center gap-1 border-2 border-ink bg-sunken px-2 py-1 text-xs font-bold">
-                <button type="button" onClick={() => dispatch({ type: "applyPreset", preset: p })}>{p.name}</button>
+              <li
+                key={p.name}
+                className="flex items-center gap-1 border-2 border-ink bg-sunken px-2 py-1 text-xs font-bold"
+              >
+                <button type="button" onClick={() => dispatch({ type: "applyPreset", preset: p })}>
+                  {p.name}
+                </button>
                 <button
                   type="button"
                   aria-label={`Delete preset ${p.name}`}
@@ -98,7 +115,13 @@ export function ExportBar({ state, dispatch }: ExportBarProps) {
             type="button"
             className={btnPlain}
             onClick={() => {
-              dispatch({ type: "addToBatch", label: batchLabel.trim() === "" ? `version-${state.batch.length + 1}` : batchLabel.trim() });
+              dispatch({
+                type: "addToBatch",
+                label:
+                  batchLabel.trim() === ""
+                    ? `version-${state.batch.length + 1}`
+                    : batchLabel.trim(),
+              });
               setBatchLabel("");
             }}
           >
@@ -108,7 +131,12 @@ export function ExportBar({ state, dispatch }: ExportBarProps) {
             type="button"
             className={btnSecondary}
             disabled={busy || state.batch.length === 0}
-            onClick={() => void withBusy(async () => { const images = await loadImageMap(state.images); await exportBatchZip(state.batch, images); })}
+            onClick={() =>
+              void withBusy(async () => {
+                const images = await loadImageMap(state.images);
+                await exportBatchZip(state.batch, images);
+              })
+            }
           >
             Export all as ZIP
           </button>
@@ -116,8 +144,13 @@ export function ExportBar({ state, dispatch }: ExportBarProps) {
         {state.batch.length > 0 && (
           <ul className="mt-2 flex flex-col gap-1">
             {state.batch.map((b) => (
-              <li key={b.id} className="flex items-center justify-between border-2 border-ink bg-sunken px-2 py-1 text-xs font-bold">
-                <span>{b.label} ({b.document.width}x{b.document.height})</span>
+              <li
+                key={b.id}
+                className="flex items-center justify-between border-2 border-ink bg-sunken px-2 py-1 text-xs font-bold"
+              >
+                <span>
+                  {b.label} ({b.document.width}x{b.document.height})
+                </span>
                 <button
                   type="button"
                   aria-label={`Remove ${b.label} from batch`}

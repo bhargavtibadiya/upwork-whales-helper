@@ -1,9 +1,9 @@
 "use client";
 
 import { useRef } from "react";
-import type { EditorElement, ImageElement, ShapeElement, TextElement } from "@/lib/editor/types";
-import { CANVAS_FONT_FAMILIES } from "@/lib/editor/export";
 import type { EditorAction } from "@/hooks/useEditor";
+import { CANVAS_FONT_FAMILIES } from "@/lib/editor/export";
+import type { EditorElement, ImageElement, ShapeElement, TextElement } from "@/lib/editor/types";
 
 interface PropertiesPanelProps {
   element: EditorElement | null;
@@ -17,68 +17,102 @@ function TextFields({ el, dispatch }: { el: TextElement; dispatch: React.Dispatc
   return (
     <>
       <div>
-        <label className={labelCls} htmlFor="prop-text">Text</label>
+        <label className={labelCls} htmlFor="prop-text">
+          Text
+        </label>
         <textarea
           id="prop-text"
           className={inputCls}
           rows={2}
           value={el.text}
-          onChange={(e) => dispatch({ type: "updateElement", id: el.id, patch: { text: e.target.value } })}
+          onChange={(e) =>
+            dispatch({ type: "updateElement", id: el.id, patch: { text: e.target.value } })
+          }
         />
       </div>
       <div>
-        <label className={labelCls} htmlFor="prop-font">Font</label>
+        <label className={labelCls} htmlFor="prop-font">
+          Font
+        </label>
         <select
           id="prop-font"
           className={inputCls}
           value={el.fontFamily}
-          onChange={(e) => dispatch({ type: "updateElement", id: el.id, patch: { fontFamily: e.target.value } })}
+          onChange={(e) =>
+            dispatch({ type: "updateElement", id: el.id, patch: { fontFamily: e.target.value } })
+          }
         >
           {CANVAS_FONT_FAMILIES.map((f) => (
-            <option key={f} value={f}>{f}</option>
+            <option key={f} value={f}>
+              {f}
+            </option>
           ))}
         </select>
       </div>
       <div className="grid grid-cols-2 gap-2">
         <div>
-          <label className={labelCls} htmlFor="prop-size">Size ({Math.round(el.fontSize)}px)</label>
+          <label className={labelCls} htmlFor="prop-size">
+            Size ({Math.round(el.fontSize)}px)
+          </label>
           <input
             id="prop-size"
             type="range"
             min={8}
             max={400}
             value={el.fontSize}
-            onChange={(e) => dispatch({ type: "updateElement", id: el.id, patch: { fontSize: Number(e.target.value) } })}
+            onChange={(e) =>
+              dispatch({
+                type: "updateElement",
+                id: el.id,
+                patch: { fontSize: Number(e.target.value) },
+              })
+            }
             className="w-full accent-drum-pink"
           />
         </div>
         <div>
-          <label className={labelCls} htmlFor="prop-weight">Weight</label>
+          <label className={labelCls} htmlFor="prop-weight">
+            Weight
+          </label>
           <select
             id="prop-weight"
             className={inputCls}
             value={el.fontWeight}
-            onChange={(e) => dispatch({ type: "updateElement", id: el.id, patch: { fontWeight: Number(e.target.value) } })}
+            onChange={(e) =>
+              dispatch({
+                type: "updateElement",
+                id: el.id,
+                patch: { fontWeight: Number(e.target.value) },
+              })
+            }
           >
             {[400, 500, 600, 700, 800, 900].map((w) => (
-              <option key={w} value={w}>{w}</option>
+              <option key={w} value={w}>
+                {w}
+              </option>
             ))}
           </select>
         </div>
       </div>
       <div className="grid grid-cols-2 gap-2">
         <div>
-          <label className={labelCls} htmlFor="prop-color">Colour</label>
+          <label className={labelCls} htmlFor="prop-color">
+            Colour
+          </label>
           <input
             id="prop-color"
             type="color"
             className="h-10 w-full border-2 border-ink bg-surface"
             value={el.color}
-            onChange={(e) => dispatch({ type: "updateElement", id: el.id, patch: { color: e.target.value } })}
+            onChange={(e) =>
+              dispatch({ type: "updateElement", id: el.id, patch: { color: e.target.value } })
+            }
           />
         </div>
         <div>
-          <label className={labelCls} htmlFor="prop-align">Align</label>
+          <label className={labelCls} htmlFor="prop-align">
+            Align
+          </label>
           <select
             id="prop-align"
             className={inputCls}
@@ -100,7 +134,9 @@ function TextFields({ el, dispatch }: { el: TextElement; dispatch: React.Dispatc
         <input
           type="checkbox"
           checked={el.uppercase}
-          onChange={(e) => dispatch({ type: "updateElement", id: el.id, patch: { uppercase: e.target.checked } })}
+          onChange={(e) =>
+            dispatch({ type: "updateElement", id: el.id, patch: { uppercase: e.target.checked } })
+          }
           className="h-4 w-4 accent-drum-pink"
         />
         Uppercase
@@ -109,12 +145,20 @@ function TextFields({ el, dispatch }: { el: TextElement; dispatch: React.Dispatc
   );
 }
 
-function ImageFields({ el, dispatch }: { el: ImageElement; dispatch: React.Dispatch<EditorAction> }) {
+function ImageFields({
+  el,
+  dispatch,
+}: {
+  el: ImageElement;
+  dispatch: React.Dispatch<EditorAction>;
+}) {
   const fileRef = useRef<HTMLInputElement>(null);
   return (
     <>
       <div>
-        <label className={labelCls} htmlFor="prop-upload">Image file</label>
+        <label className={labelCls} htmlFor="prop-upload">
+          Image file
+        </label>
         <input
           id="prop-upload"
           ref={fileRef}
@@ -137,7 +181,9 @@ function ImageFields({ el, dispatch }: { el: ImageElement; dispatch: React.Dispa
       </div>
       <div className="grid grid-cols-2 gap-2">
         <div>
-          <label className={labelCls} htmlFor="prop-iw">Width ({el.width}px)</label>
+          <label className={labelCls} htmlFor="prop-iw">
+            Width ({el.width}px)
+          </label>
           <input
             id="prop-iw"
             type="range"
@@ -152,14 +198,22 @@ function ImageFields({ el, dispatch }: { el: ImageElement; dispatch: React.Dispa
           />
         </div>
         <div>
-          <label className={labelCls} htmlFor="prop-bw">Ring ({el.borderWidth}px)</label>
+          <label className={labelCls} htmlFor="prop-bw">
+            Ring ({el.borderWidth}px)
+          </label>
           <input
             id="prop-bw"
             type="range"
             min={0}
             max={60}
             value={el.borderWidth}
-            onChange={(e) => dispatch({ type: "updateElement", id: el.id, patch: { borderWidth: Number(e.target.value) } })}
+            onChange={(e) =>
+              dispatch({
+                type: "updateElement",
+                id: el.id,
+                patch: { borderWidth: Number(e.target.value) },
+              })
+            }
             className="w-full accent-drum-pink"
           />
         </div>
@@ -168,20 +222,26 @@ function ImageFields({ el, dispatch }: { el: ImageElement; dispatch: React.Dispa
         <input
           type="checkbox"
           checked={el.circle}
-          onChange={(e) => dispatch({ type: "updateElement", id: el.id, patch: { circle: e.target.checked } })}
+          onChange={(e) =>
+            dispatch({ type: "updateElement", id: el.id, patch: { circle: e.target.checked } })
+          }
           className="h-4 w-4 accent-drum-pink"
         />
         Circle crop
       </label>
       {el.borderWidth > 0 && (
         <div>
-          <label className={labelCls} htmlFor="prop-bc">Ring colour</label>
+          <label className={labelCls} htmlFor="prop-bc">
+            Ring colour
+          </label>
           <input
             id="prop-bc"
             type="color"
             className="h-10 w-full border-2 border-ink bg-surface"
             value={el.borderColor ?? "#ff48b0"}
-            onChange={(e) => dispatch({ type: "updateElement", id: el.id, patch: { borderColor: e.target.value } })}
+            onChange={(e) =>
+              dispatch({ type: "updateElement", id: el.id, patch: { borderColor: e.target.value } })
+            }
           />
         </div>
       )}
@@ -189,28 +249,46 @@ function ImageFields({ el, dispatch }: { el: ImageElement; dispatch: React.Dispa
   );
 }
 
-function ShapeFields({ el, dispatch }: { el: ShapeElement; dispatch: React.Dispatch<EditorAction> }) {
+function ShapeFields({
+  el,
+  dispatch,
+}: {
+  el: ShapeElement;
+  dispatch: React.Dispatch<EditorAction>;
+}) {
   return (
     <>
       <div>
-        <label className={labelCls} htmlFor="prop-fill">Fill</label>
+        <label className={labelCls} htmlFor="prop-fill">
+          Fill
+        </label>
         <input
           id="prop-fill"
           type="color"
           className="h-10 w-full border-2 border-ink bg-surface"
           value={el.fill}
-          onChange={(e) => dispatch({ type: "updateElement", id: el.id, patch: { fill: e.target.value } })}
+          onChange={(e) =>
+            dispatch({ type: "updateElement", id: el.id, patch: { fill: e.target.value } })
+          }
         />
       </div>
       <div>
-        <label className={labelCls} htmlFor="prop-rot">Rotation ({el.rotation} deg)</label>
+        <label className={labelCls} htmlFor="prop-rot">
+          Rotation ({el.rotation} deg)
+        </label>
         <input
           id="prop-rot"
           type="range"
           min={0}
           max={360}
           value={el.rotation}
-          onChange={(e) => dispatch({ type: "updateElement", id: el.id, patch: { rotation: Number(e.target.value) } })}
+          onChange={(e) =>
+            dispatch({
+              type: "updateElement",
+              id: el.id,
+              patch: { rotation: Number(e.target.value) },
+            })
+          }
           className="w-full accent-drum-pink"
         />
       </div>
