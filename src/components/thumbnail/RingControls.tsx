@@ -129,13 +129,10 @@ export function BackgroundControls({ state, onRing }: RingProps): React.JSX.Elem
   return (
     <section className="surface">
       <h2>3. Background</h2>
-      <p className="helper mb-4">
-        Keep the background in your photo, or put a colour behind a cut-out PNG.
-      </p>
       <fieldset className="segments" aria-label="Photo background">
         {(
           [
-            { id: "keep", label: "Keep photo" },
+            { id: "keep", label: "Keep my photo's background" },
             { id: "solid", label: "Solid colour" },
             { id: "gradient", label: "Soft gradient" },
           ] as const
@@ -150,6 +147,10 @@ export function BackgroundControls({ state, onRing }: RingProps): React.JSX.Elem
           </button>
         ))}
       </fieldset>
+      <p className="tip">
+        Tip: for the cleanest look, use a cut-out PNG with the background removed. The colour you
+        pick here shows behind you.
+      </p>
       {ring.backgroundMode !== "keep" && (
         <>
           <fieldset className="background-options" aria-label="Background colour">

@@ -326,8 +326,8 @@ export function ThumbnailEditor(): React.JSX.Element {
             )}
             {profile && (
               <p className="preview-note">
-                Upwork crops your photo to a circle. The corners of the downloaded square will not
-                show.
+                Upwork shows your photo as a circle, so the corners get cut off. The download is a
+                square PNG, ready to upload.
               </p>
             )}
             {!fontsReady && (
@@ -353,6 +353,7 @@ export function ThumbnailEditor(): React.JSX.Element {
                 onCrop={onCrop}
                 onError={setError}
                 profile={profile}
+                mode={state.mode}
               />
             ))}
           </section>
@@ -385,19 +386,21 @@ export function ThumbnailEditor(): React.JSX.Element {
                 </fieldset>
               )}
               <div className="extra-toggles">
-                {style.extras.map((key) => (
-                  <label className="toggle" key={key}>
-                    <span>{key === "arrow" ? "Curved arrow" : "Play button"}</span>
-                    <input
-                      type="checkbox"
-                      checked={state[key]}
-                      onChange={(event) => {
-                        const checked = event.currentTarget.checked;
-                        setState((current) => ({ ...current, [key]: checked }));
-                      }}
-                    />
-                  </label>
-                ))}
+                {[...style.extras]
+                  .sort((a, b) => (a === b ? 0 : a === "arrow" ? -1 : 1))
+                  .map((key) => (
+                    <label className="toggle" key={key}>
+                      <span>{key === "arrow" ? "Curved arrow" : "Play button"}</span>
+                      <input
+                        type="checkbox"
+                        checked={state[key]}
+                        onChange={(event) => {
+                          const checked = event.currentTarget.checked;
+                          setState((current) => ({ ...current, [key]: checked }));
+                        }}
+                      />
+                    </label>
+                  ))}
               </div>
             </section>
           )}
@@ -408,10 +411,20 @@ export function ThumbnailEditor(): React.JSX.Element {
         <h2>{profile ? "Profile picture tips" : "Style examples"}</h2>
         {profile ? (
           <div className="surface mt-4">
-            <ul>
-              <li>Keep your face clear and close. A genuine smile works well.</li>
-              <li>Choose the ring colour that matches your Upwork badge.</li>
-              <li>Check the small preview before uploading your photo.</li>
+            <ul className="profile-tips">
+              {[
+                "Shoulders and up. Crop in close so clients can see your face.",
+                "A nice big smile. Look at the camera.",
+                "A simple background. Or a cut-out PNG with a solid colour behind you.",
+                "A ring in your badge colour. Top Rated is blue, Top Rated Plus is pink. It looks good with the Available Now badge.",
+              ].map((tip) => (
+                <li key={tip}>
+                  <svg viewBox="0 0 24 24" aria-hidden="true">
+                    <path d="m5 12 4 4 10-10" />
+                  </svg>
+                  <span>{tip}</span>
+                </li>
+              ))}
             </ul>
           </div>
         ) : (
@@ -436,7 +449,7 @@ export function ThumbnailEditor(): React.JSX.Element {
         )}
       </section>
       <footer className="page-container pb-8 text-center helper">
-        Made for Upwork Whales. Your images stay on your device.
+        Upwork Whales · Profile Picture & Thumbnail Maker
       </footer>
     </div>
   );

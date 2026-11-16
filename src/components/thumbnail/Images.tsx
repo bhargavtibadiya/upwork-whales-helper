@@ -1,13 +1,14 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import type { Crop, ImageKind, ThumbnailState } from "@/lib/thumbnail/model";
+import type { Crop, ImageKind, Mode, ThumbnailState } from "@/lib/thumbnail/model";
 
 interface UploadProps {
   kind: ImageKind;
   crop: Crop;
   onCrop: (kind: ImageKind, crop: Crop) => void;
   profile: boolean;
+  mode: Mode;
   onError: (message: string) => void;
 }
 export async function readLocalImage(file: File): Promise<HTMLImageElement> {
@@ -55,6 +56,7 @@ export function ImageUpload({
   crop,
   onCrop,
   profile,
+  mode,
   onError,
 }: UploadProps): React.JSX.Element {
   const [dragging, setDragging] = useState(false);
@@ -72,7 +74,11 @@ export function ImageUpload({
   return (
     <div className="upload-group">
       <label className="field-label" htmlFor={id}>
-        {kind === "face" ? "Your photo" : "Screenshot of your Upwork profile or work"}
+        {kind === "face"
+          ? "Your photo"
+          : mode === "portfolio"
+            ? "Screenshot of your work"
+            : "Screenshot of your Upwork profile or work"}
       </label>
       <input
         className="sr-only"
