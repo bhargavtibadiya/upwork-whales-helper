@@ -29,7 +29,7 @@ Style navigation has visible previous/next buttons and stays at two rows. Brand 
 - Source TypeScript and Biome checks pass; production build passes.
 - Layout suite: 170 checks across desktop, tablet, mobile and all three modes.
 - Existing interaction suite expanded to all 20 styles: 77 checks, real PNG downloads, preview/export pixel equality, touch crop, upload/paste/drop/remove, themes and rings, no browser exceptions or server writes.
-- Additional editor suite checks carousel navigation, font choices, all five controls, every style's download and editing the third stat on every supported layout.
+- Additional editor suite: 172 checks covering carousel navigation, font choices, all five controls, every style's download and editing the third stat on every supported layout.
 - Render matrix: 11,520 combinations: 20 styles, applicable aspect ratios, four font settings, default/short/long text and 32 combinations of five extras. No measured text extends outside the canvas. This is a bounds check, not a claim of exhaustive aesthetic correctness.
 - Actual pixels inspected in contact sheets of all compositions and long-text/all-extras variants, plus font comparisons and desktop/mobile editor views.
 
