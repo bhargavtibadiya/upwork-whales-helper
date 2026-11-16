@@ -306,7 +306,7 @@ try {
   }
   check("all gap options differ", new Set(gaps).size === 3);
   const backgrounds = [];
-  for (const label of ["Keep my photo's background", "Solid colour", "Soft gradient"]) {
+  for (const label of ["Keep background", "Solid colour", "Soft gradient"]) {
     await page.getByRole("button", { name: label, exact: true }).click();
     await settle();
     backgrounds.push(await pixels());

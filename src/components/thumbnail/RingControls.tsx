@@ -132,7 +132,7 @@ export function BackgroundControls({ state, onRing }: RingProps): React.JSX.Elem
       <fieldset className="segments" aria-label="Photo background">
         {(
           [
-            { id: "keep", label: "Keep my photo's background" },
+            { id: "keep", label: "Keep background" },
             { id: "solid", label: "Solid colour" },
             { id: "gradient", label: "Soft gradient" },
           ] as const

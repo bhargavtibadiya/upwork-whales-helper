@@ -18,6 +18,8 @@ import {
   type ThumbnailState,
 } from "@/lib/thumbnail/model";
 import { artworkFonts, drawThumbnail } from "@/lib/thumbnail/render";
+import { SiteFooter } from "../site/SiteFooter";
+import { SiteHeader } from "../site/SiteHeader";
 import { ImageUpload, PreviewCanvas, readLocalImage } from "./Images";
 import { BackgroundControls, RingControls } from "./RingControls";
 import { Words } from "./Words";
@@ -184,28 +186,19 @@ export function ThumbnailEditor(): React.JSX.Element {
     </button>
   );
   return (
-    <div className="min-h-screen" data-mode={state.mode}>
-      <header className="page-container pt-8 pb-6">
-        <span className="brand-badge">
-          <span aria-hidden="true" />
-          Upwork Whales
-        </span>
-        <h1 className="mt-4">Profile Picture &amp; Thumbnail Maker</h1>
-        <p className="lede mt-2 mb-6">
-          Make a ringed profile picture and thumbnails that clients actually click: for your Upwork
-          profile photo, your portfolio pieces and your intro video.
-        </p>
-        <ol className="steps">
-          {modeSteps(state.mode).map((step, index) => (
-            <li key={step}>
-              <span className="step-number">{index + 1}</span>
-              <span>{step}</span>
-            </li>
-          ))}
-        </ol>
-      </header>
-      <main className="page-container app-grid pb-12">
-        <fieldset className="mode-selector" aria-label="What are you making?">
+    <div className="min-h-screen" data-mode={state.mode} id="top">
+      <SiteHeader />
+      <div className="studio-container">
+        <section className="hero">
+          <h1>
+            Thumbnails that get <em>clicked</em>
+          </h1>
+          <p className="lede">
+            Make a ringed profile picture, a portfolio thumbnail or an intro video cover. Pick a
+            style, add your photo and download a PNG.
+          </p>
+        </section>
+        <fieldset className="mode-selector mode-tabs" aria-label="What are you making?">
           {MODES.map((mode) => (
             <button
               type="button"
@@ -221,193 +214,207 @@ export function ThumbnailEditor(): React.JSX.Element {
             </button>
           ))}
         </fieldset>
-        <section className="surface style-panel">
-          <h2>{profile ? "1. Ring colour" : "1. Style"}</h2>
-          {profile ? (
-            <RingControls state={state} onRing={onRing} />
-          ) : (
-            <>
-              <fieldset className="style-options" aria-label="Style">
-                {STYLES.filter((item) => item.mode === state.mode).map((item) => (
-                  <button
-                    className="choice style-option"
-                    type="button"
-                    key={item.id}
-                    aria-pressed={state.style === item.id}
-                    onClick={() => setState((current) => changeStyle(current, item.id))}
-                  >
-                    <PreviewCanvas
-                      state={{
-                        ...state,
-                        style: item.id,
-                        size: state.mode === "portfolio" ? "4x3" : state.size,
-                      }}
-                      mini
-                    />
-                    <span>{item.name}</span>
-                  </button>
-                ))}
-              </fieldset>
-              <fieldset className="palette-options" aria-label="Colour">
-                {(
-                  [
-                    { id: "purple", name: "Whales purple" },
-                    { id: "green", name: "Green" },
-                    { id: "blue", name: "Blue" },
-                    { id: "black", name: "Black" },
-                  ] satisfies { id: Palette; name: string }[]
-                ).map((item) => (
-                  <button
-                    className="choice palette-option"
-                    key={item.id}
-                    type="button"
-                    aria-pressed={state.palette === item.id}
-                    onClick={() => setState((current) => ({ ...current, palette: item.id }))}
-                  >
-                    <svg viewBox="0 0 32 32" aria-hidden="true">
-                      <defs>
-                        <radialGradient id={`palette-${item.id}`} cx="35%" cy="35%" r="75%">
-                          <stop stopColor={ARTWORK_PALETTES[item.id].glow} />
-                          <stop offset="1" stopColor={ARTWORK_PALETTES[item.id].base} />
-                        </radialGradient>
-                      </defs>
-                      <circle cx="16" cy="16" r="15" fill={`url(#palette-${item.id})`} />
-                      <path
-                        d="M16 16h15a15 15 0 0 1-15 15z"
-                        fill={
-                          item.id === "black"
-                            ? ARTWORK_PALETTES[item.id].accent
-                            : ARTWORK_PALETTES[item.id].line
-                        }
-                      />
-                    </svg>
-                    <span>{item.name}</span>
-                  </button>
-                ))}
-              </fieldset>
-            </>
-          )}
-        </section>
-        <section className="preview-column" aria-label="Preview">
-          <div className="preview-sticky">
-            <div className={`preview-frame ${profile ? "profile-preview" : ""}`}>
-              <div className="canvas-holder">
-                <PreviewCanvas state={state} onFonts={setFontsReady} />
-                {profile && <div className="circle-crop" aria-hidden="true" />}
-              </div>
-            </div>
-            {downloadButton}
-            {profile && (
-              <div className="upwork-mini">
-                <PreviewCanvas state={state} mini />
-                <div className="mini-lines">
-                  <span>How it looks on Upwork</span>
-                  <i />
-                  <i />
-                  <i />
-                </div>
-                <div className="small-avatar">
-                  <PreviewCanvas state={state} mini />
-                  <span>Small</span>
-                </div>
-              </div>
-            )}
-            <div className="preview-meta">
-              <span>
-                {width} x {height} px
-              </span>
-              <span>Your images never leave your browser. Nothing is uploaded.</span>
-            </div>
-            {state.mode === "intro" && (
-              <p className="preview-note">
-                Set this as the thumbnail of your intro video on YouTube or Vimeo. Upwork adds its
-                own small play button in the middle of it.
-              </p>
-            )}
-            {profile && (
-              <p className="preview-note">
-                Upwork shows your photo as a circle, so the corners get cut off. The download is a
-                square PNG, ready to upload.
-              </p>
-            )}
-            {!fontsReady && (
-              <p className="warning" role="status">
-                Artwork fonts are loading. The download will wait for them.
-              </p>
-            )}
-            {error && (
-              <p className="error-message" role="alert">
-                {error}
-              </p>
-            )}
-          </div>
-        </section>
-        <div className="input-column">
-          <section className="surface">
-            <h2>{profile ? "2. Your photo" : "2. Your images"}</h2>
-            {style.images.map((kind) => (
-              <ImageUpload
-                key={kind}
-                kind={kind}
-                crop={state[kind]}
-                onCrop={onCrop}
-                onError={setError}
-                profile={profile}
-                mode={state.mode}
-              />
+        <div className="studio-panel">
+          <ol className="steps">
+            {modeSteps(state.mode).map((step, index) => (
+              <li key={step}>
+                <span className="step-number">{index + 1}</span>
+                <span>{step}</span>
+              </li>
             ))}
-          </section>
-          {profile ? (
-            <BackgroundControls state={state} onRing={onRing} />
-          ) : (
-            <Words state={state} setState={setState} />
-          )}{" "}
-          {(state.mode === "portfolio" || style.extras.length > 0) && (
-            <section className="surface">
-              <h2>4. Extras</h2>
-              {state.mode === "portfolio" && (
-                <fieldset className="segments" aria-label="Size">
-                  {(
-                    [
-                      { id: "4x3", name: "Portfolio", size: "1000 x 750" },
-                      { id: "16x9", name: "Video / YouTube", size: "1280 x 720" },
-                    ] as const
-                  ).map((size) => (
-                    <button
-                      key={size.id}
-                      type="button"
-                      aria-pressed={state.size === size.id}
-                      onClick={() => setState((current) => ({ ...current, size: size.id }))}
-                    >
-                      {size.name}
-                      <small>{size.size}</small>
-                    </button>
+          </ol>
+          <main className="app-grid">
+            <div className="controls-column">
+              <section className="surface style-panel">
+                <h2>{profile ? "1. Ring colour" : "1. Style"}</h2>
+                {profile ? (
+                  <RingControls state={state} onRing={onRing} />
+                ) : (
+                  <>
+                    <fieldset className="style-options" aria-label="Style">
+                      {STYLES.filter((item) => item.mode === state.mode).map((item) => (
+                        <button
+                          className="choice style-option"
+                          type="button"
+                          key={item.id}
+                          aria-pressed={state.style === item.id}
+                          onClick={() => setState((current) => changeStyle(current, item.id))}
+                        >
+                          <PreviewCanvas
+                            state={{
+                              ...state,
+                              style: item.id,
+                              size: state.mode === "portfolio" ? "4x3" : state.size,
+                            }}
+                            mini
+                          />
+                          <span>{item.name}</span>
+                        </button>
+                      ))}
+                    </fieldset>
+                    <fieldset className="palette-options" aria-label="Colour">
+                      {(
+                        [
+                          { id: "purple", name: "Whales purple" },
+                          { id: "green", name: "Green" },
+                          { id: "blue", name: "Blue" },
+                          { id: "black", name: "Black" },
+                        ] satisfies { id: Palette; name: string }[]
+                      ).map((item) => (
+                        <button
+                          className="choice palette-option"
+                          key={item.id}
+                          type="button"
+                          aria-pressed={state.palette === item.id}
+                          onClick={() => setState((current) => ({ ...current, palette: item.id }))}
+                        >
+                          <svg viewBox="0 0 32 32" aria-hidden="true">
+                            <defs>
+                              <radialGradient id={`palette-${item.id}`} cx="35%" cy="35%" r="75%">
+                                <stop stopColor={ARTWORK_PALETTES[item.id].glow} />
+                                <stop offset="1" stopColor={ARTWORK_PALETTES[item.id].base} />
+                              </radialGradient>
+                            </defs>
+                            <circle cx="16" cy="16" r="15" fill={`url(#palette-${item.id})`} />
+                            <path
+                              d="M16 16h15a15 15 0 0 1-15 15z"
+                              fill={
+                                item.id === "black"
+                                  ? ARTWORK_PALETTES[item.id].accent
+                                  : ARTWORK_PALETTES[item.id].line
+                              }
+                            />
+                          </svg>
+                          <span>{item.name}</span>
+                        </button>
+                      ))}
+                    </fieldset>
+                  </>
+                )}
+              </section>
+              <div className="input-column">
+                <section className="surface">
+                  <h2>{profile ? "2. Your photo" : "2. Your images"}</h2>
+                  {style.images.map((kind) => (
+                    <ImageUpload
+                      key={kind}
+                      kind={kind}
+                      crop={state[kind]}
+                      onCrop={onCrop}
+                      onError={setError}
+                      profile={profile}
+                      mode={state.mode}
+                    />
                   ))}
-                </fieldset>
-              )}
-              <div className="extra-toggles">
-                {[...style.extras]
-                  .sort((a, b) => (a === b ? 0 : a === "arrow" ? -1 : 1))
-                  .map((key) => (
-                    <label className="toggle" key={key}>
-                      <span>{key === "arrow" ? "Curved arrow" : "Play button"}</span>
-                      <input
-                        type="checkbox"
-                        checked={state[key]}
-                        onChange={(event) => {
-                          const checked = event.currentTarget.checked;
-                          setState((current) => ({ ...current, [key]: checked }));
-                        }}
-                      />
-                    </label>
-                  ))}
+                </section>
+                {profile ? (
+                  <BackgroundControls state={state} onRing={onRing} />
+                ) : (
+                  <Words state={state} setState={setState} />
+                )}{" "}
+                {(state.mode === "portfolio" || style.extras.length > 0) && (
+                  <section className="surface">
+                    <h2>4. Extras</h2>
+                    {state.mode === "portfolio" && (
+                      <fieldset className="segments" aria-label="Size">
+                        {(
+                          [
+                            { id: "4x3", name: "Portfolio", size: "1000 x 750" },
+                            { id: "16x9", name: "Video / YouTube", size: "1280 x 720" },
+                          ] as const
+                        ).map((size) => (
+                          <button
+                            key={size.id}
+                            type="button"
+                            aria-pressed={state.size === size.id}
+                            onClick={() => setState((current) => ({ ...current, size: size.id }))}
+                          >
+                            {size.name}
+                            <small>{size.size}</small>
+                          </button>
+                        ))}
+                      </fieldset>
+                    )}
+                    <div className="extra-toggles">
+                      {[...style.extras]
+                        .sort((a, b) => (a === b ? 0 : a === "arrow" ? -1 : 1))
+                        .map((key) => (
+                          <label className="toggle" key={key}>
+                            <span>{key === "arrow" ? "Curved arrow" : "Play button"}</span>
+                            <input
+                              type="checkbox"
+                              checked={state[key]}
+                              onChange={(event) => {
+                                const checked = event.currentTarget.checked;
+                                setState((current) => ({ ...current, [key]: checked }));
+                              }}
+                            />
+                          </label>
+                        ))}
+                    </div>
+                  </section>
+                )}
+                <div className="mobile-download">{downloadButton}</div>
+              </div>
+            </div>
+            <section className="preview-column" aria-label="Preview">
+              <div className="preview-sticky">
+                <div className={`preview-frame ${profile ? "profile-preview" : ""}`}>
+                  <div className="canvas-holder">
+                    <PreviewCanvas state={state} onFonts={setFontsReady} />
+                    {profile && <div className="circle-crop" aria-hidden="true" />}
+                  </div>
+                </div>
+                {downloadButton}
+                {profile && (
+                  <div className="upwork-mini">
+                    <PreviewCanvas state={state} mini />
+                    <div className="mini-lines">
+                      <span>How it looks on Upwork</span>
+                      <i />
+                      <i />
+                      <i />
+                    </div>
+                    <div className="small-avatar">
+                      <PreviewCanvas state={state} mini />
+                      <span>Small</span>
+                    </div>
+                  </div>
+                )}
+                <div className="preview-meta">
+                  <span>
+                    {width} x {height} px
+                  </span>
+                  <span>Your images never leave your browser. Nothing is uploaded.</span>
+                </div>
+                {state.mode === "intro" && (
+                  <p className="preview-note">
+                    Set this as the thumbnail of your intro video on YouTube or Vimeo. Upwork adds
+                    its own small play button in the middle of it.
+                  </p>
+                )}
+                {profile && (
+                  <p className="preview-note">
+                    Upwork shows your photo as a circle, so the corners get cut off. The download is
+                    a square PNG, ready to upload.
+                  </p>
+                )}
+                {!fontsReady && (
+                  <p className="warning" role="status">
+                    Artwork fonts are loading. The download will wait for them.
+                  </p>
+                )}
+                {error && (
+                  <p className="error-message" role="alert">
+                    {error}
+                  </p>
+                )}
               </div>
             </section>
-          )}
-          <div className="mobile-download">{downloadButton}</div>
+          </main>
         </div>
-      </main>
-      <section className="page-container pb-12 examples">
+      </div>
+      <section className="studio-container studio-examples examples">
         <h2>{profile ? "Profile picture tips" : "Style examples"}</h2>
         {profile ? (
           <div className="surface mt-4">
@@ -448,9 +455,7 @@ export function ThumbnailEditor(): React.JSX.Element {
           </>
         )}
       </section>
-      <footer className="page-container pb-8 text-center helper">
-        Upwork Whales · Profile Picture & Thumbnail Maker
-      </footer>
+      <SiteFooter />
     </div>
   );
 }
