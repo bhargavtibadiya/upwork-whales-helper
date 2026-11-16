@@ -8,7 +8,7 @@ export function SiteFooter(): React.JSX.Element {
           <div>
             <span className="logo">
               <LogoMark />
-              Thumbnail Studio
+              Upwork Thumbnail Maker
             </span>
             <p>
               Ringed profile pictures and clickable thumbnails for your Upwork profile. Everything
@@ -41,7 +41,10 @@ export function SiteFooter(): React.JSX.Element {
           </div>
         </div>
         <div className="footer-bottom">
-          <span>Thumbnail Studio</span>
+          <span>Upwork Thumbnail Maker</span>
+          <span>
+            Made by <a href="https://bhargavtibadiya.com/">Bhargav Tibadiya</a>
+          </span>
           <span>Free to use. PNG exports are yours.</span>
         </div>
       </div>
