@@ -34,7 +34,7 @@ A fully client-side image editor for Upwork profile assets (profile picture, por
 
 ## 6. Branches
 
-- `main` holds the stable baseline. The initial commit is the documentation foundation only.
+- `main` is live production. A push can deploy automatically. Do not push or merge without explicit approval.
 - `DEV` is the working branch for all app implementation. Merge to `main` only when a milestone is verified and the owner asks.
 
 ## 7. Testing
@@ -42,6 +42,12 @@ A fully client-side image editor for Upwork profile assets (profile picture, por
 - `test-standards.md` applies to pure logic first: canvas geometry, layout calculation, preset serialization, text measurement.
 - Its backend/AI sections (NestJS, LLM layers) are not applicable to this project.
 
-## 8. Originality
+## 8. Active repair scope
+
+- Preserve the reference mode/style/field/crop/export workflow. Do not reintroduce the superseded freeform editor, brand presets or batch workflow during parity repair.
+- Apply the supplied Nordic Calm system to the interface. Canvas artwork palettes and fonts remain separate user content.
+- Capture matching reference/local screenshots after each visual revision, including uploaded-image states. Verify mobile touch controls and exported PNG pixels.
+
+## 9. Originality
 
 - This is an original reimplementation. Do not copy code or assets from the reference app (upwork-whales-thumbnail-maker.vercel.app), which has no open-source license. Layout ideas may inform our own original designs.
