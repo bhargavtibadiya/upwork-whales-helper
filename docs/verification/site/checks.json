@@ -1,0 +1,2545 @@
+{
+  "checks": 160,
+  "passed": [
+    "reference meet desktop: no page overflow",
+    "reference meet desktop: controls left of preview",
+    "reference meet tablet: no page overflow",
+    "reference meet tablet: style then preview then inputs",
+    "reference meet mobile: no page overflow",
+    "reference meet mobile: style then preview then inputs",
+    "reference meet: desktop preview remains visible while editing",
+    "reference banner desktop: no page overflow",
+    "reference banner desktop: controls left of preview",
+    "reference banner tablet: no page overflow",
+    "reference banner tablet: style then preview then inputs",
+    "reference banner mobile: no page overflow",
+    "reference banner mobile: style then preview then inputs",
+    "reference banner: desktop preview remains visible while editing",
+    "reference hello desktop: no page overflow",
+    "reference hello desktop: controls left of preview",
+    "reference hello tablet: no page overflow",
+    "reference hello tablet: style then preview then inputs",
+    "reference hello mobile: no page overflow",
+    "reference hello mobile: style then preview then inputs",
+    "reference hello: desktop preview remains visible while editing",
+    "reference proof desktop: no page overflow",
+    "reference proof desktop: controls left of preview",
+    "reference proof tablet: no page overflow",
+    "reference proof tablet: style then preview then inputs",
+    "reference proof mobile: no page overflow",
+    "reference proof mobile: style then preview then inputs",
+    "reference proof: desktop preview remains visible while editing",
+    "reference result desktop: no page overflow",
+    "reference result desktop: controls left of preview",
+    "reference result tablet: no page overflow",
+    "reference result tablet: style then preview then inputs",
+    "reference result mobile: no page overflow",
+    "reference result mobile: style then preview then inputs",
+    "reference result: desktop preview remains visible while editing",
+    "reference stat desktop: no page overflow",
+    "reference stat desktop: controls left of preview",
+    "reference stat tablet: no page overflow",
+    "reference stat tablet: style then preview then inputs",
+    "reference stat mobile: no page overflow",
+    "reference stat mobile: style then preview then inputs",
+    "reference stat: desktop preview remains visible while editing",
+    "reference reviews desktop: no page overflow",
+    "reference reviews desktop: controls left of preview",
+    "reference reviews tablet: no page overflow",
+    "reference reviews tablet: style then preview then inputs",
+    "reference reviews mobile: no page overflow",
+    "reference reviews mobile: style then preview then inputs",
+    "reference reviews: desktop preview remains visible while editing",
+    "reference profile desktop: no page overflow",
+    "reference profile desktop: controls left of preview",
+    "reference profile tablet: no page overflow",
+    "reference profile tablet: style then preview then inputs",
+    "reference profile mobile: no page overflow",
+    "reference profile mobile: style then preview then inputs",
+    "reference profile: desktop preview remains visible while editing",
+    "local meet desktop: no page overflow",
+    "local meet desktop: controls left of preview",
+    "local meet desktop: header precedes mode selector",
+    "local meet tablet: no page overflow",
+    "local meet tablet: style then preview then inputs",
+    "local meet tablet: header precedes mode selector",
+    "local meet mobile: no page overflow",
+    "local meet mobile: style then preview then inputs",
+    "local meet mobile: header precedes mode selector",
+    "local meet: desktop preview remains visible while editing",
+    "local banner desktop: no page overflow",
+    "local banner desktop: controls left of preview",
+    "local banner desktop: header precedes mode selector",
+    "local banner tablet: no page overflow",
+    "local banner tablet: style then preview then inputs",
+    "local banner tablet: header precedes mode selector",
+    "local banner mobile: no page overflow",
+    "local banner mobile: style then preview then inputs",
+    "local banner mobile: header precedes mode selector",
+    "local banner: desktop preview remains visible while editing",
+    "local hello desktop: no page overflow",
+    "local hello desktop: controls left of preview",
+    "local hello desktop: header precedes mode selector",
+    "local hello tablet: no page overflow",
+    "local hello tablet: style then preview then inputs",
+    "local hello tablet: header precedes mode selector",
+    "local hello mobile: no page overflow",
+    "local hello mobile: style then preview then inputs",
+    "local hello mobile: header precedes mode selector",
+    "local hello: desktop preview remains visible while editing",
+    "local proof desktop: no page overflow",
+    "local proof desktop: controls left of preview",
+    "local proof desktop: header precedes mode selector",
+    "local proof tablet: no page overflow",
+    "local proof tablet: style then preview then inputs",
+    "local proof tablet: header precedes mode selector",
+    "local proof mobile: no page overflow",
+    "local proof mobile: style then preview then inputs",
+    "local proof mobile: header precedes mode selector",
+    "local proof: desktop preview remains visible while editing",
+    "local result desktop: no page overflow",
+    "local result desktop: controls left of preview",
+    "local result desktop: header precedes mode selector",
+    "local result tablet: no page overflow",
+    "local result tablet: style then preview then inputs",
+    "local result tablet: header precedes mode selector",
+    "local result mobile: no page overflow",
+    "local result mobile: style then preview then inputs",
+    "local result mobile: header precedes mode selector",
+    "local result: desktop preview remains visible while editing",
+    "local stat desktop: no page overflow",
+    "local stat desktop: controls left of preview",
+    "local stat desktop: header precedes mode selector",
+    "local stat tablet: no page overflow",
+    "local stat tablet: style then preview then inputs",
+    "local stat tablet: header precedes mode selector",
+    "local stat mobile: no page overflow",
+    "local stat mobile: style then preview then inputs",
+    "local stat mobile: header precedes mode selector",
+    "local stat: desktop preview remains visible while editing",
+    "local reviews desktop: no page overflow",
+    "local reviews desktop: controls left of preview",
+    "local reviews desktop: header precedes mode selector",
+    "local reviews tablet: no page overflow",
+    "local reviews tablet: style then preview then inputs",
+    "local reviews tablet: header precedes mode selector",
+    "local reviews mobile: no page overflow",
+    "local reviews mobile: style then preview then inputs",
+    "local reviews mobile: header precedes mode selector",
+    "local reviews: desktop preview remains visible while editing",
+    "local profile desktop: no page overflow",
+    "local profile desktop: controls left of preview",
+    "local profile desktop: header precedes mode selector",
+    "local profile tablet: no page overflow",
+    "local profile tablet: style then preview then inputs",
+    "local profile tablet: header precedes mode selector",
+    "local profile mobile: no page overflow",
+    "local profile mobile: style then preview then inputs",
+    "local profile mobile: header precedes mode selector",
+    "local profile: desktop preview remains visible while editing",
+    "meet: same text fields, defaults and length limits",
+    "meet: same selectable skill icons",
+    "meet: same extras and checkbox order",
+    "banner: same text fields, defaults and length limits",
+    "banner: same selectable skill icons",
+    "banner: same extras and checkbox order",
+    "hello: same text fields, defaults and length limits",
+    "hello: same selectable skill icons",
+    "hello: same extras and checkbox order",
+    "proof: same text fields, defaults and length limits",
+    "proof: same selectable skill icons",
+    "proof: same extras and checkbox order",
+    "result: same text fields, defaults and length limits",
+    "result: same selectable skill icons",
+    "result: same extras and checkbox order",
+    "stat: same text fields, defaults and length limits",
+    "stat: same selectable skill icons",
+    "stat: same extras and checkbox order",
+    "reviews: same text fields, defaults and length limits",
+    "reviews: same selectable skill icons",
+    "reviews: same extras and checkbox order",
+    "profile: same text fields, defaults and length limits",
+    "profile: same selectable skill icons",
+    "profile: same extras and checkbox order"
+  ],
+  "records": {
+    "reference-meet": {
+      "mode": "intro",
+      "id": "meet",
+      "fields": [
+        {
+          "key": "headline",
+          "limit": 24,
+          "value": "CLICK HERE"
+        },
+        {
+          "key": "name",
+          "limit": 22,
+          "value": "Alex R."
+        },
+        {
+          "key": "role",
+          "limit": 40,
+          "value": "AI Automation Specialist"
+        }
+      ],
+      "selects": [],
+      "toggles": [
+        "Curved arrow",
+        "Play button"
+      ],
+      "sizes": {
+        "desktop": {
+          "overflow": false,
+          "style": {
+            "x": 132,
+            "y": 389.34375,
+            "width": 410,
+            "height": 448.875
+          },
+          "preview": {
+            "x": 570,
+            "y": 389.34375,
+            "width": 738,
+            "height": 1281.125
+          },
+          "inputs": {
+            "x": 132,
+            "y": 854.21875,
+            "width": 410,
+            "height": 816.25
+          },
+          "header": {
+            "x": 0,
+            "y": 0,
+            "width": 1440,
+            "height": 274.859375
+          },
+          "main": {
+            "x": 100,
+            "y": 274.859375,
+            "width": 1240,
+            "height": 1431.609375
+          },
+          "bodyHeight": 2052
+        },
+        "tablet": {
+          "overflow": false,
+          "style": {
+            "x": 16,
+            "y": 403.609375,
+            "width": 802,
+            "height": 651.375
+          },
+          "preview": {
+            "x": 16,
+            "y": 1070.984375,
+            "width": 802,
+            "height": 584.375
+          },
+          "inputs": {
+            "x": 16,
+            "y": 1671.359375,
+            "width": 802,
+            "height": 864.75
+          },
+          "header": {
+            "x": 0,
+            "y": 0,
+            "width": 834,
+            "height": 295.53125
+          },
+          "main": {
+            "x": 0,
+            "y": 295.53125,
+            "width": 834,
+            "height": 2276.578125
+          },
+          "bodyHeight": 2918
+        },
+        "mobile": {
+          "overflow": false,
+          "style": {
+            "x": 16,
+            "y": 593.90625,
+            "width": 358,
+            "height": 419.625
+          },
+          "preview": {
+            "x": 16,
+            "y": 1029.53125,
+            "width": 358,
+            "height": 418.625
+          },
+          "inputs": {
+            "x": 16,
+            "y": 1464.15625,
+            "width": 358,
+            "height": 918.5
+          },
+          "header": {
+            "x": 0,
+            "y": 0,
+            "width": 390,
+            "height": 465.96875
+          },
+          "main": {
+            "x": 0,
+            "y": 465.96875,
+            "width": 390,
+            "height": 1952.6875
+          },
+          "bodyHeight": 2735
+        }
+      }
+    },
+    "reference-banner": {
+      "mode": "intro",
+      "id": "banner",
+      "fields": [
+        {
+          "key": "headline",
+          "limit": 24,
+          "value": "FULL STACK"
+        },
+        {
+          "key": "headline2",
+          "limit": 24,
+          "value": "AI DEVELOPER"
+        },
+        {
+          "key": "subline",
+          "limit": 60,
+          "value": "From idea to launch"
+        },
+        {
+          "key": "chip1",
+          "limit": 18,
+          "value": "Web apps"
+        },
+        {
+          "key": "chip2",
+          "limit": 18,
+          "value": "Backend"
+        },
+        {
+          "key": "chip3",
+          "limit": 18,
+          "value": "AI agents"
+        },
+        {
+          "key": "chip4",
+          "limit": 18,
+          "value": "Integrations"
+        },
+        {
+          "key": "badge",
+          "limit": 18,
+          "value": "TOP RATED"
+        },
+        {
+          "key": "badge2",
+          "limit": 18,
+          "value": "100% Job Success"
+        }
+      ],
+      "selects": [
+        [
+          "code",
+          "database",
+          "ai",
+          "cloud",
+          "chart",
+          "chat",
+          "mobile",
+          "gear",
+          "search",
+          "mail",
+          "bolt",
+          "video",
+          "cart",
+          "pen",
+          "check"
+        ],
+        [
+          "code",
+          "database",
+          "ai",
+          "cloud",
+          "chart",
+          "chat",
+          "mobile",
+          "gear",
+          "search",
+          "mail",
+          "bolt",
+          "video",
+          "cart",
+          "pen",
+          "check"
+        ],
+        [
+          "code",
+          "database",
+          "ai",
+          "cloud",
+          "chart",
+          "chat",
+          "mobile",
+          "gear",
+          "search",
+          "mail",
+          "bolt",
+          "video",
+          "cart",
+          "pen",
+          "check"
+        ],
+        [
+          "code",
+          "database",
+          "ai",
+          "cloud",
+          "chart",
+          "chat",
+          "mobile",
+          "gear",
+          "search",
+          "mail",
+          "bolt",
+          "video",
+          "cart",
+          "pen",
+          "check"
+        ]
+      ],
+      "toggles": [],
+      "sizes": {
+        "desktop": {
+          "overflow": false,
+          "style": {
+            "x": 132,
+            "y": 389.34375,
+            "width": 410,
+            "height": 448.875
+          },
+          "preview": {
+            "x": 570,
+            "y": 389.34375,
+            "width": 738,
+            "height": 1492.625
+          },
+          "inputs": {
+            "x": 132,
+            "y": 854.21875,
+            "width": 410,
+            "height": 1027.75
+          },
+          "header": {
+            "x": 0,
+            "y": 0,
+            "width": 1440,
+            "height": 274.859375
+          },
+          "main": {
+            "x": 100,
+            "y": 274.859375,
+            "width": 1240,
+            "height": 1643.109375
+          },
+          "bodyHeight": 2264
+        },
+        "tablet": {
+          "overflow": false,
+          "style": {
+            "x": 16,
+            "y": 403.609375,
+            "width": 802,
+            "height": 651.375
+          },
+          "preview": {
+            "x": 16,
+            "y": 1070.984375,
+            "width": 802,
+            "height": 584.375
+          },
+          "inputs": {
+            "x": 16,
+            "y": 1671.359375,
+            "width": 802,
+            "height": 1092.5
+          },
+          "header": {
+            "x": 0,
+            "y": 0,
+            "width": 834,
+            "height": 295.53125
+          },
+          "main": {
+            "x": 0,
+            "y": 295.53125,
+            "width": 834,
+            "height": 2504.328125
+          },
+          "bodyHeight": 3146
+        },
+        "mobile": {
+          "overflow": false,
+          "style": {
+            "x": 16,
+            "y": 593.90625,
+            "width": 358,
+            "height": 419.625
+          },
+          "preview": {
+            "x": 16,
+            "y": 1029.53125,
+            "width": 358,
+            "height": 418.625
+          },
+          "inputs": {
+            "x": 16,
+            "y": 1464.15625,
+            "width": 358,
+            "height": 1130
+          },
+          "header": {
+            "x": 0,
+            "y": 0,
+            "width": 390,
+            "height": 465.96875
+          },
+          "main": {
+            "x": 0,
+            "y": 465.96875,
+            "width": 390,
+            "height": 2164.1875
+          },
+          "bodyHeight": 2946
+        }
+      }
+    },
+    "reference-hello": {
+      "mode": "intro",
+      "id": "hello",
+      "fields": [
+        {
+          "key": "headline",
+          "limit": 24,
+          "value": "hi"
+        },
+        {
+          "key": "name",
+          "limit": 22,
+          "value": "Alex R."
+        },
+        {
+          "key": "role",
+          "limit": 40,
+          "value": "AI Automation Specialist"
+        }
+      ],
+      "selects": [],
+      "toggles": [],
+      "sizes": {
+        "desktop": {
+          "overflow": false,
+          "style": {
+            "x": 132,
+            "y": 389.34375,
+            "width": 410,
+            "height": 448.875
+          },
+          "preview": {
+            "x": 570,
+            "y": 389.34375,
+            "width": 738,
+            "height": 1033.125
+          },
+          "inputs": {
+            "x": 132,
+            "y": 854.21875,
+            "width": 410,
+            "height": 568.25
+          },
+          "header": {
+            "x": 0,
+            "y": 0,
+            "width": 1440,
+            "height": 274.859375
+          },
+          "main": {
+            "x": 100,
+            "y": 274.859375,
+            "width": 1240,
+            "height": 1183.609375
+          },
+          "bodyHeight": 1804
+        },
+        "tablet": {
+          "overflow": false,
+          "style": {
+            "x": 16,
+            "y": 403.609375,
+            "width": 802,
+            "height": 651.375
+          },
+          "preview": {
+            "x": 16,
+            "y": 1070.984375,
+            "width": 802,
+            "height": 584.375
+          },
+          "inputs": {
+            "x": 16,
+            "y": 1671.359375,
+            "width": 802,
+            "height": 633
+          },
+          "header": {
+            "x": 0,
+            "y": 0,
+            "width": 834,
+            "height": 295.53125
+          },
+          "main": {
+            "x": 0,
+            "y": 295.53125,
+            "width": 834,
+            "height": 2044.828125
+          },
+          "bodyHeight": 2686
+        },
+        "mobile": {
+          "overflow": false,
+          "style": {
+            "x": 16,
+            "y": 593.90625,
+            "width": 358,
+            "height": 419.625
+          },
+          "preview": {
+            "x": 16,
+            "y": 1029.53125,
+            "width": 358,
+            "height": 418.625
+          },
+          "inputs": {
+            "x": 16,
+            "y": 1464.15625,
+            "width": 358,
+            "height": 670.5
+          },
+          "header": {
+            "x": 0,
+            "y": 0,
+            "width": 390,
+            "height": 465.96875
+          },
+          "main": {
+            "x": 0,
+            "y": 465.96875,
+            "width": 390,
+            "height": 1704.6875
+          },
+          "bodyHeight": 2487
+        }
+      }
+    },
+    "reference-proof": {
+      "mode": "intro",
+      "id": "proof",
+      "fields": [
+        {
+          "key": "pill",
+          "limit": 22,
+          "value": "WATCH THIS"
+        },
+        {
+          "key": "stat1v",
+          "limit": 10,
+          "value": "50+"
+        },
+        {
+          "key": "stat1l",
+          "limit": 20,
+          "value": "Projects delivered"
+        },
+        {
+          "key": "stat2v",
+          "limit": 10,
+          "value": "5.0"
+        },
+        {
+          "key": "stat2l",
+          "limit": 20,
+          "value": "Client rating"
+        },
+        {
+          "key": "stat3v",
+          "limit": 10,
+          "value": "$100K+"
+        },
+        {
+          "key": "stat3l",
+          "limit": 20,
+          "value": "Earned on Upwork"
+        },
+        {
+          "key": "services",
+          "limit": 48,
+          "value": "AI Agents · Automation · Web Apps"
+        }
+      ],
+      "selects": [],
+      "toggles": [
+        "Play button"
+      ],
+      "sizes": {
+        "desktop": {
+          "overflow": false,
+          "style": {
+            "x": 132,
+            "y": 389.34375,
+            "width": 410,
+            "height": 448.875
+          },
+          "preview": {
+            "x": 570,
+            "y": 389.34375,
+            "width": 738,
+            "height": 1273.375
+          },
+          "inputs": {
+            "x": 132,
+            "y": 854.21875,
+            "width": 410,
+            "height": 808.5
+          },
+          "header": {
+            "x": 0,
+            "y": 0,
+            "width": 1440,
+            "height": 274.859375
+          },
+          "main": {
+            "x": 100,
+            "y": 274.859375,
+            "width": 1240,
+            "height": 1423.859375
+          },
+          "bodyHeight": 2045
+        },
+        "tablet": {
+          "overflow": false,
+          "style": {
+            "x": 16,
+            "y": 403.609375,
+            "width": 802,
+            "height": 651.375
+          },
+          "preview": {
+            "x": 16,
+            "y": 1070.984375,
+            "width": 802,
+            "height": 584.375
+          },
+          "inputs": {
+            "x": 16,
+            "y": 1671.359375,
+            "width": 802,
+            "height": 873.25
+          },
+          "header": {
+            "x": 0,
+            "y": 0,
+            "width": 834,
+            "height": 295.53125
+          },
+          "main": {
+            "x": 0,
+            "y": 295.53125,
+            "width": 834,
+            "height": 2285.078125
+          },
+          "bodyHeight": 2927
+        },
+        "mobile": {
+          "overflow": false,
+          "style": {
+            "x": 16,
+            "y": 593.90625,
+            "width": 358,
+            "height": 419.625
+          },
+          "preview": {
+            "x": 16,
+            "y": 1029.53125,
+            "width": 358,
+            "height": 418.625
+          },
+          "inputs": {
+            "x": 16,
+            "y": 1464.15625,
+            "width": 358,
+            "height": 910.75
+          },
+          "header": {
+            "x": 0,
+            "y": 0,
+            "width": 390,
+            "height": 465.96875
+          },
+          "main": {
+            "x": 0,
+            "y": 465.96875,
+            "width": 390,
+            "height": 1944.9375
+          },
+          "bodyHeight": 2727
+        }
+      }
+    },
+    "reference-result": {
+      "mode": "portfolio",
+      "id": "result",
+      "fields": [
+        {
+          "key": "pill",
+          "limit": 22,
+          "value": "WATCH THIS"
+        },
+        {
+          "key": "headline",
+          "limit": 24,
+          "value": "120K CLICKS"
+        },
+        {
+          "key": "subline",
+          "limit": 60,
+          "value": ""
+        }
+      ],
+      "selects": [],
+      "toggles": [
+        "Curved arrow",
+        "Play button"
+      ],
+      "sizes": {
+        "desktop": {
+          "overflow": false,
+          "style": {
+            "x": 132,
+            "y": 389.34375,
+            "width": 410,
+            "height": 511.5
+          },
+          "preview": {
+            "x": 570,
+            "y": 389.34375,
+            "width": 738,
+            "height": 1263.25
+          },
+          "inputs": {
+            "x": 132,
+            "y": 916.84375,
+            "width": 410,
+            "height": 735.75
+          },
+          "header": {
+            "x": 0,
+            "y": 0,
+            "width": 1440,
+            "height": 274.859375
+          },
+          "main": {
+            "x": 100,
+            "y": 274.859375,
+            "width": 1240,
+            "height": 1413.734375
+          },
+          "bodyHeight": 2035
+        },
+        "tablet": {
+          "overflow": false,
+          "style": {
+            "x": 16,
+            "y": 382.609375,
+            "width": 802,
+            "height": 787.5
+          },
+          "preview": {
+            "x": 16,
+            "y": 1186.109375,
+            "width": 802,
+            "height": 703.5
+          },
+          "inputs": {
+            "x": 16,
+            "y": 1905.609375,
+            "width": 802,
+            "height": 803
+          },
+          "header": {
+            "x": 0,
+            "y": 0,
+            "width": 834,
+            "height": 274.53125
+          },
+          "main": {
+            "x": 0,
+            "y": 274.53125,
+            "width": 834,
+            "height": 2470.078125
+          },
+          "bodyHeight": 3091
+        },
+        "mobile": {
+          "overflow": false,
+          "style": {
+            "x": 16,
+            "y": 593.90625,
+            "width": 358,
+            "height": 472.5
+          },
+          "preview": {
+            "x": 16,
+            "y": 1082.40625,
+            "width": 358,
+            "height": 415.5
+          },
+          "inputs": {
+            "x": 16,
+            "y": 1513.90625,
+            "width": 358,
+            "height": 819.25
+          },
+          "header": {
+            "x": 0,
+            "y": 0,
+            "width": 390,
+            "height": 465.96875
+          },
+          "main": {
+            "x": 0,
+            "y": 465.96875,
+            "width": 390,
+            "height": 1903.1875
+          },
+          "bodyHeight": 2685
+        }
+      }
+    },
+    "reference-stat": {
+      "mode": "portfolio",
+      "id": "stat",
+      "fields": [
+        {
+          "key": "pill",
+          "limit": 22,
+          "value": "WATCH THIS"
+        },
+        {
+          "key": "headline",
+          "limit": 24,
+          "value": "120K"
+        },
+        {
+          "key": "subline",
+          "limit": 60,
+          "value": "Organic Clicks Delivered"
+        },
+        {
+          "key": "stat1v",
+          "limit": 10,
+          "value": "4.2M"
+        },
+        {
+          "key": "stat1l",
+          "limit": 20,
+          "value": "Impressions"
+        },
+        {
+          "key": "stat2v",
+          "limit": 10,
+          "value": "900+"
+        },
+        {
+          "key": "stat2l",
+          "limit": 20,
+          "value": "Daily Clicks"
+        },
+        {
+          "key": "services",
+          "limit": 48,
+          "value": "SEO · Google Ads · Content Writing"
+        }
+      ],
+      "selects": [],
+      "toggles": [
+        "Play button"
+      ],
+      "sizes": {
+        "desktop": {
+          "overflow": false,
+          "style": {
+            "x": 132,
+            "y": 389.34375,
+            "width": 410,
+            "height": 511.5
+          },
+          "preview": {
+            "x": 570,
+            "y": 389.34375,
+            "width": 738,
+            "height": 1542
+          },
+          "inputs": {
+            "x": 132,
+            "y": 916.84375,
+            "width": 410,
+            "height": 1014.5
+          },
+          "header": {
+            "x": 0,
+            "y": 0,
+            "width": 1440,
+            "height": 274.859375
+          },
+          "main": {
+            "x": 100,
+            "y": 274.859375,
+            "width": 1240,
+            "height": 1692.484375
+          },
+          "bodyHeight": 2313
+        },
+        "tablet": {
+          "overflow": false,
+          "style": {
+            "x": 16,
+            "y": 382.609375,
+            "width": 802,
+            "height": 787.5
+          },
+          "preview": {
+            "x": 16,
+            "y": 1186.109375,
+            "width": 802,
+            "height": 703.5
+          },
+          "inputs": {
+            "x": 16,
+            "y": 1905.609375,
+            "width": 802,
+            "height": 1079.25
+          },
+          "header": {
+            "x": 0,
+            "y": 0,
+            "width": 834,
+            "height": 274.53125
+          },
+          "main": {
+            "x": 0,
+            "y": 274.53125,
+            "width": 834,
+            "height": 2746.328125
+          },
+          "bodyHeight": 3367
+        },
+        "mobile": {
+          "overflow": false,
+          "style": {
+            "x": 16,
+            "y": 593.90625,
+            "width": 358,
+            "height": 472.5
+          },
+          "preview": {
+            "x": 16,
+            "y": 1082.40625,
+            "width": 358,
+            "height": 415.5
+          },
+          "inputs": {
+            "x": 16,
+            "y": 1513.90625,
+            "width": 358,
+            "height": 1116.75
+          },
+          "header": {
+            "x": 0,
+            "y": 0,
+            "width": 390,
+            "height": 465.96875
+          },
+          "main": {
+            "x": 0,
+            "y": 465.96875,
+            "width": 390,
+            "height": 2200.6875
+          },
+          "bodyHeight": 2983
+        }
+      }
+    },
+    "reference-reviews": {
+      "mode": "portfolio",
+      "id": "reviews",
+      "fields": [
+        {
+          "key": "pill",
+          "limit": 22,
+          "value": "Click to watch"
+        },
+        {
+          "key": "headline",
+          "limit": 24,
+          "value": "CLIENT RESULTS"
+        },
+        {
+          "key": "subline",
+          "limit": 60,
+          "value": "& REVIEWS"
+        },
+        {
+          "key": "badge",
+          "limit": 18,
+          "value": "TOP RATED"
+        },
+        {
+          "key": "stat1v",
+          "limit": 10,
+          "value": "$20K+"
+        },
+        {
+          "key": "stat1l",
+          "limit": 20,
+          "value": "Total earned"
+        },
+        {
+          "key": "stat2v",
+          "limit": 10,
+          "value": "100%"
+        },
+        {
+          "key": "stat2l",
+          "limit": 20,
+          "value": "Job success"
+        }
+      ],
+      "selects": [],
+      "toggles": [
+        "Curved arrow",
+        "Play button"
+      ],
+      "sizes": {
+        "desktop": {
+          "overflow": false,
+          "style": {
+            "x": 132,
+            "y": 389.34375,
+            "width": 410,
+            "height": 511.5
+          },
+          "preview": {
+            "x": 570,
+            "y": 389.34375,
+            "width": 738,
+            "height": 1532.5
+          },
+          "inputs": {
+            "x": 132,
+            "y": 916.84375,
+            "width": 410,
+            "height": 1005
+          },
+          "header": {
+            "x": 0,
+            "y": 0,
+            "width": 1440,
+            "height": 274.859375
+          },
+          "main": {
+            "x": 100,
+            "y": 274.859375,
+            "width": 1240,
+            "height": 1682.984375
+          },
+          "bodyHeight": 2304
+        },
+        "tablet": {
+          "overflow": false,
+          "style": {
+            "x": 16,
+            "y": 382.609375,
+            "width": 802,
+            "height": 787.5
+          },
+          "preview": {
+            "x": 16,
+            "y": 1186.109375,
+            "width": 802,
+            "height": 703.5
+          },
+          "inputs": {
+            "x": 16,
+            "y": 1905.609375,
+            "width": 802,
+            "height": 1069.75
+          },
+          "header": {
+            "x": 0,
+            "y": 0,
+            "width": 834,
+            "height": 274.53125
+          },
+          "main": {
+            "x": 0,
+            "y": 274.53125,
+            "width": 834,
+            "height": 2736.828125
+          },
+          "bodyHeight": 3357
+        },
+        "mobile": {
+          "overflow": false,
+          "style": {
+            "x": 16,
+            "y": 593.90625,
+            "width": 358,
+            "height": 472.5
+          },
+          "preview": {
+            "x": 16,
+            "y": 1082.40625,
+            "width": 358,
+            "height": 415.5
+          },
+          "inputs": {
+            "x": 16,
+            "y": 1513.90625,
+            "width": 358,
+            "height": 1107.25
+          },
+          "header": {
+            "x": 0,
+            "y": 0,
+            "width": 390,
+            "height": 465.96875
+          },
+          "main": {
+            "x": 0,
+            "y": 465.96875,
+            "width": 390,
+            "height": 2191.1875
+          },
+          "bodyHeight": 2973
+        }
+      }
+    },
+    "reference-profile": {
+      "mode": "profile",
+      "id": "profile",
+      "fields": [],
+      "selects": [],
+      "toggles": [
+        "Gradient ring"
+      ],
+      "sizes": {
+        "desktop": {
+          "overflow": false,
+          "style": {
+            "x": 132,
+            "y": 389.34375,
+            "width": 410,
+            "height": 424.53125
+          },
+          "preview": {
+            "x": 570,
+            "y": 389.34375,
+            "width": 738,
+            "height": 886.78125
+          },
+          "inputs": {
+            "x": 132,
+            "y": 829.875,
+            "width": 410,
+            "height": 446.25
+          },
+          "header": {
+            "x": 0,
+            "y": 0,
+            "width": 1440,
+            "height": 274.859375
+          },
+          "main": {
+            "x": 100,
+            "y": 274.859375,
+            "width": 1240,
+            "height": 1037.265625
+          },
+          "bodyHeight": 1587
+        },
+        "tablet": {
+          "overflow": false,
+          "style": {
+            "x": 16,
+            "y": 403.609375,
+            "width": 802,
+            "height": 390.640625
+          },
+          "preview": {
+            "x": 16,
+            "y": 810.25,
+            "width": 802,
+            "height": 800.5
+          },
+          "inputs": {
+            "x": 16,
+            "y": 1626.75,
+            "width": 802,
+            "height": 457.25
+          },
+          "header": {
+            "x": 0,
+            "y": 0,
+            "width": 834,
+            "height": 295.53125
+          },
+          "main": {
+            "x": 0,
+            "y": 295.53125,
+            "width": 834,
+            "height": 1824.46875
+          },
+          "bodyHeight": 2439
+        },
+        "mobile": {
+          "overflow": false,
+          "style": {
+            "x": 16,
+            "y": 593.90625,
+            "width": 358,
+            "height": 438.921875
+          },
+          "preview": {
+            "x": 16,
+            "y": 1048.828125,
+            "width": 358,
+            "height": 682.5
+          },
+          "inputs": {
+            "x": 16,
+            "y": 1747.328125,
+            "width": 358,
+            "height": 564.75
+          },
+          "header": {
+            "x": 0,
+            "y": 0,
+            "width": 390,
+            "height": 465.96875
+          },
+          "main": {
+            "x": 0,
+            "y": 465.96875,
+            "width": 390,
+            "height": 1882.109375
+          },
+          "bodyHeight": 2752
+        }
+      }
+    },
+    "local-meet": {
+      "mode": "intro",
+      "id": "meet",
+      "fields": [
+        {
+          "key": "headline",
+          "limit": 24,
+          "value": "CLICK HERE"
+        },
+        {
+          "key": "name",
+          "limit": 22,
+          "value": "Alex R."
+        },
+        {
+          "key": "role",
+          "limit": 40,
+          "value": "AI Automation Specialist"
+        }
+      ],
+      "selects": [],
+      "toggles": [
+        "Curved arrow",
+        "Play button"
+      ],
+      "sizes": {
+        "desktop": {
+          "overflow": false,
+          "style": {
+            "x": 200,
+            "y": 383.984375,
+            "width": 360,
+            "height": 427.8125
+          },
+          "preview": {
+            "x": 584,
+            "y": 383.984375,
+            "width": 656,
+            "height": 1329.8125
+          },
+          "inputs": {
+            "x": 200,
+            "y": 827.796875,
+            "width": 360,
+            "height": 886
+          },
+          "header": {
+            "x": 168,
+            "y": 0,
+            "width": 1104,
+            "height": 285.1875
+          },
+          "main": {
+            "x": 168,
+            "y": 285.1875,
+            "width": 1104,
+            "height": 1476.609375
+          },
+          "bodyHeight": 2117
+        },
+        "tablet": {
+          "overflow": false,
+          "style": {
+            "x": 24,
+            "y": 373.484375,
+            "width": 786,
+            "height": 649.4375
+          },
+          "preview": {
+            "x": 24,
+            "y": 1038.921875,
+            "width": 786,
+            "height": 564
+          },
+          "inputs": {
+            "x": 24,
+            "y": 1618.921875,
+            "width": 786,
+            "height": 914
+          },
+          "header": {
+            "x": 0,
+            "y": 0,
+            "width": 834,
+            "height": 285.1875
+          },
+          "main": {
+            "x": 0,
+            "y": 285.1875,
+            "width": 834,
+            "height": 2295.734375
+          },
+          "bodyHeight": 2936
+        },
+        "mobile": {
+          "overflow": false,
+          "style": {
+            "x": 16,
+            "y": 552.1875,
+            "width": 358,
+            "height": 426.6875
+          },
+          "preview": {
+            "x": 16,
+            "y": 994.875,
+            "width": 358,
+            "height": 363.25
+          },
+          "inputs": {
+            "x": 16,
+            "y": 1374.125,
+            "width": 358,
+            "height": 964
+          },
+          "header": {
+            "x": 0,
+            "y": 0,
+            "width": 390,
+            "height": 440.1875
+          },
+          "main": {
+            "x": 0,
+            "y": 440.1875,
+            "width": 390,
+            "height": 1945.9375
+          },
+          "bodyHeight": 2742
+        }
+      }
+    },
+    "local-banner": {
+      "mode": "intro",
+      "id": "banner",
+      "fields": [
+        {
+          "key": "headline",
+          "limit": 24,
+          "value": "FULL STACK"
+        },
+        {
+          "key": "headline2",
+          "limit": 24,
+          "value": "AI DEVELOPER"
+        },
+        {
+          "key": "subline",
+          "limit": 60,
+          "value": "From idea to launch"
+        },
+        {
+          "key": "chip1",
+          "limit": 18,
+          "value": "Web apps"
+        },
+        {
+          "key": "chip2",
+          "limit": 18,
+          "value": "Backend"
+        },
+        {
+          "key": "chip3",
+          "limit": 18,
+          "value": "AI agents"
+        },
+        {
+          "key": "chip4",
+          "limit": 18,
+          "value": "Integrations"
+        },
+        {
+          "key": "badge",
+          "limit": 18,
+          "value": "TOP RATED"
+        },
+        {
+          "key": "badge2",
+          "limit": 18,
+          "value": "100% Job Success"
+        }
+      ],
+      "selects": [
+        [
+          "code",
+          "database",
+          "ai",
+          "cloud",
+          "chart",
+          "chat",
+          "mobile",
+          "gear",
+          "search",
+          "mail",
+          "bolt",
+          "video",
+          "cart",
+          "pen",
+          "check"
+        ],
+        [
+          "code",
+          "database",
+          "ai",
+          "cloud",
+          "chart",
+          "chat",
+          "mobile",
+          "gear",
+          "search",
+          "mail",
+          "bolt",
+          "video",
+          "cart",
+          "pen",
+          "check"
+        ],
+        [
+          "code",
+          "database",
+          "ai",
+          "cloud",
+          "chart",
+          "chat",
+          "mobile",
+          "gear",
+          "search",
+          "mail",
+          "bolt",
+          "video",
+          "cart",
+          "pen",
+          "check"
+        ],
+        [
+          "code",
+          "database",
+          "ai",
+          "cloud",
+          "chart",
+          "chat",
+          "mobile",
+          "gear",
+          "search",
+          "mail",
+          "bolt",
+          "video",
+          "cart",
+          "pen",
+          "check"
+        ]
+      ],
+      "toggles": [],
+      "sizes": {
+        "desktop": {
+          "overflow": false,
+          "style": {
+            "x": 200,
+            "y": 383.984375,
+            "width": 360,
+            "height": 427.8125
+          },
+          "preview": {
+            "x": 584,
+            "y": 383.984375,
+            "width": 656,
+            "height": 1543.8125
+          },
+          "inputs": {
+            "x": 200,
+            "y": 827.796875,
+            "width": 360,
+            "height": 1100
+          },
+          "header": {
+            "x": 168,
+            "y": 0,
+            "width": 1104,
+            "height": 285.1875
+          },
+          "main": {
+            "x": 168,
+            "y": 285.1875,
+            "width": 1104,
+            "height": 1690.609375
+          },
+          "bodyHeight": 2331
+        },
+        "tablet": {
+          "overflow": false,
+          "style": {
+            "x": 24,
+            "y": 373.484375,
+            "width": 786,
+            "height": 649.4375
+          },
+          "preview": {
+            "x": 24,
+            "y": 1038.921875,
+            "width": 786,
+            "height": 564
+          },
+          "inputs": {
+            "x": 24,
+            "y": 1618.921875,
+            "width": 786,
+            "height": 1142
+          },
+          "header": {
+            "x": 0,
+            "y": 0,
+            "width": 834,
+            "height": 285.1875
+          },
+          "main": {
+            "x": 0,
+            "y": 285.1875,
+            "width": 834,
+            "height": 2523.734375
+          },
+          "bodyHeight": 3164
+        },
+        "mobile": {
+          "overflow": false,
+          "style": {
+            "x": 16,
+            "y": 552.1875,
+            "width": 358,
+            "height": 426.6875
+          },
+          "preview": {
+            "x": 16,
+            "y": 994.875,
+            "width": 358,
+            "height": 363.25
+          },
+          "inputs": {
+            "x": 16,
+            "y": 1374.125,
+            "width": 358,
+            "height": 1178
+          },
+          "header": {
+            "x": 0,
+            "y": 0,
+            "width": 390,
+            "height": 440.1875
+          },
+          "main": {
+            "x": 0,
+            "y": 440.1875,
+            "width": 390,
+            "height": 2159.9375
+          },
+          "bodyHeight": 2956
+        }
+      }
+    },
+    "local-hello": {
+      "mode": "intro",
+      "id": "hello",
+      "fields": [
+        {
+          "key": "headline",
+          "limit": 24,
+          "value": "hi"
+        },
+        {
+          "key": "name",
+          "limit": 22,
+          "value": "Alex R."
+        },
+        {
+          "key": "role",
+          "limit": 40,
+          "value": "AI Automation Specialist"
+        }
+      ],
+      "selects": [],
+      "toggles": [],
+      "sizes": {
+        "desktop": {
+          "overflow": false,
+          "style": {
+            "x": 200,
+            "y": 383.984375,
+            "width": 360,
+            "height": 427.8125
+          },
+          "preview": {
+            "x": 584,
+            "y": 383.984375,
+            "width": 656,
+            "height": 1069.8125
+          },
+          "inputs": {
+            "x": 200,
+            "y": 827.796875,
+            "width": 360,
+            "height": 626
+          },
+          "header": {
+            "x": 168,
+            "y": 0,
+            "width": 1104,
+            "height": 285.1875
+          },
+          "main": {
+            "x": 168,
+            "y": 285.1875,
+            "width": 1104,
+            "height": 1216.609375
+          },
+          "bodyHeight": 1857
+        },
+        "tablet": {
+          "overflow": false,
+          "style": {
+            "x": 24,
+            "y": 373.484375,
+            "width": 786,
+            "height": 649.4375
+          },
+          "preview": {
+            "x": 24,
+            "y": 1038.921875,
+            "width": 786,
+            "height": 564
+          },
+          "inputs": {
+            "x": 24,
+            "y": 1618.921875,
+            "width": 786,
+            "height": 668
+          },
+          "header": {
+            "x": 0,
+            "y": 0,
+            "width": 834,
+            "height": 285.1875
+          },
+          "main": {
+            "x": 0,
+            "y": 285.1875,
+            "width": 834,
+            "height": 2049.734375
+          },
+          "bodyHeight": 2690
+        },
+        "mobile": {
+          "overflow": false,
+          "style": {
+            "x": 16,
+            "y": 552.1875,
+            "width": 358,
+            "height": 426.6875
+          },
+          "preview": {
+            "x": 16,
+            "y": 994.875,
+            "width": 358,
+            "height": 363.25
+          },
+          "inputs": {
+            "x": 16,
+            "y": 1374.125,
+            "width": 358,
+            "height": 704
+          },
+          "header": {
+            "x": 0,
+            "y": 0,
+            "width": 390,
+            "height": 440.1875
+          },
+          "main": {
+            "x": 0,
+            "y": 440.1875,
+            "width": 390,
+            "height": 1685.9375
+          },
+          "bodyHeight": 2482
+        }
+      }
+    },
+    "local-proof": {
+      "mode": "intro",
+      "id": "proof",
+      "fields": [
+        {
+          "key": "pill",
+          "limit": 22,
+          "value": "WATCH THIS"
+        },
+        {
+          "key": "stat1v",
+          "limit": 10,
+          "value": "50+"
+        },
+        {
+          "key": "stat1l",
+          "limit": 20,
+          "value": "Projects delivered"
+        },
+        {
+          "key": "stat2v",
+          "limit": 10,
+          "value": "5.0"
+        },
+        {
+          "key": "stat2l",
+          "limit": 20,
+          "value": "Client rating"
+        },
+        {
+          "key": "stat3v",
+          "limit": 10,
+          "value": "$100K+"
+        },
+        {
+          "key": "stat3l",
+          "limit": 20,
+          "value": "Earned on Upwork"
+        },
+        {
+          "key": "services",
+          "limit": 48,
+          "value": "AI Agents · Automation · Web Apps"
+        }
+      ],
+      "selects": [],
+      "toggles": [
+        "Play button"
+      ],
+      "sizes": {
+        "desktop": {
+          "overflow": false,
+          "style": {
+            "x": 200,
+            "y": 383.984375,
+            "width": 360,
+            "height": 427.8125
+          },
+          "preview": {
+            "x": 584,
+            "y": 383.984375,
+            "width": 656,
+            "height": 1327.8125
+          },
+          "inputs": {
+            "x": 200,
+            "y": 827.796875,
+            "width": 360,
+            "height": 884
+          },
+          "header": {
+            "x": 168,
+            "y": 0,
+            "width": 1104,
+            "height": 285.1875
+          },
+          "main": {
+            "x": 168,
+            "y": 285.1875,
+            "width": 1104,
+            "height": 1474.609375
+          },
+          "bodyHeight": 2115
+        },
+        "tablet": {
+          "overflow": false,
+          "style": {
+            "x": 24,
+            "y": 373.484375,
+            "width": 786,
+            "height": 649.4375
+          },
+          "preview": {
+            "x": 24,
+            "y": 1038.921875,
+            "width": 786,
+            "height": 564
+          },
+          "inputs": {
+            "x": 24,
+            "y": 1618.921875,
+            "width": 786,
+            "height": 926
+          },
+          "header": {
+            "x": 0,
+            "y": 0,
+            "width": 834,
+            "height": 285.1875
+          },
+          "main": {
+            "x": 0,
+            "y": 285.1875,
+            "width": 834,
+            "height": 2307.734375
+          },
+          "bodyHeight": 2948
+        },
+        "mobile": {
+          "overflow": false,
+          "style": {
+            "x": 16,
+            "y": 552.1875,
+            "width": 358,
+            "height": 426.6875
+          },
+          "preview": {
+            "x": 16,
+            "y": 994.875,
+            "width": 358,
+            "height": 363.25
+          },
+          "inputs": {
+            "x": 16,
+            "y": 1374.125,
+            "width": 358,
+            "height": 962
+          },
+          "header": {
+            "x": 0,
+            "y": 0,
+            "width": 390,
+            "height": 440.1875
+          },
+          "main": {
+            "x": 0,
+            "y": 440.1875,
+            "width": 390,
+            "height": 1943.9375
+          },
+          "bodyHeight": 2740
+        }
+      }
+    },
+    "local-result": {
+      "mode": "portfolio",
+      "id": "result",
+      "fields": [
+        {
+          "key": "pill",
+          "limit": 22,
+          "value": "WATCH THIS"
+        },
+        {
+          "key": "headline",
+          "limit": 24,
+          "value": "120K CLICKS"
+        },
+        {
+          "key": "subline",
+          "limit": 60,
+          "value": ""
+        }
+      ],
+      "selects": [],
+      "toggles": [
+        "Curved arrow",
+        "Play button"
+      ],
+      "sizes": {
+        "desktop": {
+          "overflow": false,
+          "style": {
+            "x": 200,
+            "y": 383.984375,
+            "width": 360,
+            "height": 480.6875
+          },
+          "preview": {
+            "x": 584,
+            "y": 383.984375,
+            "width": 656,
+            "height": 1292.6875
+          },
+          "inputs": {
+            "x": 200,
+            "y": 880.671875,
+            "width": 360,
+            "height": 796
+          },
+          "header": {
+            "x": 168,
+            "y": 0,
+            "width": 1104,
+            "height": 285.1875
+          },
+          "main": {
+            "x": 168,
+            "y": 285.1875,
+            "width": 1104,
+            "height": 1439.484375
+          },
+          "bodyHeight": 2123
+        },
+        "tablet": {
+          "overflow": false,
+          "style": {
+            "x": 24,
+            "y": 373.484375,
+            "width": 786,
+            "height": 782.1875
+          },
+          "preview": {
+            "x": 24,
+            "y": 1171.671875,
+            "width": 786,
+            "height": 682
+          },
+          "inputs": {
+            "x": 24,
+            "y": 1869.671875,
+            "width": 786,
+            "height": 860
+          },
+          "header": {
+            "x": 0,
+            "y": 0,
+            "width": 834,
+            "height": 285.1875
+          },
+          "main": {
+            "x": 0,
+            "y": 285.1875,
+            "width": 834,
+            "height": 2492.484375
+          },
+          "bodyHeight": 3176
+        },
+        "mobile": {
+          "overflow": false,
+          "style": {
+            "x": 16,
+            "y": 552.1875,
+            "width": 358,
+            "height": 479.1875
+          },
+          "preview": {
+            "x": 16,
+            "y": 1047.375,
+            "width": 358,
+            "height": 383
+          },
+          "inputs": {
+            "x": 16,
+            "y": 1446.375,
+            "width": 358,
+            "height": 874
+          },
+          "header": {
+            "x": 0,
+            "y": 0,
+            "width": 390,
+            "height": 440.1875
+          },
+          "main": {
+            "x": 0,
+            "y": 440.1875,
+            "width": 390,
+            "height": 1928.1875
+          },
+          "bodyHeight": 2767
+        }
+      }
+    },
+    "local-stat": {
+      "mode": "portfolio",
+      "id": "stat",
+      "fields": [
+        {
+          "key": "pill",
+          "limit": 22,
+          "value": "WATCH THIS"
+        },
+        {
+          "key": "headline",
+          "limit": 24,
+          "value": "120K"
+        },
+        {
+          "key": "subline",
+          "limit": 60,
+          "value": "Organic Clicks Delivered"
+        },
+        {
+          "key": "stat1v",
+          "limit": 10,
+          "value": "4.2M"
+        },
+        {
+          "key": "stat1l",
+          "limit": 20,
+          "value": "Impressions"
+        },
+        {
+          "key": "stat2v",
+          "limit": 10,
+          "value": "900+"
+        },
+        {
+          "key": "stat2l",
+          "limit": 20,
+          "value": "Daily Clicks"
+        },
+        {
+          "key": "services",
+          "limit": 48,
+          "value": "SEO · Google Ads · Content Writing"
+        }
+      ],
+      "selects": [],
+      "toggles": [
+        "Play button"
+      ],
+      "sizes": {
+        "desktop": {
+          "overflow": false,
+          "style": {
+            "x": 200,
+            "y": 383.984375,
+            "width": 360,
+            "height": 480.6875
+          },
+          "preview": {
+            "x": 584,
+            "y": 383.984375,
+            "width": 656,
+            "height": 1600.6875
+          },
+          "inputs": {
+            "x": 200,
+            "y": 880.671875,
+            "width": 360,
+            "height": 1104
+          },
+          "header": {
+            "x": 168,
+            "y": 0,
+            "width": 1104,
+            "height": 285.1875
+          },
+          "main": {
+            "x": 168,
+            "y": 285.1875,
+            "width": 1104,
+            "height": 1747.484375
+          },
+          "bodyHeight": 2431
+        },
+        "tablet": {
+          "overflow": false,
+          "style": {
+            "x": 24,
+            "y": 373.484375,
+            "width": 786,
+            "height": 782.1875
+          },
+          "preview": {
+            "x": 24,
+            "y": 1171.671875,
+            "width": 786,
+            "height": 682
+          },
+          "inputs": {
+            "x": 24,
+            "y": 1869.671875,
+            "width": 786,
+            "height": 1146
+          },
+          "header": {
+            "x": 0,
+            "y": 0,
+            "width": 834,
+            "height": 285.1875
+          },
+          "main": {
+            "x": 0,
+            "y": 285.1875,
+            "width": 834,
+            "height": 2778.484375
+          },
+          "bodyHeight": 3462
+        },
+        "mobile": {
+          "overflow": false,
+          "style": {
+            "x": 16,
+            "y": 552.1875,
+            "width": 358,
+            "height": 479.1875
+          },
+          "preview": {
+            "x": 16,
+            "y": 1047.375,
+            "width": 358,
+            "height": 383
+          },
+          "inputs": {
+            "x": 16,
+            "y": 1446.375,
+            "width": 358,
+            "height": 1182
+          },
+          "header": {
+            "x": 0,
+            "y": 0,
+            "width": 390,
+            "height": 440.1875
+          },
+          "main": {
+            "x": 0,
+            "y": 440.1875,
+            "width": 390,
+            "height": 2236.1875
+          },
+          "bodyHeight": 3075
+        }
+      }
+    },
+    "local-reviews": {
+      "mode": "portfolio",
+      "id": "reviews",
+      "fields": [
+        {
+          "key": "pill",
+          "limit": 22,
+          "value": "Click to watch"
+        },
+        {
+          "key": "headline",
+          "limit": 24,
+          "value": "CLIENT RESULTS"
+        },
+        {
+          "key": "subline",
+          "limit": 60,
+          "value": "& REVIEWS"
+        },
+        {
+          "key": "badge",
+          "limit": 18,
+          "value": "TOP RATED"
+        },
+        {
+          "key": "stat1v",
+          "limit": 10,
+          "value": "$20K+"
+        },
+        {
+          "key": "stat1l",
+          "limit": 20,
+          "value": "Total earned"
+        },
+        {
+          "key": "stat2v",
+          "limit": 10,
+          "value": "100%"
+        },
+        {
+          "key": "stat2l",
+          "limit": 20,
+          "value": "Job success"
+        }
+      ],
+      "selects": [],
+      "toggles": [
+        "Curved arrow",
+        "Play button"
+      ],
+      "sizes": {
+        "desktop": {
+          "overflow": false,
+          "style": {
+            "x": 200,
+            "y": 383.984375,
+            "width": 360,
+            "height": 480.6875
+          },
+          "preview": {
+            "x": 584,
+            "y": 383.984375,
+            "width": 656,
+            "height": 1592.6875
+          },
+          "inputs": {
+            "x": 200,
+            "y": 880.671875,
+            "width": 360,
+            "height": 1096
+          },
+          "header": {
+            "x": 168,
+            "y": 0,
+            "width": 1104,
+            "height": 285.1875
+          },
+          "main": {
+            "x": 168,
+            "y": 285.1875,
+            "width": 1104,
+            "height": 1739.484375
+          },
+          "bodyHeight": 2423
+        },
+        "tablet": {
+          "overflow": false,
+          "style": {
+            "x": 24,
+            "y": 373.484375,
+            "width": 786,
+            "height": 782.1875
+          },
+          "preview": {
+            "x": 24,
+            "y": 1171.671875,
+            "width": 786,
+            "height": 682
+          },
+          "inputs": {
+            "x": 24,
+            "y": 1869.671875,
+            "width": 786,
+            "height": 1138
+          },
+          "header": {
+            "x": 0,
+            "y": 0,
+            "width": 834,
+            "height": 285.1875
+          },
+          "main": {
+            "x": 0,
+            "y": 285.1875,
+            "width": 834,
+            "height": 2770.484375
+          },
+          "bodyHeight": 3454
+        },
+        "mobile": {
+          "overflow": false,
+          "style": {
+            "x": 16,
+            "y": 552.1875,
+            "width": 358,
+            "height": 479.1875
+          },
+          "preview": {
+            "x": 16,
+            "y": 1047.375,
+            "width": 358,
+            "height": 383
+          },
+          "inputs": {
+            "x": 16,
+            "y": 1446.375,
+            "width": 358,
+            "height": 1174
+          },
+          "header": {
+            "x": 0,
+            "y": 0,
+            "width": 390,
+            "height": 440.1875
+          },
+          "main": {
+            "x": 0,
+            "y": 440.1875,
+            "width": 390,
+            "height": 2228.1875
+          },
+          "bodyHeight": 3067
+        }
+      }
+    },
+    "local-profile": {
+      "mode": "profile",
+      "id": "profile",
+      "fields": [],
+      "selects": [],
+      "toggles": [
+        "Gradient ring"
+      ],
+      "sizes": {
+        "desktop": {
+          "overflow": false,
+          "style": {
+            "x": 200,
+            "y": 383.984375,
+            "width": 360,
+            "height": 459.171875
+          },
+          "preview": {
+            "x": 584,
+            "y": 383.984375,
+            "width": 656,
+            "height": 989.171875
+          },
+          "inputs": {
+            "x": 200,
+            "y": 859.15625,
+            "width": 360,
+            "height": 514
+          },
+          "header": {
+            "x": 168,
+            "y": 0,
+            "width": 1104,
+            "height": 285.1875
+          },
+          "main": {
+            "x": 168,
+            "y": 285.1875,
+            "width": 1104,
+            "height": 1135.96875
+          },
+          "bodyHeight": 1690
+        },
+        "tablet": {
+          "overflow": false,
+          "style": {
+            "x": 24,
+            "y": 373.484375,
+            "width": 786,
+            "height": 394.390625
+          },
+          "preview": {
+            "x": 24,
+            "y": 783.875,
+            "width": 786,
+            "height": 790
+          },
+          "inputs": {
+            "x": 24,
+            "y": 1589.875,
+            "width": 786,
+            "height": 484
+          },
+          "header": {
+            "x": 0,
+            "y": 0,
+            "width": 834,
+            "height": 285.1875
+          },
+          "main": {
+            "x": 0,
+            "y": 285.1875,
+            "width": 834,
+            "height": 1836.6875
+          },
+          "bodyHeight": 2433
+        },
+        "mobile": {
+          "overflow": false,
+          "style": {
+            "x": 16,
+            "y": 552.1875,
+            "width": 358,
+            "height": 459.171875
+          },
+          "preview": {
+            "x": 16,
+            "y": 1027.359375,
+            "width": 358,
+            "height": 630
+          },
+          "inputs": {
+            "x": 16,
+            "y": 1673.359375,
+            "width": 358,
+            "height": 592
+          },
+          "header": {
+            "x": 0,
+            "y": 0,
+            "width": 390,
+            "height": 440.1875
+          },
+          "main": {
+            "x": 0,
+            "y": 440.1875,
+            "width": 390,
+            "height": 1873.171875
+          },
+          "bodyHeight": 2711
+        }
+      }
+    }
+  }
+}

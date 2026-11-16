@@ -70,3 +70,26 @@ CHROME_PATH=/usr/bin/google-chrome npm run test:compare
 `test:compare` fetches only the public reference page and uses generated local fixtures. It captures default and uploaded states of every layout, saves full-page screenshots and artwork PNGs, and requires mean RGB error below 1/255 with less than 1% of pixels differing by over 20 channel levels. It cannot replace visual inspection. `EVIDENCE_DIR`, `APP_URL`, `REFERENCE_URL` and `CHROME_PATH` are configurable.
 
 Fonts are bundled locally with their SIL Open Font Licenses. TypeScript's unused checks exclude only Next's generated validator file, which declares framework imports unused even in a valid single-page app; application sources remain checked.
+
+## Complete-site follow-up
+
+The second pass compares whole pages, not only exported artwork. The repeatable `npm run test:site` script captures all eight layout states at 1440px desktop, 834px tablet and 390px mobile for both the live reference and the local production build. It passes 160 checks, covering responsive section order, no overflow, sticky preview visibility while editing, identical text-field order/defaults/length limits, icon options and checkbox order. The existing 51 interaction/export checks and 16 artwork comparisons were rerun after these fixes.
+
+Whole-page comparison found and fixed suppressed header/help spacing, undersized profile preview, incorrect Client results input order, reversed extras order, a portfolio upload label, missing profile-background guidance, and missing big-stat input guidance. Profile tips now retain the reference's four-item, responsive two-column structure. The remaining theme differences are intentional: Nordic Calm's 1040px content cap, 24px cards, Manrope, hairline borders and muted blue replace the reference's wider, saturated purple presentation. The generated example gallery remains the disclosed alternative to copying student photographs.
+
+Full-page comparisons (reference left, implementation right):
+
+| Mode | Desktop | Mobile |
+| --- | --- | --- |
+| Intro | [Complete intro page](verification/site/meet-desktop.webp) | [Complete mobile intro](verification/site/meet-mobile.webp) |
+| Portfolio | [Complete portfolio page](verification/site/result-desktop.webp) | [Complete mobile portfolio](verification/site/result-mobile.webp) |
+| Profile | [Complete profile page](verification/site/profile-desktop.webp) | [Complete mobile profile](verification/site/profile-mobile.webp) |
+
+[All 48 full-page captures at original resolution](verification/site/all-layouts-full-pages.zip), including every preset and tablet state. [Machine-readable site checks](verification/site/checks.json).
+
+```sh
+# Run against the already-started production server:
+npm run test:site
+```
+
+For the live deployment, set `APP_URL=https://upwork-whales-helper.vercel.app`. This pass does not claim that Nordic Calm and the reference's original theme are pixel-identical whole pages.
