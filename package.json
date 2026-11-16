@@ -11,7 +11,8 @@
     "lint:fix": "biome check --write .",
     "test:e2e": "node scripts/verify-browser.mjs",
     "test:compare": "node scripts/compare-reference.mjs",
-    "test:site": "node scripts/verify-fullsite.mjs"
+    "test:site": "node scripts/verify-fullsite.mjs",
+    "test:layout": "node scripts/verify-layout.mjs"
   },
   "dependencies": {
     "next": "16.4.6",
