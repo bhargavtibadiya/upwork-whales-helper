@@ -27,7 +27,7 @@ body {
   align-items: center;
   justify-content: space-between;
   gap: 16px;
-  height: 64px;
+  height: 56px;
 }
 .logo {
   display: inline-flex;
@@ -42,16 +42,29 @@ body {
 .logo-mark {
   display: grid;
   place-items: center;
-  width: 36px;
-  height: 36px;
-  border-radius: 12px;
+  width: 34px;
+  height: 34px;
+  flex: none;
+  border-radius: 10px;
   background: linear-gradient(135deg, #7cb4d4, #3b6a88);
   color: #0a1620;
 }
 .logo-mark svg {
-  width: 22px;
-  height: 22px;
-  stroke-width: 1.8;
+  width: 20px;
+  height: 20px;
+  stroke: currentColor;
+  fill: currentColor;
+}
+.logo-text {
+  display: flex;
+  flex-direction: column;
+  line-height: 1.2;
+}
+.logo-byline {
+  font-size: 11px;
+  font-weight: 500;
+  letter-spacing: 0;
+  color: var(--ds-color-text-muted);
 }
 .header-nav {
   display: flex;
@@ -115,6 +128,9 @@ body {
 }
 
 /* Mode tabs */
+/* [WHY] fieldset selector: the globals reset `fieldset.mode-selector { margin: 0 }` would
+   otherwise outrank a plain class and stick the tab cards to the panel below. */
+fieldset.mode-tabs,
 .mode-tabs {
   background: transparent;
   border-radius: 0;
@@ -255,12 +271,27 @@ body {
 .studio-panel .ring-options {
   gap: 12px;
 }
+/* Style picker: exactly two rows, scroll sideways for the rest so the panel
+   never grows taller as more presets are added. */
 .studio-panel .style-options {
+  display: grid;
+  grid-template-columns: none;
+  grid-auto-flow: column;
+  grid-template-rows: repeat(2, minmax(0, auto));
+  /* [WHY] 2.9 columns: the third column peeks off the right edge so it is
+     obvious more presets sit behind the horizontal scroll. */
+  grid-auto-columns: calc((100% - 24px) / 2.9);
   gap: 12px;
+  overflow-x: auto;
+  padding-bottom: 10px;
+  scroll-snap-type: x proximity;
+  scrollbar-color: var(--ds-color-border-medium) transparent;
+}
+.studio-panel .style-options .style-option {
+  scroll-snap-align: start;
 }
 .studio-panel .palette-options {
   gap: 12px;
-  margin-top: 20px;
 }
 .studio-panel .extra-toggles {
   gap: 16px;
@@ -276,7 +307,7 @@ body {
   grid-area: preview;
 }
 .studio-panel .preview-sticky {
-  top: 88px;
+  top: 76px;
 }
 .studio-panel .preview-frame {
   padding: 16px;
@@ -315,7 +346,7 @@ body {
   display: grid;
   grid-template-columns: minmax(0, 1.4fr) repeat(2, minmax(0, 1fr));
   gap: 32px;
-  padding: 48px 0 32px;
+  padding: 36px 0 24px;
 }
 .footer-grid p {
   color: var(--ds-color-text-muted);
@@ -351,13 +382,21 @@ body {
 }
 .footer-bottom {
   border-top: 1px solid var(--ds-color-border-light);
-  padding: 20px 0 28px;
+  padding: 14px 0 18px;
   color: var(--ds-color-text-muted);
   font-size: 13px;
   display: flex;
   flex-wrap: wrap;
   justify-content: space-between;
-  gap: 8px;
+  gap: 8px 16px;
+}
+.footer-bottom a {
+  color: var(--ds-color-text-secondary);
+  text-decoration: none;
+}
+.footer-bottom a:hover {
+  color: var(--ds-color-primary);
+  text-decoration: underline;
 }
 
 @media (max-width: 1023px) {
@@ -386,11 +425,14 @@ body {
   .controls-column > .style-panel {
     order: 1;
   }
-  .studio-panel .preview-column {
+  .controls-column > .theme-panel {
     order: 2;
   }
-  .controls-column > .input-column {
+  .studio-panel .preview-column {
     order: 3;
+  }
+  .controls-column > .input-column {
+    order: 4;
   }
   .studio-panel .app-grid {
     display: flex;
@@ -412,6 +454,9 @@ body {
     padding: 0 16px;
   }
   .header-link {
+    display: none;
+  }
+  .logo-byline {
     display: none;
   }
   .theme-toggle span {
@@ -467,6 +512,9 @@ body {
   }
   .studio-panel .segments button {
     white-space: normal;
+  }
+  .studio-panel .style-options {
+    grid-auto-columns: calc((100% - 12px) / 2.25);
   }
   .footer-grid {
     grid-template-columns: 1fr;
