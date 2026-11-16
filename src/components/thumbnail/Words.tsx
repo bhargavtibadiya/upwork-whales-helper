@@ -56,13 +56,35 @@ export function Words({ state, setState }: WordsProps): React.JSX.Element | null
   return (
     <section className="surface words">
       <h2>4. Your words</h2>
+      <p className="helper mb-4">
+        Text and stats are examples. Replace them with your own accurate details before exporting.
+      </p>
+      <div className="field">
+        <label htmlFor="artwork-font">Artwork font</label>
+        <select
+          id="artwork-font"
+          value={state.font}
+          onChange={(event) => {
+            const font = event.currentTarget.value as ThumbnailState["font"];
+            setState((current) => ({ ...current, font }));
+          }}
+        >
+          <option value="original">Original pairing</option>
+          <option value="Montserrat">Montserrat · geometric</option>
+          <option value="Manrope">Manrope · clean</option>
+          <option value="Anton">Anton · condensed</option>
+        </select>
+        <p className="helper">
+          Google Fonts, served locally. Applies to the artwork, not the editor.
+        </p>
+      </div>
       {style.fields.map((key) =>
         key === "stats" ? (
           <fieldset className="field" key={key}>
             <legend>
               Small stats <span className="helper">(number, then what it is)</span>
             </legend>
-            {Array.from({ length: style.statCount ?? 2 }, (_, index) => {
+            {Array.from({ length: style.statCount ?? 3 }, (_, index) => {
               const n = index + 1;
               return (
                 <div className="field-pair" key={n}>

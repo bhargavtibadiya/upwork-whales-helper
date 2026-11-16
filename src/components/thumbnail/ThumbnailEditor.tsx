@@ -89,9 +89,9 @@ export function ThumbnailEditor(): React.JSX.Element {
     // [WHY] The picker scrolls sideways; keep the chosen preset visible when it
     // changes or the mode loads with a preset that sits offscreen.
     styleListRef.current
-      ?.querySelector('[aria-pressed="true"]')
+      ?.querySelector(`[data-style="${state.style}"]`)
       ?.scrollIntoView({ block: "nearest", inline: "nearest" });
-  }, [state.style, state.mode]);
+  }, [state.style]);
   useEffect(() => {
     const sync = () => {
       const mode = location.hash.slice(1);
@@ -234,7 +234,38 @@ export function ThumbnailEditor(): React.JSX.Element {
           <main className="app-grid">
             <div className="controls-column">
               <section className="surface style-panel">
-                <h2>{profile ? "1. Ring colour" : "1. Style"}</h2>
+                <div className="picker-heading">
+                  <h2>{profile ? "1. Ring colour" : "1. Style"}</h2>
+                  {!profile && (
+                    <div className="carousel-nav">
+                      <button
+                        type="button"
+                        aria-label="Previous styles"
+                        onClick={() =>
+                          styleListRef.current?.scrollBy({
+                            left: -(styleListRef.current?.clientWidth ?? 300) * 0.8,
+                            behavior: "smooth",
+                          })
+                        }
+                      >
+                        ←
+                      </button>
+                      <span>10 styles</span>
+                      <button
+                        type="button"
+                        aria-label="Next styles"
+                        onClick={() =>
+                          styleListRef.current?.scrollBy({
+                            left: (styleListRef.current?.clientWidth ?? 300) * 0.8,
+                            behavior: "smooth",
+                          })
+                        }
+                      >
+                        →
+                      </button>
+                    </div>
+                  )}
+                </div>
                 {profile ? (
                   <RingControls state={state} onRing={onRing} />
                 ) : (
@@ -242,6 +273,7 @@ export function ThumbnailEditor(): React.JSX.Element {
                     {STYLES.filter((item) => item.mode === state.mode).map((item) => (
                       <button
                         className="choice style-option"
+                        data-style={item.id}
                         type="button"
                         key={item.id}
                         aria-pressed={state.style === item.id}
@@ -316,7 +348,7 @@ export function ThumbnailEditor(): React.JSX.Element {
                 ) : (
                   <Words state={state} setState={setState} />
                 )}{" "}
-                {(state.mode === "portfolio" || style.extras.length > 0) && (
+                {!profile && (
                   <section className="surface">
                     <h2>5. Extras</h2>
                     {state.mode === "portfolio" && (
@@ -339,22 +371,45 @@ export function ThumbnailEditor(): React.JSX.Element {
                         ))}
                       </fieldset>
                     )}
+                    {!["result", "meet"].includes(state.style) && (
+                      <div className="field">
+                        <label htmlFor="callout-text">Callout text</label>
+                        <input
+                          id="callout-text"
+                          maxLength={22}
+                          value={state.calloutText}
+                          onChange={(event) => {
+                            const calloutText = event.currentTarget.value;
+                            setState((current) => ({ ...current, calloutText }));
+                          }}
+                        />
+                        <p className="helper">
+                          Used with the play button or arrow in the safe callout area.
+                        </p>
+                      </div>
+                    )}
                     <div className="extra-toggles">
-                      {[...style.extras]
-                        .sort((a, b) => (a === b ? 0 : a === "arrow" ? -1 : 1))
-                        .map((key) => (
-                          <label className="toggle" key={key}>
-                            <span>{key === "arrow" ? "Curved arrow" : "Play button"}</span>
-                            <input
-                              type="checkbox"
-                              checked={state[key]}
-                              onChange={(event) => {
-                                const checked = event.currentTarget.checked;
-                                setState((current) => ({ ...current, [key]: checked }));
-                              }}
-                            />
-                          </label>
-                        ))}
+                      {(
+                        [
+                          ["arrow", "Curved arrow"],
+                          ["play", "Play button"],
+                          ["sparkles", "Sparkle accents"],
+                          ["stars", "Star strip"],
+                          ["border", "Accent frame"],
+                        ] as const
+                      ).map(([key, name]) => (
+                        <label className="toggle" key={key}>
+                          <span>{name}</span>
+                          <input
+                            type="checkbox"
+                            checked={state[key]}
+                            onChange={(event) => {
+                              const checked = event.currentTarget.checked;
+                              setState((current) => ({ ...current, [key]: checked }));
+                            }}
+                          />
+                        </label>
+                      ))}
                     </div>
                   </section>
                 )}

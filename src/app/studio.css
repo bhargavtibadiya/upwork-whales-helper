@@ -520,3 +520,35 @@ fieldset.mode-tabs,
     grid-template-columns: 1fr;
   }
 }
+
+.picker-heading {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 12px;
+}
+.picker-heading h2 {
+  margin: 0;
+}
+.carousel-nav {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: var(--ds-color-text-secondary);
+  font-size: 11px;
+  white-space: nowrap;
+}
+.studio-panel .carousel-nav button {
+  width: 34px;
+  height: 34px;
+  border: 1px solid var(--ds-color-border);
+  border-radius: 8px;
+  background: var(--ds-color-bg-sunken);
+  font-size: 20px;
+  color: var(--ds-color-text-primary);
+  cursor: pointer;
+}
+.studio-panel .carousel-nav button:hover {
+  background: var(--ds-btn-secondary-bg);
+}
