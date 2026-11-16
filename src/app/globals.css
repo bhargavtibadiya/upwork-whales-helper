@@ -1,0 +1,45 @@
+@import "tailwindcss";
+
+/*
+ * Risograph Print design system (docs/design-system/) mapped into Tailwind v4
+ * theme tokens. Two inks: pink drum + blue drum over warm paper.
+ */
+@theme inline {
+  --color-paper: #f4f1ea;
+  --color-surface: #fbf9f3;
+  --color-sunken: #e9e5da;
+  --color-ink: #1d1d1b;
+  --color-ink-soft: #3c3c38;
+  --color-ink-muted: #5f5f56;
+  --color-drum-pink: #ff48b0;
+  --color-drum-pink-hover: #f2359f;
+  --color-drum-blue: #0078bf;
+  --color-drum-blue-hover: #006aa8;
+
+  --font-display: "Space Grotesk", system-ui, sans-serif;
+  --font-body: "Work Sans", system-ui, sans-serif;
+
+  --shadow-card: 6px 6px 0 #0078bf;
+  --shadow-dropdown: 4px 4px 0 #ff48b0;
+  --shadow-focus: 3px 3px 0 #0078bf;
+  --shadow-btn-hover: 4px 4px 0 #0078bf;
+
+  --radius-riso: 2px;
+}
+
+body {
+  background: var(--color-paper);
+  color: var(--color-ink);
+  font-family: var(--font-body);
+}
+
+h1, h2, h3 {
+  font-family: var(--font-display);
+  letter-spacing: -0.01em;
+}
+
+/* [WHY] Riso focus ring must stay visible on every interactive element. */
+:focus-visible {
+  outline: none;
+  box-shadow: var(--shadow-focus);
+}
