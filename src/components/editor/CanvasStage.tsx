@@ -63,27 +63,28 @@ export function CanvasStage({ document: doc, imageData, selectedId, dispatch }: 
   const scale = displayWidth / doc.width;
   const displayHeight = Math.round(doc.height * scale);
 
+  // [WHY] No dep array: redraw after every render so scale, document, images
+  // and selection can never disagree with the last painted frame.
   useEffect(() => {
     const canvas = canvasRef.current;
     if (canvas === null) return;
     const ctx = canvas.getContext("2d");
     if (ctx === null) return;
-    ctx.save();
-    ctx.scale(scale, scale);
+    // [WHY] The bitmap is document-sized and CSS shrinks it to fit, so the
+    // renderer always draws at 1:1 document coordinates. Clear first or a
+    // redraw leaves ghosts.
+    ctx.setTransform(1, 0, 0, 1, 0, 0);
+    ctx.clearRect(0, 0, doc.width, doc.height);
     const { bounds } = renderDocument(ctx, doc, loaded);
-    ctx.restore();
     boundsRef.current = bounds;
     if (selectedId !== null && bounds[selectedId] !== undefined) {
       const b = bounds[selectedId];
-      ctx.save();
-      ctx.scale(scale, scale);
       ctx.strokeStyle = "#0078bf";
       ctx.lineWidth = 3 / scale;
       ctx.setLineDash([8 / scale, 6 / scale]);
       ctx.strokeRect(b.x - 6, b.y - 6, b.width + 12, b.height + 12);
-      ctx.restore();
     }
-  }, [doc, loaded, scale, selectedId]);
+  });
 
   const toDocCoords = useCallback(
     (event: React.PointerEvent<HTMLCanvasElement>): { x: number; y: number } => {

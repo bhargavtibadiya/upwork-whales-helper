@@ -79,9 +79,9 @@ const LAYOUTS: LayoutSpec[] = [
         x: w * 0.06, y: h * 0.34, text: "120K CLICKS", fontFamily: DISPLAY_FONT, fontSize: h * 0.17,
         fontWeight: 400, color: theme.ink, align: "left", lineHeight: 1, maxWidth: w * 0.9, uppercase: true,
       }),
-      shape({ shape: "rect", x: w * 0.06, y: h * 0.62, width: w * 0.88, height: h * 0.32, fill: theme.accentAlt, rotation: 0 }),
+      shape({ shape: "rect", x: w * 0.5, y: h * 0.66, width: w, height: h * 0.36, fill: theme.accentAlt, rotation: 0 }),
       image({
-        x: w * 0.5, y: h * 0.62, width: w * 0.84, height: h * 0.28,
+        x: w * 0.5, y: h * 0.66, width: w * 0.84, height: h * 0.28,
         src: null, circle: false, borderColor: null, borderWidth: 0,
         placeholder: "Screenshot of your work",
       }),
