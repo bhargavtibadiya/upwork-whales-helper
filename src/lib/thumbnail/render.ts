@@ -1,3 +1,4 @@
+import { editorial, decorationRail } from "./editorial";
 import { Brush, blend, translucent } from "./brush";
 import { dimensions, fieldValue, type Style, type ThumbnailState } from "./model";
 
@@ -1418,6 +1419,7 @@ export async function artworkFonts(): Promise<boolean> {
     "800 40px Montserrat",
     "900 40px Montserrat",
     "400 40px Anton",
+    "700 40px Manrope",
   ];
   await Promise.all(
     specs.map((font) =>
@@ -1447,7 +1449,8 @@ export function drawThumbnail(
   c.textBaseline = "alphabetic";
   c.imageSmoothingEnabled = true;
   c.imageSmoothingQuality = "high";
-  const b = new Brush(c, chosen, w, h);
+  const rail = state.mode === "profile" ? 0 : h * .085;
+  const b = new Brush(c, chosen, w, h - rail);
   const painters: Record<Style, (brush: Brush) => void> = {
     profile,
     result,
@@ -1465,7 +1468,14 @@ export function drawThumbnail(
     centered,
     statline,
     tagline,
+    spotlight: editorial, beforeafter: editorial, minimal: editorial, editorial, signature: editorial,
   };
-  painters[style](b);
+  const redesigned = !["profile", "result", "meet", "banner", "hello", "proof"].includes(style);
+  if (redesigned) editorial(b); else painters[style](b);
+  if (rail) decorationRail(b, h - rail, rail, redesigned);
+  if (state.mode !== "profile" && state.border) {
+    c.strokeStyle = b.palette.highlight; c.lineWidth = 5*b.scale;
+    c.strokeRect(10*b.scale,10*b.scale,w-20*b.scale,h-20*b.scale);
+  }
   c.restore();
 }
