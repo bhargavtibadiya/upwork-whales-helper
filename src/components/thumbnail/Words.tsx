@@ -108,6 +108,9 @@ export function Words({ state, setState }: WordsProps): React.JSX.Element | null
             {key === "headline" && state.style === "result" && (
               <p className="helper">Keep it short: a number and a word works best.</p>
             )}
+            {key === "headline" && state.style === "stat" && (
+              <p className="helper">Just the number, like 120K or $48K.</p>
+            )}
             {key === "headline" && state.style === "hello" && (
               <p className="helper">Short and friendly: hi, hey or hello.</p>
             )}

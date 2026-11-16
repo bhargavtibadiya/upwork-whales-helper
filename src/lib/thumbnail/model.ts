@@ -105,7 +105,7 @@ export const STYLES: StyleSpec[] = [
     id: "reviews",
     mode: "portfolio",
     name: "Client results",
-    fields: ["headline", "subline", "badge", "stats", "pill"],
+    fields: ["pill", "headline", "subline", "badge", "stats"],
     images: ["face"],
     extras: ["play", "arrow"],
     defaults: {
