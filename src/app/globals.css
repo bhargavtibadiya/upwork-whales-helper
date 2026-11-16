@@ -25,6 +25,8 @@
   --shadow-btn-hover: 4px 4px 0 #0078bf;
 
   --radius-riso: 2px;
+
+  --ease-riso: cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 body {
@@ -33,13 +35,87 @@ body {
   font-family: var(--font-body);
 }
 
-h1, h2, h3 {
+h1,
+h2,
+h3 {
   font-family: var(--font-display);
   letter-spacing: -0.01em;
+}
+
+::selection {
+  background: var(--color-drum-pink);
+  color: var(--color-ink);
 }
 
 /* [WHY] Riso focus ring must stay visible on every interactive element. */
 :focus-visible {
   outline: none;
   box-shadow: var(--shadow-focus);
+}
+
+/* Display title with visible misregistration: pink ghost offset behind ink. */
+.riso-title {
+  font-family: var(--font-display);
+  font-weight: 700;
+  letter-spacing: -0.01em;
+  text-shadow: 3px 3px 0 var(--color-drum-pink);
+}
+
+/* Duotone rule: ink line with a pink offset, like a misregistered separator. */
+.riso-rule {
+  border: 0;
+  height: 2px;
+  background: var(--color-ink);
+  box-shadow: 3px 3px 0 var(--color-drum-pink);
+}
+
+/* Zine-style numbered section label. */
+.riso-kicker {
+  font-family: var(--font-display);
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: 0.01em;
+  color: var(--color-ink);
+}
+.riso-kicker > span {
+  color: var(--color-drum-blue);
+  margin-right: 0.5em;
+}
+
+/* Paper panel with blue offset shadow. */
+.riso-card {
+  background: var(--color-surface);
+  border: var(--ds-border-width, 2px) solid var(--color-ink);
+  border-radius: var(--radius-riso);
+  box-shadow: var(--shadow-card);
+}
+
+/* Shared button motion: colour/shadow/transform only, 120ms print-press feel. */
+.riso-btn {
+  border-radius: var(--radius-riso);
+  transition:
+    box-shadow 120ms var(--ease-riso),
+    background-color 120ms var(--ease-riso),
+    transform 120ms var(--ease-riso);
+}
+.riso-btn:active:not(:disabled) {
+  transform: translate(3px, 3px);
+  box-shadow: none;
+}
+.riso-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+/* Pink badge with ink border. */
+.riso-badge {
+  display: inline-block;
+  background: var(--color-drum-pink);
+  color: var(--color-ink);
+  border: 2px solid var(--color-ink);
+  border-radius: var(--radius-riso);
+  padding: 3px 12px;
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: 0.01em;
 }
