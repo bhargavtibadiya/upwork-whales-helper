@@ -1,15 +1,26 @@
-import type { EditorDocument, ElementBounds, ImageElement, ShapeElement, TextElement } from "./types";
+import type {
+  EditorDocument,
+  ElementBounds,
+  ImageElement,
+  ShapeElement,
+  TextElement,
+} from "./types";
 
 // [WHY] Images arrive as a caller-supplied map so this module stays pure logic:
 // the browser passes HTMLImageElement, tests can pass any CanvasImageSource.
-export type RenderableImage = CanvasImageSource & { readonly width: number; readonly height: number };
+export type RenderableImage = CanvasImageSource & {
+  readonly width: number;
+  readonly height: number;
+};
 export type ImageMap = Record<string, RenderableImage>;
 
 export interface RenderResult {
   bounds: Record<string, ElementBounds>;
 }
 
-export function canvasFont(el: Pick<TextElement, "fontWeight" | "fontSize" | "fontFamily">): string {
+export function canvasFont(
+  el: Pick<TextElement, "fontWeight" | "fontSize" | "fontFamily">,
+): string {
   return `${el.fontWeight} ${el.fontSize}px "${el.fontFamily}", sans-serif`;
 }
 
@@ -88,7 +99,11 @@ function drawShape(ctx: CanvasRenderingContext2D, el: ShapeElement): ElementBoun
   return { x: left, y: top, width: el.width, height: el.height };
 }
 
-function drawImage(ctx: CanvasRenderingContext2D, el: ImageElement, images: ImageMap): ElementBounds {
+function drawImage(
+  ctx: CanvasRenderingContext2D,
+  el: ImageElement,
+  images: ImageMap,
+): ElementBounds {
   const left = el.x - el.width / 2;
   const top = el.y - el.height / 2;
   ctx.save();
@@ -126,7 +141,12 @@ function drawImage(ctx: CanvasRenderingContext2D, el: ImageElement, images: Imag
     if (el.circle) {
       ctx.arc(el.x, el.y, el.width / 2 + el.borderWidth / 2, 0, Math.PI * 2);
     } else {
-      ctx.rect(left - el.borderWidth / 2, top - el.borderWidth / 2, el.width + el.borderWidth, el.height + el.borderWidth);
+      ctx.rect(
+        left - el.borderWidth / 2,
+        top - el.borderWidth / 2,
+        el.width + el.borderWidth,
+        el.height + el.borderWidth,
+      );
     }
     ctx.stroke();
   }
@@ -147,7 +167,8 @@ function drawText(ctx: CanvasRenderingContext2D, el: TextElement): ElementBounds
     widest = Math.max(widest, ctx.measureText(line).width);
     ctx.fillText(line, el.x, firstY + index * step);
   });
-  const left = el.align === "center" ? el.x - widest / 2 : el.align === "right" ? el.x - widest : el.x;
+  const left =
+    el.align === "center" ? el.x - widest / 2 : el.align === "right" ? el.x - widest : el.x;
   return { x: left, y: el.y - blockHeight / 2, width: widest, height: blockHeight };
 }
 
@@ -164,7 +185,11 @@ function drawPlaceholderLabels(ctx: CanvasRenderingContext2D, doc: EditorDocumen
   }
 }
 
-export function renderDocument(ctx: CanvasRenderingContext2D, doc: EditorDocument, images: ImageMap): RenderResult {
+export function renderDocument(
+  ctx: CanvasRenderingContext2D,
+  doc: EditorDocument,
+  images: ImageMap,
+): RenderResult {
   const bounds: Record<string, ElementBounds> = {};
   drawBackground(ctx, doc);
   for (const el of doc.elements) {
@@ -176,7 +201,12 @@ export function renderDocument(ctx: CanvasRenderingContext2D, doc: EditorDocumen
   return { bounds };
 }
 
-export function hitTest(bounds: Record<string, ElementBounds>, doc: EditorDocument, x: number, y: number): string | null {
+export function hitTest(
+  bounds: Record<string, ElementBounds>,
+  doc: EditorDocument,
+  x: number,
+  y: number,
+): string | null {
   // [WHY] Later elements draw on top, so hit testing walks the z-order backwards.
   for (let i = doc.elements.length - 1; i >= 0; i -= 1) {
     const el = doc.elements[i];

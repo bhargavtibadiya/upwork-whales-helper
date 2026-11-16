@@ -1,5 +1,5 @@
+import { type ImageMap, type RenderableImage, renderDocument } from "./render";
 import type { BatchItem, EditorDocument } from "./types";
-import { renderDocument, type ImageMap, type RenderableImage } from "./render";
 
 export const CANVAS_FONT_FAMILIES = ["Anton", "Montserrat", "Space Grotesk", "Work Sans"];
 
@@ -66,10 +66,19 @@ function canvasToBlob(canvas: HTMLCanvasElement): Promise<Blob> {
 }
 
 export function fileStem(label: string): string {
-  return label.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/(^-|-$)/g, "") || "thumbnail";
+  return (
+    label
+      .toLowerCase()
+      .replace(/[^a-z0-9]+/g, "-")
+      .replace(/(^-|-$)/g, "") || "thumbnail"
+  );
 }
 
-export async function exportDocumentPng(doc: EditorDocument, images: ImageMap, label: string): Promise<void> {
+export async function exportDocumentPng(
+  doc: EditorDocument,
+  images: ImageMap,
+  label: string,
+): Promise<void> {
   await ensureFontsLoaded(doc);
   const canvas = renderToCanvas(doc, images);
   const blob = await canvasToBlob(canvas);

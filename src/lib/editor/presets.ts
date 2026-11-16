@@ -10,7 +10,13 @@ function isBackground(value: unknown): value is CanvasBackground {
 
 function isBrandPreset(value: unknown): value is BrandPreset {
   if (typeof value !== "object" || value === null) return false;
-  const candidate: { name?: unknown; savedAt?: unknown; themeId?: unknown; fontFamily?: unknown; background?: unknown } = value;
+  const candidate: {
+    name?: unknown;
+    savedAt?: unknown;
+    themeId?: unknown;
+    fontFamily?: unknown;
+    background?: unknown;
+  } = value;
   return (
     typeof candidate.name === "string" &&
     typeof candidate.savedAt === "string" &&
