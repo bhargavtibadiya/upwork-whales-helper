@@ -1,5 +1,5 @@
-import { editorial, decorationRail } from "./editorial";
 import { Brush, blend, translucent } from "./brush";
+import { decorationRail, editorial } from "./editorial";
 import { dimensions, fieldValue, type Style, type ThumbnailState } from "./model";
 
 function words(b: Brush, key: string, style: Style = b.state.style): string {
@@ -1449,7 +1449,12 @@ export function drawThumbnail(
   c.textBaseline = "alphabetic";
   c.imageSmoothingEnabled = true;
   c.imageSmoothingQuality = "high";
-  const rail = state.mode === "profile" ? 0 : h * .085;
+  const redesigned = !["profile", "result", "meet", "banner", "hello", "proof"].includes(style);
+  const railPrimary = redesigned || !["result", "meet"].includes(style);
+  const hasRail =
+    state.mode !== "profile" &&
+    (state.stars || state.sparkles || (railPrimary && (state.arrow || state.play)));
+  const rail = hasRail ? h * 0.12 : 0;
   const b = new Brush(c, chosen, w, h - rail);
   const painters: Record<Style, (brush: Brush) => void> = {
     profile,
@@ -1468,14 +1473,19 @@ export function drawThumbnail(
     centered,
     statline,
     tagline,
-    spotlight: editorial, beforeafter: editorial, minimal: editorial, editorial, signature: editorial,
+    spotlight: editorial,
+    beforeafter: editorial,
+    minimal: editorial,
+    editorial,
+    signature: editorial,
   };
-  const redesigned = !["profile", "result", "meet", "banner", "hello", "proof"].includes(style);
-  if (redesigned) editorial(b); else painters[style](b);
-  if (rail) decorationRail(b, h - rail, rail, redesigned);
+  if (redesigned) editorial(b);
+  else painters[style](b);
+  if (rail) decorationRail(b, h - rail, rail, railPrimary);
   if (state.mode !== "profile" && state.border) {
-    c.strokeStyle = b.palette.highlight; c.lineWidth = 5*b.scale;
-    c.strokeRect(10*b.scale,10*b.scale,w-20*b.scale,h-20*b.scale);
+    c.strokeStyle = b.palette.highlight;
+    c.lineWidth = 5 * b.scale;
+    c.strokeRect(10 * b.scale, 10 * b.scale, w - 20 * b.scale, h - 20 * b.scale);
   }
   c.restore();
 }
