@@ -1,9 +1,9 @@
 "use client";
 
 import { useCallback, useEffect, useRef, useState } from "react";
-import type { EditorDocument, ElementBounds } from "@/lib/editor/types";
-import { hitTest, renderDocument, type ImageMap } from "@/lib/editor/render";
 import type { EditorAction } from "@/hooks/useEditor";
+import { hitTest, type ImageMap, renderDocument } from "@/lib/editor/render";
+import type { EditorDocument, ElementBounds } from "@/lib/editor/types";
 
 interface CanvasStageProps {
   document: EditorDocument;
@@ -117,7 +117,12 @@ export function CanvasStage({ document: doc, imageData, selectedId, dispatch }: 
       const drag = dragRef.current;
       if (drag === null) return;
       const point = toDocCoords(event);
-      dispatch({ type: "moveElement", id: drag.id, x: Math.round(point.x + drag.offsetX), y: Math.round(point.y + drag.offsetY) });
+      dispatch({
+        type: "moveElement",
+        id: drag.id,
+        x: Math.round(point.x + drag.offsetX),
+        y: Math.round(point.y + drag.offsetY),
+      });
     },
     [dispatch, toDocCoords],
   );

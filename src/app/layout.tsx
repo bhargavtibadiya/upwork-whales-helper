@@ -11,13 +11,16 @@ const montserrat = Montserrat({ subsets: ["latin"], variable: "--font-montserrat
 
 export const metadata: Metadata = {
   title: "Upwork Whales Helper",
-  description: "Browser-local image editor for Upwork profile pictures, portfolio thumbnails and intro-video thumbnails.",
+  description:
+    "Browser-local image editor for Upwork profile pictures, portfolio thumbnails and intro-video thumbnails.",
 };
 
 export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
   return (
     <html lang="en" data-ds="risograph-print">
-      <body className={`${spaceGrotesk.variable} ${workSans.variable} ${anton.variable} ${montserrat.variable}`}>
+      <body
+        className={`${spaceGrotesk.variable} ${workSans.variable} ${anton.variable} ${montserrat.variable}`}
+      >
         {children}
       </body>
     </html>

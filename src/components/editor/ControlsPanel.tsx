@@ -1,10 +1,10 @@
 "use client";
 
-import type { ModeId } from "@/lib/editor/types";
-import { MODES, SIZES, modeById } from "@/lib/editor/sizes";
+import type { EditorAction, EditorState } from "@/hooks/useEditor";
 import { layoutsForMode } from "@/lib/editor/layouts";
+import { MODES, modeById, SIZES } from "@/lib/editor/sizes";
 import { CANVAS_THEMES } from "@/lib/editor/themes";
-import type { EditorState, EditorAction } from "@/hooks/useEditor";
+import type { ModeId } from "@/lib/editor/types";
 
 interface ControlsPanelProps {
   state: EditorState;
@@ -13,7 +13,8 @@ interface ControlsPanelProps {
   dispatch: React.Dispatch<EditorAction>;
 }
 
-const btnBase = "border-2 border-ink bg-surface px-3 py-2 text-left text-sm font-bold transition-shadow hover:shadow-btn-hover";
+const btnBase =
+  "border-2 border-ink bg-surface px-3 py-2 text-left text-sm font-bold transition-shadow hover:shadow-btn-hover";
 const btnActive = "bg-drum-pink text-ink shadow-dropdown";
 
 export function ControlsPanel({ state, layoutId, onLayout, dispatch }: ControlsPanelProps) {
@@ -100,7 +101,11 @@ export function ControlsPanel({ state, layoutId, onLayout, dispatch }: ControlsP
           <button type="button" className={btnBase} onClick={() => dispatch({ type: "addText" })}>
             + Text
           </button>
-          <button type="button" className={btnBase} onClick={() => dispatch({ type: "addImageSlot" })}>
+          <button
+            type="button"
+            className={btnBase}
+            onClick={() => dispatch({ type: "addImageSlot" })}
+          >
             + Image
           </button>
         </div>
