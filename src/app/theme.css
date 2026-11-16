@@ -1,0 +1,52 @@
+/*
+ * Dark theme for Nordic Calm. Dark is the default; light stays available through the toggle.
+ * [WHY] Only tokens change here, so every component picks the theme up without edits.
+ */
+
+html[data-theme="dark"] {
+  color-scheme: dark;
+}
+
+html[data-theme="dark"] [data-ds="nordic-calm"],
+html[data-theme="dark"] body {
+  --ds-color-bg-base: #0e1318;
+  --ds-color-bg-surface: #161d25;
+  --ds-color-bg-sunken: #0b1015;
+  --ds-color-bg-secondary: #1c252f;
+  --ds-color-bg-overlay: rgba(5, 8, 11, 0.62);
+
+  --ds-color-primary: #7cb4d4;
+  --ds-color-primary-hover: #93c2de;
+  --ds-color-primary-active: #6aa3c4;
+  --ds-color-primary-fg: #0a1620;
+
+  --ds-color-text-primary: #e8eef3;
+  --ds-color-text-secondary: #b6c3ce;
+  --ds-color-text-tertiary: #97a7b5;
+  --ds-color-text-muted: #97a7b5;
+  --ds-color-text-disabled: #5d6d7b;
+
+  --ds-color-border-light: #24303b;
+  --ds-color-border-medium: #33424f;
+  --ds-color-border-strong: #5a6e7f;
+
+  --ds-color-success: #5fd391;
+  --ds-color-success-bg: #12301f;
+  --ds-color-warning: #f0be5c;
+  --ds-color-warning-bg: #33260a;
+  --ds-color-error: #ff8a90;
+  --ds-color-error-bg: #381417;
+
+  --ds-shadow-card: 0 1px 2px rgba(0, 0, 0, 0.4);
+  --ds-shadow-btn-hover: 0 2px 8px rgba(0, 0, 0, 0.45);
+  --ds-shadow-focus: 0 0 0 3px rgba(124, 180, 212, 0.35);
+  --ds-focus-ring: 0 0 0 3px rgba(124, 180, 212, 0.35);
+
+  --ds-btn-secondary-bg: #213240;
+  --ds-btn-secondary-text: #e8eef3;
+  --ds-btn-secondary-border: #213240;
+  --ds-btn-secondary-hover-bg: #2a3f50;
+  --ds-btn-outline-text: #e8eef3;
+  --ds-btn-outline-border: #5a6e7f;
+  --ds-btn-outline-hover-bg: #1c252f;
+}
