@@ -1,7 +1,7 @@
 import { describe, expect, it } from "vitest";
+import { fileStem } from "../src/lib/editor/export";
 import { buildDocument, layoutsForMode, resetIdCounter } from "../src/lib/editor/layouts";
 import { canvasFont, hitTest, renderDocument, wrapLines } from "../src/lib/editor/render";
-import { fileStem } from "../src/lib/editor/export";
 import { themeById } from "../src/lib/editor/themes";
 import type { TextElement } from "../src/lib/editor/types";
 
@@ -59,7 +59,12 @@ describe("buildDocument", () => {
       const layouts = layoutsForMode(mode);
       expect(layouts.length).toBeGreaterThan(0);
       for (const layout of layouts) {
-        const doc = buildDocument(mode, mode === "intro" ? "16x9" : mode === "profile" ? "1x1" : "4x3", layout.id, themeById("riso-paper"));
+        const doc = buildDocument(
+          mode,
+          mode === "intro" ? "16x9" : mode === "profile" ? "1x1" : "4x3",
+          layout.id,
+          themeById("riso-paper"),
+        );
         expect(doc.elements.length).toBeGreaterThan(0);
         expect(doc.width).toBeGreaterThan(0);
       }
@@ -67,7 +72,9 @@ describe("buildDocument", () => {
   });
 
   it("rejects a size that the mode does not allow", () => {
-    expect(() => buildDocument("profile", "16x9", "ringed-photo", themeById("riso-paper"))).toThrow();
+    expect(() =>
+      buildDocument("profile", "16x9", "ringed-photo", themeById("riso-paper")),
+    ).toThrow();
   });
 });
 
