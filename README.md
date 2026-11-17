@@ -17,6 +17,14 @@ npm run build
 
 The four intro styles are Meet me, Title banner, Big hello, and Watch this + proof. Each has its own fields. Names, roles, images, crop settings, and other shared values survive style switches. Images can be chosen, dropped, or pasted; they are never sent to a server.
 
+## Preset links
+
+The address bar always carries the current design as a `?p=` preset, so copying
+the URL (or the "Copy link to this design" button) shares a link that reopens
+that exact design. Presets can reference the bundled demo images under
+`public/demo/` by same-origin path; a visitor's own uploads are never
+serialised and never leave their browser.
+
 ## Browser verification
 
 Start the production server, then run:

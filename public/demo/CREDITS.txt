@@ -1,0 +1,25 @@
+Demo images used by the example presets (loaded by ?p= links in articles).
+
+All photos come from Unsplash (https://unsplash.com/license) and belong to
+their photographers. Faces are cut out locally (background removed) so the
+ring/background controls show through.
+
+Faces:
+- face-ava.png    https://unsplash.com/photos/1494790108377-be9c29b29330
+- face-noah.png   https://unsplash.com/photos/1507003211169-0a1dd7228f2d
+- face-marcus.png https://unsplash.com/photos/1500648767791-00dcc994a43e
+- face-sofia.png  https://unsplash.com/photos/1438761681033-6461ffad8d80
+- face-elias.png  https://unsplash.com/photos/1472099645785-5658abf4ff4e
+- face-mira.png   https://unsplash.com/photos/1544005313-94ddf0286df2
+- face-leo.png    https://unsplash.com/photos/1506794778202-cad84cf45f1d
+- face-zoe.png    https://unsplash.com/photos/1534528741775-53994a69daeb
+
+Project screenshots:
+- shot-dashboard.jpg https://unsplash.com/photos/1460925895917-afdab827c52f
+- shot-mobile.jpg    https://unsplash.com/photos/1551650975-87deedd944c3
+- shot-design.jpg    https://unsplash.com/photos/1547658719-da2b51169166
+- shot-code.jpg      https://unsplash.com/photos/1498050108023-c5249f4df085
+- shot-analytics.jpg https://unsplash.com/photos/1551288049-bebda4e38f71
+
+Names, stats and words in the examples are demonstration content, not real
+client results or endorsements.

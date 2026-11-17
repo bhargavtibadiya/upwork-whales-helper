@@ -29,6 +29,9 @@ export interface Crop {
   zoom: number;
   x: number;
   y: number;
+  // Same-origin path when the image came from a bundled preset asset, so the
+  // preset link can reload it. Local uploads never set this.
+  src?: string;
 }
 export interface Ring {
   color: string;

@@ -17,6 +17,7 @@ import {
   spec,
   type ThumbnailState,
 } from "@/lib/thumbnail/model";
+import { applyPreset, decodePreset, encodePreset, loadPresetImage } from "@/lib/thumbnail/preset";
 import { artworkFonts, drawThumbnail } from "@/lib/thumbnail/render";
 import { SiteFooter } from "../site/SiteFooter";
 import { SiteHeader } from "../site/SiteHeader";
@@ -79,6 +80,7 @@ function modeSteps(mode: Mode): string[] {
 export function ThumbnailEditor(): React.JSX.Element {
   const [state, setState] = useState<ThumbnailState>(() => initialState());
   const [hashReady, setHashReady] = useState(false);
+  const [copied, setCopied] = useState(false);
   const [error, setError] = useState("");
   const [fontsReady, setFontsReady] = useState(true);
   const [downloading, setDownloading] = useState(false);
@@ -93,6 +95,20 @@ export function ThumbnailEditor(): React.JSX.Element {
       ?.scrollIntoView({ block: "nearest", inline: "nearest" });
   }, [state.style]);
   useEffect(() => {
+    // A `?p=` preset link reopens an exact design. Apply it before the hash
+    // sync and point the hash at the preset's mode so the two never fight.
+    const preset = decodePreset(window.location.search);
+    if (preset) {
+      history.replaceState(null, "", `#${preset.mode}`);
+      setState(applyPreset(preset));
+      for (const kind of ["face", "shot"] as const) {
+        const image = preset[kind];
+        if (!image) continue;
+        void loadPresetImage(image, kind).then((crop) => {
+          if (crop) setState((current) => ({ ...current, [kind]: crop }));
+        });
+      }
+    }
     const sync = () => {
       const mode = location.hash.slice(1);
       if (validMode(mode)) setState((current) => changeMode(current, mode));
@@ -103,8 +119,19 @@ export function ThumbnailEditor(): React.JSX.Element {
     return () => window.removeEventListener("hashchange", sync);
   }, []);
   useEffect(() => {
-    if (hashReady) history.replaceState(null, "", `#${state.mode}`);
-  }, [state.mode, hashReady]);
+    // The address bar always carries the current design, so copying the URL
+    // at any moment gives a working preset link.
+    if (hashReady) history.replaceState(null, "", `?p=${encodePreset(state)}#${state.mode}`);
+  }, [state, hashReady]);
+  const copyPresetLink = async () => {
+    try {
+      await navigator.clipboard.writeText(window.location.href);
+      setCopied(true);
+      setTimeout(() => setCopied(false), 2000);
+    } catch {
+      setError("Could not copy the link. Copy it from the address bar instead.");
+    }
+  };
   const onCrop = useCallback(
     (kind: ImageKind, crop: Crop) => setState((current) => ({ ...current, [kind]: crop })),
     [],
@@ -603,6 +630,13 @@ export function ThumbnailEditor(): React.JSX.Element {
                     {width} x {height} px
                   </span>
                   <span>Your images never leave your browser. Nothing is uploaded.</span>
+                  <button
+                    type="button"
+                    className="text-button"
+                    onClick={() => void copyPresetLink()}
+                  >
+                    {copied ? "Copied!" : "Copy link to this design"}
+                  </button>
                 </div>
                 {state.mode === "intro" && (
                   <p className="preview-note">
