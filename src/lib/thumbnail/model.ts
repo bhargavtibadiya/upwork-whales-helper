@@ -52,6 +52,8 @@ export interface ThumbnailState {
   shot: Crop;
   arrow: boolean;
   play: boolean;
+  playOffsetX: number;
+  playOffsetY: number;
   calloutText: string;
   font: "original" | "Montserrat" | "Manrope" | "Anton";
   overlayLabel: boolean;
@@ -508,6 +510,8 @@ export function initialState(mode: Mode = "portfolio"): ThumbnailState {
     backdrop: "glow",
     arrow: false,
     play: true,
+    playOffsetX: 0,
+    playOffsetY: 0,
     ring: {
       color: "#8360F5",
       preset: "whales",

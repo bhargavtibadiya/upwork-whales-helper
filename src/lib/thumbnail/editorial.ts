@@ -1,4 +1,5 @@
 import { type Box, type Brush, translucent } from "./brush";
+import { desktopFrame, playCenter } from "./geometry";
 import { skillIcon } from "./icons";
 import { fieldValue } from "./model";
 
@@ -125,8 +126,23 @@ function portrait(b: Brush, box: Box, circle = false): void {
   b.face([x, y, w, h], "none");
   c.restore();
 }
-function screen(b: Brush, box: Box): void {
-  b.frame(box, 16 * b.scale, 4 * b.scale);
+function screen(b: Brush, box: Box, desktop = false): void {
+  const border = 4 * b.scale;
+  const fitted = desktop ? desktopFrame(box, border, b.state.browserFrame ? 38 * b.scale : 0) : box;
+  b.frame(fitted, 16 * b.scale, border);
+}
+function themePanel(b: Brush, box: Box, reverse = false): void {
+  const [x, y, w, h] = box;
+  const gradient = b.ctx.createLinearGradient(x, reverse ? y + h : y, x + w, reverse ? y : y + h);
+  gradient.addColorStop(0, b.palette.surface);
+  gradient.addColorStop(0.55, b.palette.base);
+  gradient.addColorStop(1, b.palette.accent);
+  b.ctx.save();
+  b.ctx.fillStyle = gradient;
+  b.ctx.fillRect(x, y, w, h);
+  b.ctx.fillStyle = "rgba(0,0,0,.28)";
+  b.ctx.fillRect(x, y, w, h);
+  b.ctx.restore();
 }
 function smallRule(b: Brush, x: number, y: number, w: number, color = b.palette.highlight): void {
   b.rect([x, y, w, 3 * b.scale], color);
@@ -299,7 +315,7 @@ export function editorial(b: Brush): void {
     eyebrow(b, value(b, "pill"), m, h * 0.17, w * 0.29);
     block(b, headline, [m, h * 0.26, w * 0.29, h * 0.35], 85);
     block(b, sub, [m, h * 0.66, w * 0.29, h * 0.12], 24, muted);
-    screen(b, [w * 0.42, h * 0.14, w * 0.52, h * 0.72]);
+    screen(b, [w * 0.42, h * 0.14, w * 0.52, h * 0.72], true);
   } else if (id === "duo") {
     portrait(b, [m, h * 0.09, w * 0.32, h * 0.82]);
     eyebrow(b, "IMPACT REPORT", w * 0.44, h * 0.09, w * 0.5);
@@ -307,7 +323,7 @@ export function editorial(b: Brush): void {
     line(b, sub, [w * 0.44, h * 0.38, w * 0.5, h * 0.06], 24 * s, muted);
     metrics(b, [w * 0.44, h * 0.51, w * 0.5, h * 0.36], "stack");
   } else if (id === "spotlight") {
-    screen(b, [w * 0.4, h * 0.12, w * 0.54, h * 0.76]);
+    screen(b, [w * 0.4, h * 0.12, w * 0.54, h * 0.76], true);
     b.rect([m, h * 0.16, w * 0.41, h * 0.66], t.surface, 22 * s, translucent(t.line, 0.3), s);
     eyebrow(b, value(b, "pill"), m + w * 0.035, h * 0.2, w * 0.34);
     block(b, headline, [m + w * 0.035, h * 0.29, w * 0.32, h * 0.23], 77);
@@ -327,7 +343,7 @@ export function editorial(b: Brush): void {
     block(b, headline, [m + w * 0.03, h * 0.53, w * 0.37, h * 0.2], 70, t.foreground);
     line(b, sub, [m, h * 0.88, cw, h * 0.05], 23 * s, muted);
   } else if (id === "split") {
-    b.rect([w * 0.56, 0, w * 0.44, h], t.accent);
+    themePanel(b, [w * 0.56, 0, w * 0.44, h], true);
     portrait(b, [w * 0.59, h * 0.07, w * 0.35, h * 0.86]);
     eyebrow(b, "INTRODUCING", m, h * 0.2, w * 0.44);
     block(b, name, [m, h * 0.3, w * 0.44, h * 0.24], 130);
@@ -359,7 +375,7 @@ export function editorial(b: Brush): void {
       line(b, txt, [xx + w * 0.065, yy, w * 0.15, h * 0.11], 23 * s, white, "left", 700);
     });
   } else if (id === "editorial") {
-    b.rect([0, 0, w * 0.43, h], t.accent);
+    themePanel(b, [0, 0, w * 0.43, h]);
     portrait(b, [m, h * 0.1, w * 0.31, h * 0.8]);
     eyebrow(b, value(b, "pill"), w * 0.49, h * 0.16, w * 0.45);
     block(b, name, [w * 0.49, h * 0.28, w * 0.45, h * 0.22], 125);
@@ -422,10 +438,9 @@ export function compositionCallout(b: Brush): void {
   const [rx, ry] = anchor,
     w = b.width,
     h = b.height,
-    cx = rx * w,
-    cy = ry * h,
     s = b.scale,
     r = 33 * s;
+  const [cx, cy] = playCenter(w, h, rx * w, ry * h, r, b.state.playOffsetX, b.state.playOffsetY);
   const usePill = ["result", "proof", "stat", "reviews", "split"].includes(b.state.style),
     text = (usePill ? value(b, "pill") : b.state.calloutText).trim();
   const showLabel = b.state.overlayLabel && Boolean(text);
