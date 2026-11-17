@@ -4,14 +4,14 @@ import { createServer } from "vite";
 
 const dir = process.env.EVIDENCE_DIR ?? "/downloads/upwork-stress";
 await mkdir(dir, { recursive: true });
-const server = await createServer({ server: { port: 3101 }, appType: "custom" });
+const server = await createServer({ server: { port: 3102 }, appType: "custom" });
 await server.listen();
 const browser = await chromium.launch({
   executablePath: "/usr/bin/google-chrome",
   args: ["--no-sandbox"],
 });
 const p = await browser.newPage();
-await p.goto("http://localhost:3101/src/app/fonts.css");
+await p.goto("http://localhost:3102/src/app/fonts.css");
 await p.setContent('<link rel="stylesheet" href="/src/app/fonts.css"><canvas></canvas>');
 const face =
   "data:image/jpeg;base64," +
@@ -101,10 +101,10 @@ const result = await p.evaluate(
                                 : "TRANSFORM YOUR BUSINESS",
                 );
               }
-            for (let mask = 0; mask < 32; mask++) {
+            for (let mask = 0; mask < 16; mask++) {
               tag = `${spec.id}/${size}/${font}/${text}/${mask}`;
               const extras = Object.fromEntries(
-                ["arrow", "play", "sparkles", "stars", "border"].map((key, i) => [
+                ["arrow", "play", "browserFrame", "overlayLabel"].map((key, i) => [
                   key,
                   Boolean(mask & (1 << i)),
                 ]),
@@ -112,7 +112,7 @@ const result = await p.evaluate(
               drawThumbnail(canvas, { ...state, ...extras });
               checks++;
               if (
-                mask === 31 &&
+                mask === 15 &&
                 ((font === "Manrope" && text === "long") ||
                   (["cover", "signature"].includes(spec.id) && text !== "long"))
               )
@@ -128,9 +128,9 @@ const result = await p.evaluate(
   { face, shot },
 );
 for (const { name, data } of result.saved)
-  await writeFile(dir + "/" + name, Buffer.from(data.split(",")[1], "base64"));
+  await writeFile(`${dir}/${name}`, Buffer.from(data.split(",")[1], "base64"));
 delete result.saved;
-await writeFile(dir + "/results.json", JSON.stringify(result, null, 2));
+await writeFile(`${dir}/results.json`, JSON.stringify(result, null, 2));
 console.log(
   JSON.stringify({
     checks: result.checks,

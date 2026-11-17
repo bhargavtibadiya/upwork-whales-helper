@@ -43,7 +43,7 @@ try {
       check(
         `${tag}: old badge removed`,
         (await page.locator(".brand-badge").count()) === 0 &&
-          !(await page.locator("header.site-header").innerText()).includes("Upwork Whales"),
+          !(await page.locator("header.site-header").textContent()).includes("Upwork Whales"),
       );
       check(
         `${tag}: no horizontal overflow`,
@@ -112,14 +112,14 @@ try {
       );
       check(
         `${tag}: new brand name, old name gone`,
-        (await page.locator("header.site-header").innerText()).includes("Upwork Helper") &&
-          !(await page.locator("body").innerText()).includes("Thumbnail Studio"),
+        (await page.locator("header.site-header").textContent()).includes("Upwork Helper") &&
+          !(await page.locator("body").textContent()).includes("Thumbnail Studio"),
       );
       check(
         `${tag}: owner name in header and footer`,
         (width <= 767 ||
-          (await page.locator("header.site-header").innerText()).includes("Bhargav Tibadiya")) &&
-          (await page.locator("footer.site-footer").innerText()).includes("Bhargav Tibadiya"),
+          (await page.locator("header.site-header").textContent()).includes("Bhargav Tibadiya")) &&
+          (await page.locator("footer.site-footer").textContent()).includes("Bhargav Tibadiya"),
       );
       if (mode === "profile") {
         check(

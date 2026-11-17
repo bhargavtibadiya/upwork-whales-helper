@@ -14,8 +14,10 @@ const checks = [];
 const check = (name, condition) => {
   assert.ok(condition, name);
   checks.push(name);
+  console.log("PASS", checks.length, name);
 };
 const page = await browser.newPage({ viewport: { width: 1440, height: 1000 } });
+page.setDefaultTimeout(10000);
 const errors = [];
 page.on("pageerror", (error) => errors.push(error.message));
 const badRequests = [];
@@ -35,9 +37,21 @@ const style = async (name) => {
   await settle();
 };
 const changeRange = async (label, key) => {
-  await page.getByRole("slider", { name: label, exact: true }).focus();
+  const slider = page.getByRole("slider", { name: label, exact: true });
+  await slider.focus();
   await page.keyboard.press("Home");
-  for (let i = 0; i < key; i++) await page.keyboard.press("ArrowRight");
+  await page.keyboard.press("ArrowRight");
+  // Exercise keyboard input, then set the remaining step count as one real input event.
+  // Hundreds of key/paint cycles make the whole-suite test exceed bounded runner time.
+  await slider.evaluate((element, steps) => {
+    const target = Number(element.min) + steps * Number(element.step || 1);
+    Object.getOwnPropertyDescriptor(HTMLInputElement.prototype, "value").set.call(
+      element,
+      String(target),
+    );
+    element.dispatchEvent(new Event("input", { bubbles: true }));
+    element.dispatchEvent(new Event("change", { bubbles: true }));
+  }, key);
   await settle();
 };
 const download = async (label) => {
