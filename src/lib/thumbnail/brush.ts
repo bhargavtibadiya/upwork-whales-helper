@@ -479,9 +479,12 @@ export class Brush {
       const cap = this.cap(),
         tw = c.measureText(label).width,
         ph = cap + 20 * s,
-        px = lx + margin,
+        pw = tw + 2 * padX,
+        // Spotlight and minimal overlap the image's bottom-left with a card.
+        right = this.state.style === "spotlight" || this.state.style === "minimal",
+        px = right ? lx + lw - margin - pw : lx + margin,
         py = ly + lh - margin - ph;
-      this.rect([px, py, tw + 2 * padX, ph], "rgba(0,0,0,.58)", ph / 2);
+      this.rect([px, py, pw, ph], "rgba(0,0,0,.58)", ph / 2);
       this.text(label, px + padX, py + ph / 2 + cap / 2, size, "#fff", Infinity, 700);
     }
     c.restore();
