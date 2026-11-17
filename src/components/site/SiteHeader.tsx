@@ -26,8 +26,7 @@ export function SiteHeader({ onLogoClick }: SiteHeaderProps): React.JSX.Element 
   return (
     <header className="site-header">
       <div className="studio-container">
-        {/* biome-ignore lint/a11y/useValidAnchor: the logo is a real link to the homepage top; the handler also resets the editor */}
-        <a className="logo" href="#top" onClick={onLogoClick}>
+        <a className="logo" href="/" onClick={onLogoClick}>
           <LogoMark />
           <span className="logo-text">
             Upwork Helper

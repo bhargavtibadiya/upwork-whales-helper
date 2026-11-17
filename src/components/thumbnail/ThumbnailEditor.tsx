@@ -87,16 +87,23 @@ export function ThumbnailEditor(): React.JSX.Element {
   const stateRef = useRef(state);
   stateRef.current = state;
   const styleListRef = useRef<HTMLFieldSetElement>(null);
+  const resetStateRef = useRef<ThumbnailState | null>(null);
+  const loadVersionRef = useRef(0);
   useEffect(() => {
-    // [WHY] The picker scrolls sideways; keep the chosen preset visible when it
-    // changes or the mode loads with a preset that sits offscreen.
-    styleListRef.current
-      ?.querySelector(`[data-style="${state.style}"]`)
-      ?.scrollIntoView({ block: "nearest", inline: "nearest" });
+    // [WHY] Scroll only the carousel, never the document containing it.
+    const list = styleListRef.current;
+    const selected = list?.querySelector<HTMLElement>(`[data-style="${state.style}"]`);
+    if (list && selected) {
+      const outer = list.getBoundingClientRect();
+      const inner = selected.getBoundingClientRect();
+      if (inner.left < outer.left) list.scrollLeft += inner.left - outer.left;
+      else if (inner.right > outer.right) list.scrollLeft += inner.right - outer.right;
+    }
   }, [state.style]);
   useEffect(() => {
     // A `?p=` preset link reopens an exact design. Apply it before the hash
     // sync and point the hash at the preset's mode so the two never fight.
+    const loadVersion = ++loadVersionRef.current;
     const preset = decodePreset(window.location.search);
     if (preset) {
       history.replaceState(null, "", `#${preset.mode}`);
@@ -105,7 +112,8 @@ export function ThumbnailEditor(): React.JSX.Element {
         const image = preset[kind];
         if (!image) continue;
         void loadPresetImage(image, kind).then((crop) => {
-          if (crop) setState((current) => ({ ...current, [kind]: crop }));
+          if (crop && loadVersion === loadVersionRef.current)
+            setState((current) => ({ ...current, [kind]: crop }));
         });
       }
     }
@@ -121,7 +129,14 @@ export function ThumbnailEditor(): React.JSX.Element {
   useEffect(() => {
     // The address bar always carries the current design, so copying the URL
     // at any moment gives a working preset link.
-    if (hashReady) history.replaceState(null, "", `?p=${encodePreset(state)}#${state.mode}`);
+    if (hashReady)
+      history.replaceState(
+        null,
+        "",
+        state === resetStateRef.current
+          ? window.location.pathname
+          : `?p=${encodePreset(state)}#${state.mode}`,
+      );
   }, [state, hashReady]);
   const copyPresetLink = async () => {
     try {
@@ -138,15 +153,20 @@ export function ThumbnailEditor(): React.JSX.Element {
   );
   const onRing = (patch: Partial<Ring>) =>
     setState((current) => ({ ...current, ring: { ...current.ring, ...patch } }));
-  // [WHY] A preset link fills every field; visitors need an obvious way back
-  // to a blank editor. The URL-sync effect rewrites the address bar from the
-  // fresh state, so the copied link keeps working after a reset.
+  // [WHY] Invalidate pending demo-image loads so they cannot restore an image
+  // after reset. Keep the homepage URL clean until the next edit.
   const resetEditor = useCallback(() => {
-    setState(initialState());
+    ++loadVersionRef.current;
+    const fresh = initialState();
+    resetStateRef.current = fresh;
+    setState(fresh);
+    setCopied(false);
     setError("");
+    history.replaceState(null, "", window.location.pathname);
     window.scrollTo({ top: 0, behavior: "smooth" });
   }, []);
   const onLogoClick = (event: React.MouseEvent<HTMLAnchorElement>) => {
+    if (event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) return;
     event.preventDefault();
     resetEditor();
   };

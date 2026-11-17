@@ -60,8 +60,8 @@ check(
   (await page.locator('.palette-option[aria-pressed="true"]', { hasText: "Purple" }).count()) === 1,
 );
 check(
-  "address bar still carries a working preset",
-  page.url().includes("?p=") && page.url().endsWith("#portfolio"),
+  "reset leaves a clean homepage URL",
+  new URL(page.url()).search === "" && new URL(page.url()).hash === "",
 );
 
 // 2. The editor keeps working after a reset.
@@ -70,6 +70,8 @@ check(
   "editor accepts new input after reset",
   (await page.getByLabel("Project name in image").inputValue()) === "After Reset",
 );
+
+check("editing after reset restores shareable URL", new URL(page.url()).searchParams.has("p"));
 
 // 3. A preset with a bundled demo image; the header logo clears it and the mode.
 const withImage = {
@@ -87,17 +89,26 @@ await page.locator("a.logo").click();
 await page.waitForTimeout(600);
 check(
   "logo reset returns to the default mode",
-  page.url().includes("?p=") && page.url().endsWith("#portfolio"),
+  new URL(page.url()).search === "" && new URL(page.url()).hash === "",
 );
-check(
-  "logo reset clears the loaded image",
-  (await page.locator(".file-line").count()) === 0,
-);
+check("logo reset clears the loaded image", (await page.locator(".file-line").count()) === 0);
 check(
   "logo reset shows the default headline field",
   (await page.getByLabel("Big result").inputValue()) === "120K CLICKS",
 );
 check("logo reset scrolls to the top", (await page.evaluate(() => window.scrollY)) === 0);
+
+// A delayed demo response must not refill the editor after a reset.
+await page.route("**/demo/face-ava.png", async (route) => {
+  await new Promise((resolve) => setTimeout(resolve, 700));
+  await route.continue();
+});
+await page.goto(`${base}/?p=${encode(withImage)}#profile`, { waitUntil: "domcontentloaded" });
+await page.getByRole("button", { name: "Start fresh" }).click();
+await page.waitForTimeout(1200);
+check("late preset image cannot undo reset", (await page.locator(".file-line").count()) === 0);
+check("late preset image leaves URL clean", new URL(page.url()).search === "");
+await page.unroute("**/demo/face-ava.png");
 
 // 4. Resetting on a fresh homepage is a no-op that keeps the editor alive.
 await page.getByRole("button", { name: "Start fresh" }).click();
