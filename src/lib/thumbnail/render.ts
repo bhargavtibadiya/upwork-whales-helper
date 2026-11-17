@@ -1,11 +1,12 @@
 import { Brush, blend, translucent } from "./brush";
-import { decorationRail, editorial } from "./editorial";
-import { dimensions, fieldValue, type Style, type ThumbnailState } from "./model";
+import { compositionCallout, editorial } from "./editorial";
+import { skillIcon } from "./icons";
+import { dimensions, fieldValue, type Style, setField, type ThumbnailState } from "./model";
 
 function words(b: Brush, key: string, style: Style = b.state.style): string {
   return fieldValue(b.state, key, style).replace(/\s+/g, " ").trim();
 }
-function statRows(b: Brush, count = 2): [string, string][] {
+function statRows(b: Brush, count = 3): [string, string][] {
   return Array.from({ length: count }, (_, i): [string, string] => [
     words(b, `stat${i + 1}v`),
     words(b, `stat${i + 1}l`),
@@ -272,219 +273,29 @@ function proof(b: Brush): void {
   if (n) y += bh + gap;
   if (svc) service(b, svc, cx - sw / 2, y, sw, sh, ss);
 }
-function skillIcon(b: Brush, kind: string, cx: number, cy: number, r: number): void {
-  const c = b.ctx;
-  c.save();
-  c.translate(cx, cy);
-  c.scale(r / 40, r / 40);
-  c.lineWidth = 3.4;
-  c.strokeStyle = b.palette.highlight;
-  c.fillStyle = b.palette.highlight;
-  c.lineCap = "round";
-  c.lineJoin = "round";
-  const path = (points: number[][]) => {
-    c.beginPath();
-    points.forEach(([x, y], i) => {
-      if (i) c.lineTo(x, y);
-      else c.moveTo(x, y);
-    });
-    c.stroke();
-  };
-  if (kind === "database") {
-    for (const y of [-12, 0, 12]) {
-      c.beginPath();
-      c.ellipse(0, y, 16, 5.2, 0, 0, y === -12 ? Math.PI * 2 : Math.PI);
-      c.stroke();
-    }
-    path([
-      [-16, -12],
-      [-16, 12],
-    ]);
-    path([
-      [16, -12],
-      [16, 12],
-    ]);
-  } else if (kind === "code") {
-    c.strokeRect(-19, -16, 38, 26);
-    path([
-      [0, 10],
-      [0, 17],
-      [-8, 17],
-      [8, 17],
-    ]);
-    path([
-      [-6, -8],
-      [-11, -3],
-      [-6, 2],
-    ]);
-    path([
-      [6, -8],
-      [11, -3],
-      [6, 2],
-    ]);
-    path([
-      [2, -9],
-      [-2, 3],
-    ]);
-  } else if (kind === "ai") {
-    for (const [x, y, rr] of [
-      [-4, 2, 15],
-      [12, -12, 7],
-      [12, 12, 4],
-    ]) {
-      c.beginPath();
-      c.moveTo(x, y - rr);
-      c.quadraticCurveTo(x + rr * 0.2, y - rr * 0.2, x + rr, y);
-      c.quadraticCurveTo(x + rr * 0.2, y + rr * 0.2, x, y + rr);
-      c.quadraticCurveTo(x - rr * 0.2, y + rr * 0.2, x - rr, y);
-      c.quadraticCurveTo(x - rr * 0.2, y - rr * 0.2, x, y - rr);
-      c.fill();
-    }
-  } else if (kind === "cloud") {
-    c.beginPath();
-    c.arc(-12, 5, 8, Math.PI * 0.5, Math.PI * 1.5);
-    c.arc(0, -1, 11, Math.PI * 1.1, Math.PI * 1.95);
-    c.arc(12, 5, 7, Math.PI * 1.4, Math.PI * 2.5);
-    c.closePath();
-    c.stroke();
-  } else if (kind === "check") {
-    c.beginPath();
-    c.arc(0, 0, 17, 0, Math.PI * 2);
-    c.stroke();
-    path([
-      [-8, 0],
-      [-2, 6],
-      [9, -6],
-    ]);
-  } else if (kind === "mail") {
-    c.strokeRect(-18, -12, 36, 24);
-    path([
-      [-17, -10],
-      [0, 2],
-      [17, -10],
-    ]);
-  } else if (kind === "mobile") {
-    c.strokeRect(-10, -18, 20, 36);
-    path([
-      [-3, 12],
-      [3, 12],
-    ]);
-  } else if (kind === "search") {
-    c.beginPath();
-    c.arc(-3, -3, 11, 0, Math.PI * 2);
-    c.stroke();
-    path([
-      [5, 5],
-      [16, 16],
-    ]);
-  } else if (kind === "chart") {
-    path([
-      [-17, -17],
-      [-17, 16],
-      [18, 16],
-    ]);
-    for (let i = 0; i < 3; i++) c.fillRect(-10 + i * 9, 6 - i * 8, 5, 7 + i * 8);
-  } else if (kind === "bolt") {
-    path([
-      [4, -19],
-      [-12, 2],
-      [-1, 2],
-      [-4, 19],
-      [12, -4],
-      [1, -4],
-      [4, -19],
-    ]);
-  } else if (kind === "chat") {
-    c.beginPath();
-    c.roundRect(-18.4, -15.6, 36.8, 25.2, 6);
-    c.stroke();
-    path([
-      [-9, 10],
-      [-12, 18],
-      [-1, 10],
-    ]);
-    for (const x of [-8.4, 0, 8.4]) {
-      c.beginPath();
-      c.arc(x, -3, 2, 0, Math.PI * 2);
-      c.fill();
-    }
-  } else if (kind === "gear") {
-    for (const radius of [5.2, 12]) {
-      c.beginPath();
-      c.arc(0, 0, radius, 0, Math.PI * 2);
-      c.stroke();
-    }
-    c.lineWidth = 6.12;
-    for (let i = 0; i < 8; i++) {
-      const a = (i * Math.PI) / 4;
-      path([
-        [Math.cos(a) * 14, Math.sin(a) * 14],
-        [Math.cos(a) * 18, Math.sin(a) * 18],
-      ]);
-    }
-  } else if (kind === "video") {
-    c.beginPath();
-    c.roundRect(-18.4, -12, 25, 24, 3.2);
-    c.stroke();
-    path([
-      [8.4, -3],
-      [18.4, -9.6],
-      [18.4, 9.6],
-      [8.4, 3],
-      [8.4, -3],
-    ]);
-  } else if (kind === "cart") {
-    path([
-      [-19, -14.4],
-      [-13.6, -14.4],
-      [-8.4, 7.2],
-      [12, 7.2],
-      [17.2, -8.4],
-      [-11.2, -8.4],
-    ]);
-    for (const x of [-6, 9.6]) {
-      c.beginPath();
-      c.arc(x, 14.4, 2.6, 0, Math.PI * 2);
-      c.fill();
-    }
-  } else if (kind === "pen") {
-    path([
-      [-16.4, 16.4],
-      [-14.8, 8.4],
-      [9.2, -15.6],
-      [15.6, -9.2],
-      [-8.4, 14.8],
-      [-16.4, 16.4],
-    ]);
-    path([
-      [4.4, -10.8],
-      [10.8, -4.4],
-    ]);
-  }
-
-  c.restore();
-}
 function banner(b: Brush): void {
   const { width: w, height: h } = b,
     s = b.scale,
     t = b.palette,
     c = b.ctx;
   b.background(w * 0.75, h * 0.42, Math.max(w, h) * 0.38);
-  const grid = c.createLinearGradient(w * 0.3, 0, w, 0);
-  grid.addColorStop(0, translucent(t.line, 0));
-  grid.addColorStop(1, translucent(t.line, 0.14));
-  c.strokeStyle = grid;
-  c.lineWidth = Math.max(1, 1.2 * s);
-  c.beginPath();
-  for (let x = w * 0.3 + 56 * s; x <= w; x += 56 * s) {
-    c.moveTo(x, 0);
-    c.lineTo(x, h);
+  if (b.state.backdrop !== "clean") {
+    const grid = c.createLinearGradient(w * 0.3, 0, w, 0);
+    grid.addColorStop(0, translucent(t.line, 0));
+    grid.addColorStop(1, translucent(t.line, 0.14));
+    c.strokeStyle = grid;
+    c.lineWidth = Math.max(1, 1.2 * s);
+    c.beginPath();
+    for (let x = w * 0.3 + 56 * s; x <= w; x += 56 * s) {
+      c.moveTo(x, 0);
+      c.lineTo(x, h);
+    }
+    for (let y = 28 * s; y <= h; y += 56 * s) {
+      c.moveTo(w * 0.3, y);
+      c.lineTo(w, y);
+    }
+    c.stroke();
   }
-  for (let y = 28 * s; y <= h; y += 56 * s) {
-    c.moveTo(w * 0.3, y);
-    c.lineTo(w, y);
-  }
-  c.stroke();
   b.face([w * 0.5, 0, w * 0.5, h], "left");
   const x = 54 * s,
     cw = w * 0.55 - x;
@@ -759,8 +570,14 @@ function stat(b: Brush): void {
   let vs = 46 * s,
     ls = 23 * s;
   for (const [v, l] of rows) {
-    vs = Math.min(vs, b.fit(v, 46 * s, rows.length === 2 ? inner / 2 - 18 * s : inner, 800));
-    ls = Math.min(ls, b.fit(l, 23 * s, rows.length === 2 ? inner / 2 - 18 * s : inner, 500));
+    vs = Math.min(
+      vs,
+      b.fit(v, 46 * s, rows.length > 1 ? inner / rows.length - 18 * s : inner, 800),
+    );
+    ls = Math.min(
+      ls,
+      b.fit(l, 23 * s, rows.length > 1 ? inner / rows.length - 18 * s : inner, 500),
+    );
   }
   b.font(vs, 800);
   const vc = b.cap();
@@ -816,7 +633,7 @@ function stat(b: Brush): void {
       c.fillRect(x + 34 * s, yy, inner, 2 * s);
       yy += 34 * s;
       rows.forEach(([v, l], i) => {
-        const xx = rows.length === 2 ? x + 34 * s + inner * (i ? 0.75 : 0.25) : cx;
+        const xx = rows.length > 1 ? x + 34 * s + (inner / rows.length) * (i + 0.5) : cx;
         b.text(v, xx, yy + vc, vs, "#fff", Infinity, 800, "center");
         b.text(l, xx, yy + vc + 18 * s + lc, ls, "rgba(255,255,255,.66)", Infinity, 500, "center");
       });
@@ -900,7 +717,7 @@ function reviews(b: Brush): void {
   for (let i = 0; i < 5; i++)
     b.star(starsX + 21 * s + i * 50 * s, y + rh / 2 + 2 * s, 21 * s, t.highlight);
   y += rh + gap;
-  const bw = rows.length === 2 ? (cw - 16 * s) / 2 : cw * 0.6;
+  const bw = rows.length > 1 ? (cw - 16 * s * (rows.length - 1)) / rows.length : cw * 0.6;
   rows.forEach(([v, l], i) => {
     const xx = m + i * (bw + 16 * s);
     b.rect([xx, y, bw, sh], "rgba(0,0,0,.5)", 16 * s);
@@ -1449,13 +1266,14 @@ export function drawThumbnail(
   c.textBaseline = "alphabetic";
   c.imageSmoothingEnabled = true;
   c.imageSmoothingQuality = "high";
-  const redesigned = !["profile", "result", "meet", "banner", "hello", "proof"].includes(style);
-  const railPrimary = redesigned || !["result", "meet"].includes(style);
-  const hasRail =
-    state.mode !== "profile" &&
-    (state.stars || state.sparkles || (railPrimary && (state.arrow || state.play)));
-  const rail = hasRail ? h * 0.12 : 0;
-  const b = new Brush(c, chosen, w, h - rail);
+  const redesigned =
+    !["profile", "result", "meet", "banner", "hello", "proof"].includes(style) &&
+    !(state.originalLayout && ["stat", "reviews"].includes(style));
+  // Button words are drawn once, in the image overlay. No duplicate header/button row.
+  const baseState = ["result", "proof", "stat", "reviews", "split"].includes(style)
+    ? setField({ ...chosen, play: false, arrow: false }, "pill", "")
+    : chosen;
+  const b = new Brush(c, baseState, w, h);
   const painters: Record<Style, (brush: Brush) => void> = {
     profile,
     result,
@@ -1481,11 +1299,6 @@ export function drawThumbnail(
   };
   if (redesigned) editorial(b);
   else painters[style](b);
-  if (rail) decorationRail(b, h - rail, rail, railPrimary);
-  if (state.mode !== "profile" && state.border) {
-    c.strokeStyle = b.palette.highlight;
-    c.lineWidth = 5 * b.scale;
-    c.strokeRect(10 * b.scale, 10 * b.scale, w - 20 * b.scale, h - 20 * b.scale);
-  }
+  if (style !== "profile" && style !== "meet") compositionCallout(new Brush(c, chosen, w, h));
   c.restore();
 }

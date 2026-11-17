@@ -350,7 +350,23 @@ export function ThumbnailEditor(): React.JSX.Element {
                 )}{" "}
                 {!profile && (
                   <section className="surface">
-                    <h2>5. Extras</h2>
+                    <h2>5. Finishing touches</h2>
+                    {["stat", "reviews"].includes(state.style) && (
+                      <div className="field">
+                        <label htmlFor="original-layout">Layout version</label>
+                        <select
+                          id="original-layout"
+                          value={state.originalLayout ? "original" : "reworked"}
+                          onChange={(e) => {
+                            const originalLayout = e.currentTarget.value === "original";
+                            setState((current) => ({ ...current, originalLayout }));
+                          }}
+                        >
+                          <option value="reworked">Reworked composition</option>
+                          <option value="original">Original reference composition</option>
+                        </select>
+                      </div>
+                    )}
                     {state.mode === "portfolio" && (
                       <fieldset className="segments" aria-label="Size">
                         {(
@@ -371,31 +387,95 @@ export function ThumbnailEditor(): React.JSX.Element {
                         ))}
                       </fieldset>
                     )}
-                    {!["result", "meet"].includes(state.style) && (
-                      <div className="field">
-                        <label htmlFor="callout-text">Callout text</label>
+                    {!["result", "meet", "proof"].includes(state.style) &&
+                      !(state.originalLayout && ["stat", "reviews"].includes(state.style)) && (
+                        <div className="field">
+                          <label htmlFor="callout-text">Callout text</label>
+                          <input
+                            id="callout-text"
+                            maxLength={22}
+                            value={state.calloutText}
+                            onChange={(event) => {
+                              const calloutText = event.currentTarget.value;
+                              setState((current) => ({ ...current, calloutText }));
+                            }}
+                          />
+                          <p className="helper">
+                            Overlays an image corner, away from the face and headline. Clear for an
+                            icon-only button.
+                          </p>
+                        </div>
+                      )}
+                    <p className="helper mb-4">
+                      Play controls overlay the media. They never add a row or shrink your artwork.
+                    </p>
+                    <div className="field">
+                      <label htmlFor="artwork-backdrop">Background treatment</label>
+                      <select
+                        id="artwork-backdrop"
+                        value={state.backdrop}
+                        onChange={(e) => {
+                          const backdrop = e.currentTarget.value as ThumbnailState["backdrop"];
+                          setState((current) => ({ ...current, backdrop }));
+                        }}
+                      >
+                        <option value="glow">Studio glow</option>
+                        <option value="clean">Clean solid</option>
+                      </select>
+                    </div>
+                    {spec(state.style).images.includes("shot") && (
+                      <label className="toggle">
+                        <span>Browser-window screenshot</span>
                         <input
-                          id="callout-text"
-                          maxLength={22}
-                          value={state.calloutText}
-                          onChange={(event) => {
-                            const calloutText = event.currentTarget.value;
-                            setState((current) => ({ ...current, calloutText }));
+                          type="checkbox"
+                          checked={state.browserFrame}
+                          onChange={(e) => {
+                            const browserFrame = e.currentTarget.checked;
+                            setState((current) => ({ ...current, browserFrame }));
                           }}
                         />
-                        <p className="helper">
-                          Used with the play button or arrow in the safe callout area.
-                        </p>
-                      </div>
+                      </label>
+                    )}
+                    {spec(state.style).images.includes("face") &&
+                      !["meet", "hello", "banner", "proof", "centered", "signature"].includes(
+                        state.style,
+                      ) &&
+                      !(state.originalLayout && ["stat", "reviews"].includes(state.style)) && (
+                        <div className="field">
+                          <label htmlFor="portrait-shape">Portrait shape</label>
+                          <select
+                            id="portrait-shape"
+                            value={state.portraitShape}
+                            onChange={(e) => {
+                              const portraitShape = e.currentTarget
+                                .value as ThumbnailState["portraitShape"];
+                              setState((current) => ({ ...current, portraitShape }));
+                            }}
+                          >
+                            <option value="rounded">Soft corners</option>
+                            <option value="square">Square corners</option>
+                            <option value="circle">Circle crop</option>
+                          </select>
+                        </div>
+                      )}
+                    {state.style !== "meet" && (
+                      <label className="toggle">
+                        <span>Show button label</span>
+                        <input
+                          type="checkbox"
+                          checked={state.overlayLabel}
+                          onChange={(e) => {
+                            const overlayLabel = e.currentTarget.checked;
+                            setState((current) => ({ ...current, overlayLabel }));
+                          }}
+                        />
+                      </label>
                     )}
                     <div className="extra-toggles">
                       {(
                         [
                           ["arrow", "Curved arrow"],
                           ["play", "Play button"],
-                          ["sparkles", "Sparkle accents"],
-                          ["stars", "Star strip"],
-                          ["border", "Accent frame"],
                         ] as const
                       ).map(([key, name]) => (
                         <label className="toggle" key={key}>

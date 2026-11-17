@@ -1,310 +1,466 @@
 import { type Box, type Brush, translucent } from "./brush";
+import { skillIcon } from "./icons";
 import { fieldValue } from "./model";
 
 const value = (b: Brush, key: string) => fieldValue(b.state, key).replace(/\s+/g, " ").trim();
-function label(
+const white = "#f8f8fb",
+  muted = "#c0bfcd";
+function line(
   b: Brush,
   text: string,
-  x: number,
-  y: number,
-  width: number,
+  box: Box,
   size: number,
-  color = "#fff",
-  weight = 800,
-): void {
-  if (!text) return;
-  const fitted = b.fit(text, size, width, weight);
-  b.text(text, x, y + b.cap(), fitted, color, width, weight);
+  color = white,
+  align: CanvasTextAlign = "left",
+  weight = 700,
+): number {
+  if (!text) return 0;
+  const [x, y, w, h] = box,
+    c = b.ctx;
+  const fitted = b.fit(text, size, w, weight),
+    mt = c.measureText(text);
+  const asc = mt.actualBoundingBoxAscent,
+    desc = mt.actualBoundingBoxDescent;
+  b.text(
+    text,
+    align === "center" ? x + w / 2 : align === "right" ? x + w : x,
+    y + (h - asc - desc) / 2 + asc,
+    fitted,
+    color,
+    w,
+    weight,
+    align,
+  );
+  return fitted;
 }
-function title(b: Brush, text: string, box: Box, color = "#fff", max = 96): void {
-  if (!text) return;
+function block(
+  b: Brush,
+  text: string,
+  box: Box,
+  max: number,
+  color = white,
+  align: CanvasTextAlign = "left",
+  vertical: "top" | "center" = "center",
+): number {
+  if (!text) return 0;
   const [x, y, w, h] = box;
-  let lines = [text],
-    size = Math.min(max * b.scale, h * 0.7);
-  for (; size > 12; size -= 1) {
+  let size = Math.min(max * b.scale, h),
+    lines: string[] = [];
+  for (; size > 10; size -= 0.5) {
     b.font(size, 800);
     lines = [];
-    let line = "";
+    let current = "";
     for (const word of text.split(" ")) {
-      const next = line ? `${line} ${word}` : word;
-      if (line && b.ctx.measureText(next).width > w) {
-        lines.push(line);
-        line = word;
-      } else line = next;
+      const next = current ? `${current} ${word}` : word;
+      if (current && b.ctx.measureText(next).width > w) {
+        lines.push(current);
+        current = word;
+      } else current = next;
     }
-    if (line) lines.push(line);
+    if (current) lines.push(current);
     if (
       lines.length <= 3 &&
-      lines.length * size * 1.17 <= h &&
+      lines.length * size * 1.12 <= h &&
       lines.every((l) => b.ctx.measureText(l).width <= w)
     )
       break;
   }
+  const lh = size * 1.12,
+    total = lines.length * lh,
+    top = vertical === "top" ? y : y + (h - total) / 2;
   lines.forEach((l, i) => {
-    label(b, l, x, y + i * size * 1.17, w, size, color);
+    line(b, l, [x, top + i * lh, w, lh], size, color, align, 800);
   });
+  return total;
+}
+function headingPair(b: Brush, a: string, z: string, box: Box, max: number): void {
+  if (!z) {
+    block(b, a, box, max);
+    return;
+  }
+  if (!a) {
+    block(b, z, box, max, b.palette.highlight);
+    return;
+  }
+  const [x, y, w, h] = box;
+  let size = max * b.scale;
+  while (size > 12) {
+    b.font(size, 800);
+    if (Math.max(b.ctx.measureText(a).width, b.ctx.measureText(z).width) <= w && size * 2.15 <= h)
+      break;
+    size -= 0.5;
+  }
+  const lh = size * 1.08,
+    top = y + (h - 2 * lh) / 2;
+  line(b, a, [x, top, w, lh], size, white, "left", 800);
+  line(b, z, [x, top + lh, w, lh], size, b.palette.highlight, "left", 800);
+}
+function eyebrow(
+  b: Brush,
+  text: string,
+  x: number,
+  y: number,
+  w: number,
+  color = b.palette.highlight,
+): void {
+  line(b, text, [x, y, w, b.height * 0.045], 20 * b.scale, color, "left", 700);
 }
 function portrait(b: Brush, box: Box, circle = false): void {
-  const [x, y, w, h] = box,
-    c = b.ctx;
-  b.rect(box, translucent(b.palette.glow, 0.17), Math.min(w, h) * 0.08);
+  let [x, y, w, h] = box;
+  circle ||= b.state.portraitShape === "circle";
+  if (circle) {
+    const side = Math.min(w, h);
+    x += (w - side) / 2;
+    y += (h - side) / 2;
+    w = side;
+    h = side;
+  }
+  const c = b.ctx;
   c.save();
   c.beginPath();
-  if (circle) c.arc(x + w / 2, y + h / 2, Math.min(w, h) / 2, 0, Math.PI * 2);
-  else c.roundRect(x, y, w, h, Math.min(w, h) * 0.08);
+  if (circle) c.arc(x + w / 2, y + h / 2, w / 2, 0, Math.PI * 2);
+  else c.roundRect(x, y, w, h, b.state.portraitShape === "square" ? 0 : 20 * b.scale);
   c.clip();
-  b.face(box, "none");
+  b.rect([x, y, w, h], b.palette.surface);
+  b.face([x, y, w, h], "none");
   c.restore();
 }
 function screen(b: Brush, box: Box): void {
-  b.frame(box, 14 * b.scale, 4 * b.scale);
+  b.frame(box, 16 * b.scale, 4 * b.scale);
 }
-function stats(b: Brush, box: Box, vertical = false): void {
+function smallRule(b: Brush, x: number, y: number, w: number, color = b.palette.highlight): void {
+  b.rect([x, y, w, 3 * b.scale], color);
+}
+function metricRows(b: Brush): string[][] {
+  return [1, 2, 3]
+    .map((i) => [value(b, `stat${i}v`), value(b, `stat${i}l`)])
+    .filter((r) => r.some(Boolean));
+}
+type MetricStyle = "tiles" | "rules" | "paper" | "stack" | "capsule";
+function metrics(b: Brush, box: Box, style: MetricStyle): void {
   const [x, y, w, h] = box,
-    rows = [1, 2, 3]
-      .map((i) => [value(b, `stat${i}v`), value(b, `stat${i}l`)])
-      .filter((r) => r.some(Boolean));
+    rows = metricRows(b),
+    vertical = style === "stack",
+    s = b.scale,
+    t = b.palette;
+  const gap = style === "rules" ? 0 : 16 * s,
+    cw = vertical ? w : (w - gap * (rows.length - 1)) / Math.max(rows.length, 1),
+    ch = vertical ? (h - gap * (rows.length - 1)) / Math.max(rows.length, 1) : h;
+  const pad = Math.min(24 * s, cw * 0.12),
+    labelSizes = rows.map((r) => b.fit(r[1], Math.min(22 * s, ch * 0.2), cw - pad * 2, 600));
+  const numberSizes = rows.map((r) => b.fit(r[0], Math.min(58 * s, ch * 0.37), cw - pad * 2, 800));
+  const ns = Math.min(...numberSizes),
+    ls = Math.min(...labelSizes);
   rows.forEach(([v, l], i) => {
-    const gap = 12 * b.scale,
-      cw = vertical ? w : (w - gap * (rows.length - 1)) / rows.length,
-      ch = vertical ? (h - gap * (rows.length - 1)) / rows.length : h;
     const xx = x + (vertical ? 0 : i * (cw + gap)),
       yy = y + (vertical ? i * (ch + gap) : 0),
-      pad = 18 * b.scale;
-    b.rect(
-      [xx, yy, cw, ch],
-      translucent(b.palette.highlight, 0.09),
-      12 * b.scale,
-      b.palette.line,
-      1 * b.scale,
-    );
-    label(
-      b,
-      v,
-      xx + pad,
-      yy + ch * 0.18,
-      cw - pad * 2,
-      Math.min(48 * b.scale, ch * 0.33),
-      b.palette.highlight,
-    );
-    label(
-      b,
-      l,
-      xx + pad,
-      yy + ch * 0.65,
-      cw - pad * 2,
-      Math.min(20 * b.scale, ch * 0.18),
-      "#ddd",
-      600,
-    );
+      light = style === "paper";
+    if (style === "tiles")
+      b.rect(
+        [xx, yy, cw, ch],
+        translucent(t.highlight, 0.12),
+        16 * s,
+        translucent(t.line, 0.35),
+        s,
+      );
+    if (light) b.rect([xx, yy, cw, ch], "#f1f0f5", 8 * s);
+    if (style === "capsule") b.rect([xx, yy, cw, ch], t.surface, ch * 0.18, t.line, s);
+    if (style === "stack") {
+      b.rect([xx, yy, cw, ch], translucent(t.highlight, 0.1), 12 * s);
+      b.rect([xx, yy, 4 * s, ch], t.highlight, 2 * s);
+    }
+    if (style === "rules" && i)
+      b.rect([xx, yy + ch * 0.18, s, ch * 0.64], translucent(t.line, 0.4));
+    b.font(ns, 800);
+    const vm = b.ctx.measureText(v),
+      va = vm.actualBoundingBoxAscent,
+      vd = vm.actualBoundingBoxDescent;
+    b.font(ls, 600);
+    const lm = b.ctx.measureText(l),
+      la = lm.actualBoundingBoxAscent,
+      ld = lm.actualBoundingBoxDescent;
+    const g = v && l ? 14 * s : 0,
+      total = (v ? va + vd : 0) + g + (l ? la + ld : 0),
+      top = yy + (ch - total) / 2;
+    if (v)
+      b.text(
+        v,
+        xx + cw / 2,
+        top + va,
+        ns,
+        light ? t.base : t.highlight,
+        cw - pad * 2,
+        800,
+        "center",
+      );
+    if (l)
+      b.text(
+        l,
+        xx + cw / 2,
+        top + (v ? va + vd : 0) + g + la,
+        ls,
+        light ? "#575565" : muted,
+        cw - pad * 2,
+        600,
+        "center",
+      );
   });
 }
-function rule(b: Brush, x: number, y: number, w: number): void {
-  b.rect([x, y, w, 3 * b.scale], b.palette.highlight);
+function specialties(b: Brush, text: string, box: Box, numbered = false): void {
+  const [x, y, w, h] = box,
+    items = text
+      .split(/[·,|]/)
+      .map((x) => x.trim())
+      .filter(Boolean)
+      .slice(0, 5),
+    gap = 12 * b.scale,
+    ch = (h - gap * (items.length - 1)) / Math.max(1, items.length),
+    t = b.palette;
+  items.forEach((txt, i) => {
+    const yy = y + i * (ch + gap),
+      r = Math.min(ch * 0.29, 19 * b.scale),
+      cx = x + r,
+      cy = yy + ch / 2;
+    b.circle(cx, cy, r, t.accent);
+    line(
+      b,
+      numbered ? String(i + 1) : "+",
+      [cx - r, cy - r, r * 2, r * 2],
+      r * 0.95,
+      t.foreground,
+      "center",
+      800,
+    );
+    line(
+      b,
+      txt,
+      [x + r * 2 + 18 * b.scale, yy, w - r * 2 - 18 * b.scale, ch],
+      27 * b.scale,
+      white,
+      "left",
+      600,
+    );
+    if (i < items.length - 1)
+      b.rect(
+        [x + r * 2 + 18 * b.scale, yy + ch + gap / 2, w - r * 2 - 18 * b.scale, b.scale],
+        translucent(t.line, 0.2),
+      );
+  });
 }
 
-// Every composition ends above the dedicated decoration rail painted by render.ts.
-// Coordinates are fractions of the content canvas, not text-dependent guesses.
+// Each layout has a separate hierarchy. Shared primitives supply measured type and insets,
+// not a shared footer or repeated card composition.
 export function editorial(b: Brush): void {
   const w = b.width,
     h = b.height,
-    m = w * 0.055,
+    m = w * 0.06,
+    cw = w - 2 * m,
     t = b.palette,
-    cw = w - 2 * m;
-  b.background(w * 0.65, h * 0.35, Math.max(w, h) * 0.65);
-  const id = b.state.style,
+    s = b.scale,
+    id = b.state.style,
     headline = value(b, "headline"),
     sub = value(b, "subline"),
     name = value(b, "name"),
     role = value(b, "role");
-  if (id === "checklist") {
-    portrait(b, [w * 0.66, m, w * 0.285, h - m * 2]);
-    label(b, "THE DELIVERABLES", m, m, w * 0.52, 22 * b.scale, t.highlight);
-    title(b, headline, [m, h * 0.16, w * 0.53, h * 0.22]);
-    const items = value(b, "services").split(/[·,|]/).filter(Boolean).slice(0, 5),
-      rh = h * 0.085;
-    items.forEach((text, i) => {
-      const y = h * 0.43 + i * (rh + h * 0.018);
-      b.circle(m + rh * 0.3, y + rh * 0.5, rh * 0.28, t.accent);
-      label(
-        b,
-        String(i + 1).padStart(2, "0"),
-        m + rh * 0.09,
-        y + rh * 0.32,
-        rh * 0.45,
-        rh * 0.28,
-        t.foreground,
-      );
-      label(b, text.trim(), m + rh * 0.85, y + rh * 0.25, w * 0.45, rh * 0.4, "#fff", 600);
-      rule(b, m + rh * 0.85, y + rh, w * 0.43);
-    });
-  } else if (id === "cover") {
-    label(b, value(b, "pill"), m, m, cw, 24 * b.scale, t.highlight);
-    title(b, headline, [m, h * 0.14, cw, h * 0.17]);
-    label(b, sub, m, h * 0.33, cw, 25 * b.scale, "#ccc", 500);
-    screen(b, [m, h * 0.43, cw, h * 0.52]);
-  } else if (id === "duo" || id === "stat") {
-    portrait(b, [m, m, w * 0.35, h - m * 2]);
-    const x = w * 0.45,
-      ww = w - x - m;
-    label(
-      b,
-      id === "duo" ? "MEASURABLE IMPACT" : value(b, "pill"),
-      x,
-      m,
-      ww,
-      23 * b.scale,
-      t.highlight,
-    );
-    title(b, headline, [x, h * 0.17, ww, h * 0.24], "#fff", 132);
-    label(b, sub, x, h * 0.44, ww, 28 * b.scale, "#ddd", 600);
-    stats(b, [x, h * 0.56, ww, h * 0.27]);
-    if (id === "stat") label(b, value(b, "services"), x, h * 0.9, ww, 20 * b.scale, "#bbb", 500);
+  b.background(w * 0.74, h * 0.4, Math.max(w, h) * 0.7);
+  if (id === "stat") {
+    portrait(b, [w * 0.59, h * 0.09, w * 0.35, h * 0.82]);
+    eyebrow(b, "SELECTED RESULTS", m, h * 0.1, w * 0.47);
+    block(b, headline, [m, h * 0.22, w * 0.47, h * 0.23], 154);
+    block(b, sub, [m, h * 0.46, w * 0.47, h * 0.11], 32, muted);
+    metrics(b, [m, h * 0.63, w * 0.47, h * 0.17], "rules");
+    line(b, value(b, "services"), [m, h * 0.84, w * 0.47, h * 0.055], 20 * s, muted, "left", 500);
   } else if (id === "reviews") {
-    const x = m,
-      ww = w * 0.55;
-    label(b, value(b, "badge"), x, m, ww, 23 * b.scale, t.highlight);
-    title(b, headline, [x, h * 0.16, ww, h * 0.19]);
-    title(b, sub, [x, h * 0.36, ww, h * 0.14], t.highlight, 70);
-    stats(b, [x, h * 0.59, ww, h * 0.25]);
-    label(b, value(b, "pill"), x, h * 0.91, ww, 25 * b.scale, "#ddd", 600);
-    portrait(b, [w * 0.68, m, w * 0.27, h - m * 2]);
+    portrait(b, [w * 0.62, h * 0.08, w * 0.32, h * 0.84]);
+    eyebrow(b, value(b, "badge"), m, h * 0.09, w * 0.51);
+    headingPair(b, headline, sub, [m, h * 0.2, w * 0.51, h * 0.32], 88);
+    metrics(b, [m, h * 0.59, w * 0.51, h * 0.24], "tiles");
   } else if (id === "quote") {
-    portrait(b, [w * 0.68, m, w * 0.27, h - m * 2]);
-    label(b, "CLIENT VOICE", m, m, w * 0.55, 24 * b.scale, t.highlight);
-    b.text("“", m, h * 0.29, 160 * b.scale, t.highlight);
-    title(b, value(b, "quote"), [m, h * 0.3, w * 0.54, h * 0.37], "#fff", 64);
-    rule(b, m, h * 0.75, w * 0.15);
-    label(b, name, m, h * 0.81, w * 0.54, 30 * b.scale);
-    label(
+    portrait(b, [w * 0.61, h * 0.09, w * 0.33, h * 0.82]);
+    eyebrow(b, "CLIENT PERSPECTIVE", m, h * 0.1, w * 0.47);
+    line(b, "\u201c", [m, h * 0.19, w * 0.15, h * 0.13], 132 * s, t.highlight, "left", 800);
+    block(b, value(b, "quote"), [m, h * 0.31, w * 0.48, h * 0.35], 62);
+    smallRule(b, m, h * 0.73, w * 0.08);
+    line(b, name, [m, h * 0.77, w * 0.48, h * 0.07], 28 * s);
+    line(
       b,
-      value(b, "badge") ? `${value(b, "badge")}  /  5 client rating` : "",
-      m,
-      h * 0.91,
-      w * 0.54,
-      20 * b.scale,
+      value(b, "badge") ? `${value(b, "badge")} / 5 client rating` : "",
+      [m, h * 0.85, w * 0.48, h * 0.04],
+      18 * s,
       t.highlight,
-      600,
     );
+  } else if (id === "checklist") {
+    portrait(b, [w * 0.61, h * 0.09, w * 0.33, h * 0.82]);
+    eyebrow(b, "WHAT'S INCLUDED", m, h * 0.1, w * 0.49);
+    block(b, headline, [m, h * 0.19, w * 0.49, h * 0.22], 82);
+    specialties(b, value(b, "services"), [m, h * 0.47, w * 0.49, h * 0.39], true);
+  } else if (id === "cover") {
+    b.rect([w * 0.39, 0, w * 0.61, h], translucent(t.highlight, 0.07));
+    eyebrow(b, value(b, "pill"), m, h * 0.17, w * 0.29);
+    block(b, headline, [m, h * 0.26, w * 0.29, h * 0.35], 85);
+    block(b, sub, [m, h * 0.66, w * 0.29, h * 0.12], 24, muted);
+    screen(b, [w * 0.42, h * 0.14, w * 0.52, h * 0.72]);
+  } else if (id === "duo") {
+    portrait(b, [m, h * 0.09, w * 0.32, h * 0.82]);
+    eyebrow(b, "IMPACT REPORT", w * 0.44, h * 0.09, w * 0.5);
+    block(b, headline, [w * 0.44, h * 0.18, w * 0.5, h * 0.18], 90);
+    line(b, sub, [w * 0.44, h * 0.38, w * 0.5, h * 0.06], 24 * s, muted);
+    metrics(b, [w * 0.44, h * 0.51, w * 0.5, h * 0.36], "stack");
   } else if (id === "spotlight") {
-    label(b, value(b, "pill"), m, m, w * 0.7, 22 * b.scale, t.highlight);
-    title(b, headline, [m, h * 0.15, w * 0.53, h * 0.25], "#fff", 108);
-    label(b, sub, m, h * 0.45, w * 0.54, 25 * b.scale, "#ccc", 500);
-    screen(b, [m, h * 0.58, w * 0.58, h * 0.36]);
-    portrait(b, [w * 0.7, h * 0.16, w * 0.25, h * 0.78]);
+    screen(b, [w * 0.4, h * 0.12, w * 0.54, h * 0.76]);
+    b.rect([m, h * 0.16, w * 0.41, h * 0.66], t.surface, 22 * s, translucent(t.line, 0.3), s);
+    eyebrow(b, value(b, "pill"), m + w * 0.035, h * 0.2, w * 0.34);
+    block(b, headline, [m + w * 0.035, h * 0.29, w * 0.32, h * 0.23], 77);
+    block(b, sub, [m + w * 0.035, h * 0.55, w * 0.32, h * 0.13], 25, muted);
+    portrait(b, [m + w * 0.035, h * 0.71, h * 0.085, h * 0.085], true);
   } else if (id === "beforeafter") {
-    title(b, headline, [m, m, w * 0.43, h * 0.18]);
-    title(b, value(b, "headline2"), [m, h * 0.26, w * 0.43, h * 0.2], t.highlight);
-    label(b, sub, m, h * 0.51, w * 0.43, 24 * b.scale, "#ccc", 500);
-    screen(b, [w * 0.54, m, w * 0.405, h * 0.55]);
-    stats(b, [m, h * 0.7, cw, h * 0.24]);
+    b.rect([w * 0.48, 0, w * 0.52, h], translucent(t.highlight, 0.09));
+    headingPair(b, headline, value(b, "headline2"), [m, h * 0.1, w * 0.36, h * 0.29], 86);
+    block(b, sub, [m, h * 0.44, w * 0.35, h * 0.13], 29, muted);
+    screen(b, [w * 0.53, h * 0.11, w * 0.41, h * 0.53]);
+    metrics(b, [m, h * 0.71, cw, h * 0.19], "paper");
   } else if (id === "minimal") {
-    b.rect([0, 0, w * 0.32, h], t.accent);
-    label(b, value(b, "pill"), m, m, w * 0.24, 17 * b.scale, t.foreground);
-    title(b, headline, [m, h * 0.22, w * 0.22, h * 0.43], t.foreground, 70);
-    label(b, sub, m, h * 0.79, w * 0.22, 19 * b.scale, t.foreground, 500);
-    screen(b, [w * 0.38, h * 0.12, w * 0.56, h * 0.76]);
+    b.rect([0, 0, w, h], t.base);
+    eyebrow(b, value(b, "pill"), m, h * 0.08, w * 0.45);
+    screen(b, [w * 0.22, h * 0.2, w * 0.72, h * 0.58]);
+    b.rect([m, h * 0.49, w * 0.43, h * 0.33], t.accent, 14 * s);
+    block(b, headline, [m + w * 0.03, h * 0.53, w * 0.37, h * 0.2], 70, t.foreground);
+    line(b, sub, [m, h * 0.88, cw, h * 0.05], 23 * s, muted);
   } else if (id === "split") {
-    portrait(b, [w * 0.58, m, w * 0.365, h - m * 2]);
-    label(b, value(b, "pill"), m, m, w * 0.46, 23 * b.scale, t.highlight);
-    title(b, name, [m, h * 0.27, w * 0.46, h * 0.35], "#fff", 150);
-    rule(b, m, h * 0.7, w * 0.16);
-    title(b, role, [m, h * 0.77, w * 0.46, h * 0.15], t.highlight, 34);
+    b.rect([w * 0.56, 0, w * 0.44, h], t.accent);
+    portrait(b, [w * 0.59, h * 0.07, w * 0.35, h * 0.86]);
+    eyebrow(b, "INTRODUCING", m, h * 0.2, w * 0.44);
+    block(b, name, [m, h * 0.3, w * 0.44, h * 0.24], 130);
+    block(b, role, [m, h * 0.57, w * 0.43, h * 0.13], 38, t.highlight);
+    smallRule(b, m, h * 0.77, w * 0.1);
   } else if (id === "centered") {
-    label(b, headline, m, m, cw, 22 * b.scale, t.highlight);
-    const side = h * 0.48;
-    portrait(b, [(w - side) / 2, h * 0.16, side, side], true);
-    const ns = b.fit(name, 80 * b.scale, cw, 800);
-    b.text(name, w / 2, h * 0.79, ns, "#fff", cw, 800, "center");
-    const rs = b.fit(role, 28 * b.scale, cw, 600);
-    b.text(role, w / 2, h * 0.91, rs, t.highlight, cw, 600, "center");
+    const side = h * 0.48,
+      px = (w - side) / 2;
+    portrait(b, [px, h * 0.1, side, side], true);
+    line(b, headline, [w * 0.2, h * 0.62, w * 0.6, h * 0.055], 23 * s, t.highlight, "center", 700);
+    block(b, name, [w * 0.14, h * 0.69, w * 0.72, h * 0.13], 100, white, "center");
+    line(b, role, [w * 0.16, h * 0.85, w * 0.68, h * 0.07], 30 * s, muted, "center", 600);
   } else if (id === "statline") {
-    portrait(b, [w * 0.65, m, w * 0.295, h * 0.57]);
-    label(b, "PROVEN EXPERIENCE", m, m, w * 0.54, 23 * b.scale, t.highlight);
-    title(b, headline, [m, h * 0.19, w * 0.54, h * 0.31]);
-    label(b, value(b, "services"), m, h * 0.58, w * 0.54, 23 * b.scale, "#ccc", 500);
-    stats(b, [m, h * 0.72, cw, h * 0.23]);
+    portrait(b, [w * 0.61, h * 0.07, w * 0.33, h * 0.63]);
+    eyebrow(b, "EXPERIENCE, AT A GLANCE", m, h * 0.1, w * 0.49);
+    block(b, headline, [m, h * 0.22, w * 0.49, h * 0.29], 103);
+    line(b, value(b, "services"), [m, h * 0.56, w * 0.49, h * 0.07], 24 * s, muted);
+    metrics(b, [m, h * 0.76, cw, h * 0.17], "rules");
   } else if (id === "tagline") {
-    portrait(b, [w * 0.62, m, w * 0.325, h - m * 2]);
-    title(b, headline, [m, h * 0.13, w * 0.5, h * 0.18]);
-    title(b, value(b, "headline2"), [m, h * 0.34, w * 0.5, h * 0.18], t.highlight);
-    [1, 2, 3, 4]
-      .map((i) => value(b, `chip${i}`))
-      .filter(Boolean)
-      .forEach((txt, i) => {
-        const ww = w * 0.235,
-          xx = m + (i % 2) * (ww + w * 0.018),
-          yy = h * 0.65 + Math.floor(i / 2) * h * 0.14;
-        b.rect([xx, yy, ww, h * 0.1], t.surface, 10 * b.scale, t.line, 1 * b.scale);
-        label(b, txt, xx + 16 * b.scale, yy + h * 0.028, ww - 32 * b.scale, 24 * b.scale);
-      });
+    portrait(b, [w * 0.61, h * 0.08, w * 0.33, h * 0.84]);
+    headingPair(b, headline, value(b, "headline2"), [m, h * 0.13, w * 0.49, h * 0.32], 98);
+    const chips = [1, 2, 3, 4].map((i) => value(b, `chip${i}`));
+    chips.forEach((txt, i) => {
+      if (!txt) return;
+      const xx = m + (i % 2) * w * 0.25,
+        yy = h * 0.56 + Math.floor(i / 2) * h * 0.15;
+      b.rect([xx, yy, w * 0.23, h * 0.11], t.surface, 12 * s, translucent(t.line, 0.4), s);
+      skillIcon(b, b.state.icons[i] || "code", xx + w * 0.034, yy + h * 0.055, 15 * s);
+      line(b, txt, [xx + w * 0.065, yy, w * 0.15, h * 0.11], 23 * s, white, "left", 700);
+    });
   } else if (id === "editorial") {
     b.rect([0, 0, w * 0.43, h], t.accent);
-    portrait(b, [m, h * 0.11, w * 0.32, h * 0.72]);
-    label(b, value(b, "pill"), w * 0.49, m, w * 0.45, 20 * b.scale, t.highlight);
-    title(b, name, [w * 0.49, h * 0.25, w * 0.45, h * 0.28], "#fff", 130);
-    title(b, role, [w * 0.49, h * 0.57, w * 0.45, h * 0.16], t.highlight, 40);
-    label(b, value(b, "services"), w * 0.49, h * 0.85, w * 0.45, 24 * b.scale, "#ddd", 500);
+    portrait(b, [m, h * 0.1, w * 0.31, h * 0.8]);
+    eyebrow(b, value(b, "pill"), w * 0.49, h * 0.16, w * 0.45);
+    block(b, name, [w * 0.49, h * 0.28, w * 0.45, h * 0.22], 125);
+    block(b, role, [w * 0.49, h * 0.53, w * 0.45, h * 0.13], 41, t.highlight);
+    smallRule(b, w * 0.49, h * 0.72, w * 0.08);
+    line(b, value(b, "services"), [w * 0.49, h * 0.79, w * 0.45, h * 0.07], 24 * s, muted);
   } else if (id === "signature") {
-    label(b, headline, m, m, cw, 22 * b.scale, t.highlight);
-    title(b, name, [m, h * 0.2, w * 0.55, h * 0.26], "#fff", 132);
-    title(b, role, [m, h * 0.5, w * 0.55, h * 0.13], t.highlight, 44);
-    const side = h * 0.48;
-    portrait(b, [w - m - side, h * 0.14, side, side], true);
-    stats(b, [m, h * 0.75, cw, h * 0.21]);
+    portrait(b, [w * 0.62, h * 0.09, w * 0.32, h * 0.56], true);
+    eyebrow(b, headline, m, h * 0.13, w * 0.49);
+    block(b, name, [m, h * 0.26, w * 0.49, h * 0.21], 125);
+    block(b, role, [m, h * 0.5, w * 0.49, h * 0.13], 40, t.highlight);
+    metrics(b, [m, h * 0.74, cw, h * 0.19], "capsule");
   }
 }
 
-export function decorationRail(b: Brush, y: number, height: number, primary: boolean): void {
-  const { width: w } = b,
-    s = b.scale,
-    t = b.palette,
-    c = b.ctx;
-  b.rect([0, y, w, height], t.base);
-  b.rect([w * 0.055, y, w * 0.89, s], translucent(t.highlight, 0.25));
-  if (primary && (b.state.play || b.state.arrow)) {
-    const x = w * 0.055,
-      ph = height * 0.65,
-      py = y + height * 0.175;
-    const text = b.state.calloutText.trim(),
-      icon = b.state.play ? ph : 0;
-    const size = b.fit(text, 27 * s, w * 0.31 - icon, 800);
-    const pw = Math.min(w * 0.38, Math.max(ph, c.measureText(text).width + icon + ph * 0.7));
-    b.rect([x, py, pw, ph], t.accent, ph * 0.24);
-    if (b.state.play) b.play(x + ph * 0.5, py + ph * 0.5, ph * 0.29, true);
-    label(
-      b,
-      text,
-      x + icon + ph * 0.3,
-      py + (ph - size * 0.75) / 2,
-      pw - icon - ph * 0.5,
-      size,
-      t.foreground,
-    );
-    if (b.state.arrow)
-      b.arrow(
-        [x + pw + height * 1.5, py + ph * 0.18],
-        [x + pw + height * 0.22, py + ph * 0.55],
-        height * 0.28,
-        height * 0.105,
-      );
+const OVERLAY_ANCHORS: Record<string, [number, number]> = {
+  result: [0.5, 0.66],
+  stat: [0.765, 0.79],
+  reviews: [0.78, 0.8],
+  quote: [0.775, 0.8],
+  checklist: [0.775, 0.8],
+  cover: [0.68, 0.51],
+  duo: [0.22, 0.8],
+  spotlight: [0.76, 0.52],
+  beforeafter: [0.735, 0.38],
+  minimal: [0.72, 0.48],
+  split: [0.765, 0.79],
+  centered: [0.5, 0.55],
+  statline: [0.775, 0.63],
+  tagline: [0.775, 0.8],
+  editorial: [0.215, 0.8],
+  signature: [0.78, 0.58],
+  hello: [0.77, 0.76],
+  banner: [0.77, 0.81],
+  proof: [0.22, 0.81],
+};
+export function compositionCallout(b: Brush): void {
+  if (!b.state.play && !b.state.arrow) return;
+  let anchor = OVERLAY_ANCHORS[b.state.style];
+  if (!anchor) return;
+  if (b.state.originalLayout && b.state.style === "stat") anchor = [0.24, 0.81];
+  const portraitBoxes: Record<string, [number, number, number, number]> = {
+    stat: [0.59, 0.09, 0.35, 0.82],
+    reviews: [0.62, 0.08, 0.32, 0.84],
+    quote: [0.61, 0.09, 0.33, 0.82],
+    checklist: [0.61, 0.09, 0.33, 0.82],
+    duo: [0.06, 0.09, 0.32, 0.82],
+    split: [0.59, 0.07, 0.35, 0.86],
+    statline: [0.61, 0.07, 0.33, 0.63],
+    tagline: [0.61, 0.08, 0.33, 0.84],
+    editorial: [0.06, 0.1, 0.31, 0.8],
+  };
+  const pb = portraitBoxes[b.state.style];
+  if (pb && b.state.portraitShape === "circle" && !b.state.originalLayout) {
+    anchor = [
+      pb[0] + pb[2] / 2,
+      pb[1] + pb[3] / 2 + (Math.min(pb[2] * b.width, pb[3] * b.height) * 0.34) / b.height,
+    ];
   }
-  if (b.state.stars)
-    for (let i = 0; i < 5; i++)
-      b.star(w * 0.69 + i * height * 0.3, y + height * 0.5, height * 0.105, t.highlight);
-  if (b.state.sparkles) {
-    for (const [x, yy, r] of [
-      [w * 0.92, y + height * 0.5, height * 0.2],
-      [w * 0.96, y + height * 0.3, height * 0.09],
-    ]) {
-      c.beginPath();
-      c.moveTo(x, yy - r);
-      c.quadraticCurveTo(x + r * 0.2, yy - r * 0.2, x + r, yy);
-      c.quadraticCurveTo(x + r * 0.2, yy + r * 0.2, x, yy + r);
-      c.quadraticCurveTo(x - r * 0.2, yy + r * 0.2, x - r, yy);
-      c.quadraticCurveTo(x - r * 0.2, yy - r * 0.2, x, yy - r);
-      c.fillStyle = t.highlight;
-      c.fill();
+  const [rx, ry] = anchor,
+    w = b.width,
+    h = b.height,
+    cx = rx * w,
+    cy = ry * h,
+    s = b.scale,
+    r = 33 * s;
+  const usePill = ["result", "proof", "stat", "reviews", "split"].includes(b.state.style),
+    text = (usePill ? value(b, "pill") : b.state.calloutText).trim();
+  const showLabel = b.state.overlayLabel && Boolean(text);
+  let overlayLeft = cx - r,
+    overlayRight = cx + r;
+  if (b.state.play) {
+    b.shadow("rgba(0,0,0,.35)", 18 * s, 3 * s);
+    if (showLabel) {
+      const labelSize = b.fit(text, 23 * s, w * 0.24, 700),
+        tw = b.ctx.measureText(text).width,
+        pw = tw + r * 2.6,
+        xx = Math.max(w * 0.04, Math.min(w * 0.96 - pw, cx - pw / 2));
+      overlayLeft = xx;
+      overlayRight = xx + pw;
+      b.rect([xx, cy - r, pw, r * 2], b.palette.accent, r);
+      b.noShadow();
+      b.play(xx + r, cy, r * 0.65, true);
+      line(b, text, [xx + r * 2.1, cy - r, pw - r * 2.4, r * 2], labelSize, b.palette.foreground);
+    } else {
+      b.play(cx, cy, r);
+      b.noShadow();
     }
+  }
+  if (b.state.arrow) {
+    const direction = cx > w * 0.5 ? -1 : 1,
+      edge = b.state.play
+        ? direction < 0
+          ? overlayLeft - 10 * s
+          : overlayRight + 10 * s
+        : cx + direction * 8 * s;
+    b.arrow(
+      [Math.max(18 * s, Math.min(w - 18 * s, edge + direction * 60 * s)), cy + r * 0.8],
+      [edge, cy + r * 0.12],
+      direction * r * 0.25,
+      8 * s,
+    );
   }
 }
