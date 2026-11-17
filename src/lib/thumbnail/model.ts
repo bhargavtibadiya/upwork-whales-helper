@@ -54,9 +54,11 @@ export interface ThumbnailState {
   play: boolean;
   calloutText: string;
   font: "original" | "Montserrat" | "Manrope" | "Anton";
-  sparkles: boolean;
-  stars: boolean;
-  border: boolean;
+  overlayLabel: boolean;
+  originalLayout: boolean;
+  browserFrame: boolean;
+  portraitShape: "rounded" | "square" | "circle";
+  backdrop: "glow" | "clean";
   ring: Ring;
 }
 export interface StyleSpec {
@@ -164,7 +166,7 @@ export const STYLES: StyleSpec[] = [
     labels: {
       quote: "Client quote",
       name: "Client name",
-      badge: "Rating (leave empty to hide the stars)",
+      badge: "Client rating (optional)",
     },
   },
   {
@@ -499,10 +501,12 @@ export function initialState(mode: Mode = "portfolio"): ThumbnailState {
     shot: { image: null, name: "", zoom: 100, x: 50, y: 0 },
     calloutText: "Watch this",
     font: "original",
-    sparkles: false,
-    stars: false,
-    border: false,
-    arrow: true,
+    overlayLabel: false,
+    originalLayout: false,
+    browserFrame: false,
+    portraitShape: "rounded",
+    backdrop: "glow",
+    arrow: false,
     play: true,
     ring: {
       color: "#8360F5",

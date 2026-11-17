@@ -236,6 +236,7 @@ export class Brush {
       h = this.height;
     c.fillStyle = t.base;
     c.fillRect(0, 0, w, h);
+    if (this.state.backdrop === "clean") return;
     c.fillStyle = "rgba(255,255,255,.028)";
     for (const polygon of [
       [
@@ -294,28 +295,19 @@ export class Brush {
   }
   placeholder(box: Box): void {
     const [x, y, w, h] = box,
-      c = this.ctx,
-      s = this.scale;
-    const cx = x + w / 2,
-      r = Math.min(w * 0.2, h * 0.15),
-      cy = y + h * 0.42;
-    c.fillStyle = "rgba(255,255,255,0.17)";
-    c.beginPath();
-    c.arc(cx, cy, r, 0, Math.PI * 2);
-    c.fill();
-    const sw = Math.min(w * 0.86, r * 4.4),
-      top = cy + r * 1.3;
-    c.beginPath();
-    c.roundRect(cx - sw / 2, top, sw, y + h - top + 80 * s, [r * 1.6, r * 1.6, 0, 0]);
-    c.fill();
+      k = Math.min(w / 300, h / 360),
+      cx = x + w / 2,
+      cy = y + h * 0.43;
+    this.circle(cx, cy, 42 * k, "rgba(255,255,255,.18)");
+    this.rect([cx - 86 * k, cy + 58 * k, 172 * k, 130 * k], "rgba(255,255,255,.14)", 50 * k);
     this.text(
-      "Your photo here",
+      "Your photo",
       cx,
-      cy - r - 26 * s,
-      26 * s,
-      "rgba(255,255,255,0.72)",
-      w - 40 * s,
-      700,
+      y + h * 0.21,
+      23 * k,
+      "rgba(255,255,255,.72)",
+      w * 0.8,
+      600,
       "center",
     );
   }
@@ -360,6 +352,32 @@ export class Brush {
     const [x, y, w, h] = box,
       c = this.ctx,
       s = this.scale;
+    if (this.state.browserFrame) {
+      const bar = Math.min(38 * s, h * 0.13);
+      const inner = new Brush(c, { ...this.state, browserFrame: false }, this.width, this.height);
+      inner.frame(
+        [x, y + bar, w, h - bar],
+        radius,
+        border,
+        shift,
+        visibleHeight ? visibleHeight - bar : undefined,
+      );
+      this.rect([x, y, w, bar + radius], "#e9eaf0", radius);
+      this.rect([x, y + bar, w, radius], "#F5F5F7");
+      for (const [i, color] of ["#f08080", "#edc566", "#70b997"].entries())
+        this.circle(x + 17 * s + i * 15 * s, y + bar / 2, 4 * s, color);
+      this.text(
+        "PROJECT PREVIEW",
+        x + w / 2,
+        y + bar * 0.66,
+        Math.min(12 * s, bar * 0.36),
+        "#626576",
+        w * 0.55,
+        600,
+        "center",
+      );
+      return;
+    }
     this.shadow("rgba(0,0,0,.55)", 44 * s, 14 * s);
     this.rect(box, "#F5F5F7", radius);
     this.noShadow();
