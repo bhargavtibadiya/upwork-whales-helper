@@ -21,7 +21,10 @@ function check(x, m) {
 const image = () => p.locator('[data-testid="main-canvas"]').evaluate((e) => e.toDataURL());
 const settle = () => p.waitForTimeout(100);
 try {
-  await p.goto(`${process.env.APP_URL ?? "http://localhost:3100"}/#portfolio`);
+  await p.goto(`${process.env.APP_URL ?? "http://localhost:3100"}/#portfolio`, {
+    waitUntil: "networkidle",
+  });
+  await p.waitForTimeout(500);
   for (const id of ["stat", "reviews"]) {
     await p.locator(`[data-style="${id}"]`).click();
     await p.locator("#upload-face").setInputFiles("/downloads/demo-portrait.jpg");
