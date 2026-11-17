@@ -1,4 +1,15 @@
-# Reference parity verification
+# Verification
+
+## Preset links (November 17, 2026)
+
+Verified against the local production build (`next build` + `next start`).
+
+- 30 unit tests pass, including 10 preset round-trip, sanitiser and hostile-payload tests.
+- 13 browser preset assertions pass (`npm run test:preset`): state restore from `?p=`, URL rewrites on edit and mode switch, bundled demo-image loading, corrupt-preset fallback, no page errors.
+- The full existing browser suite (82 checks) passes unchanged, including download-vs-preview pixel equality and the no-server-writes guard.
+- Ten example exports were generated from preset links across all three modes; every download matched its preview pixels exactly and each was visually inspected.
+
+## Reference parity verification
 
 Verified November 16, 2026 against the local production build (`next build` followed by `next start`). This repair is on DEV only. Main is live production and was not changed.
 
