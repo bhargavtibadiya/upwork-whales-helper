@@ -11,7 +11,7 @@ export function RingControls({ state, onRing }: RingProps): React.JSX.Element {
   const ring = state.ring;
   return (
     <>
-      <p className="helper mb-4">
+      <p className="helper">
         Colour the ring for your current badge: Top Rated is blue, Top Rated Plus is pink. It looks
         good with the Available Now badge.
       </p>
@@ -78,7 +78,7 @@ export function RingControls({ state, onRing }: RingProps): React.JSX.Element {
           />
         </label>
       </fieldset>
-      <label className="toggle mt-4">
+      <label className="toggle">
         <span>Gradient ring</span>
         <input
           type="checkbox"
@@ -100,7 +100,7 @@ export function RingControls({ state, onRing }: RingProps): React.JSX.Element {
           onChange={(event) => onRing({ thickness: Number(event.currentTarget.value) })}
         />
       </label>
-      <div className="mt-4">
+      <div>
         <span className="field-label">Gap between ring and photo</span>
         <fieldset className="segments" aria-label="Gap between ring and photo">
           {(

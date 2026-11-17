@@ -56,7 +56,7 @@ export function Words({ state, setState }: WordsProps): React.JSX.Element | null
   return (
     <section className="surface words">
       <h2>4. Your words</h2>
-      <p className="helper mb-4">
+      <p className="helper">
         Text and stats are examples. Replace them with your own accurate details before exporting.
       </p>
       <div className="field">

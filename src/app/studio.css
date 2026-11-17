@@ -240,13 +240,9 @@ fieldset.mode-tabs,
   letter-spacing: 0.08em;
   font-weight: 700;
   color: var(--ds-color-primary);
-  margin-bottom: 20px;
-}
-.studio-panel .field + .field {
-  margin-top: 24px;
-}
-.studio-panel .upload-group + .upload-group {
-  margin-top: 24px;
+  /* [WHY] No bottom margin here: the panel rhythm rule below spaces the
+     heading from the first control, so one value owns the gap. */
+  margin-bottom: 0;
 }
 .studio-panel .upload-zone {
   padding: 16px;
@@ -299,9 +295,6 @@ fieldset.mode-tabs,
 }
 .studio-panel .toggle {
   font-size: 14px;
-}
-.studio-panel .range-control {
-  margin-top: 24px;
 }
 .studio-panel .preview-column {
   grid-area: preview;
@@ -521,12 +514,32 @@ fieldset.mode-tabs,
   }
 }
 
+/*
+ * Vertical rhythm for control panels.
+ * [WHY] Spacing used to be opt-in per element (only `.field + .field` had a
+ * gap), so toggles, segmented buttons, helper notes and range sliders packed
+ * against their neighbours whenever a control type or its order changed.
+ * Every direct child of a control surface after the first now gets the same
+ * gap, which covers today's controls and any added later. Inner elements
+ * (labels, helpers, sliders inside a group) keep their own smaller margins.
+ */
+.studio-panel .surface > * + * {
+  margin-top: 20px;
+}
+/* [WHY] The reset link sits inside the play-position group; without its own
+   gap it clings to the slider above it. */
+.studio-panel fieldset.field > .text-button {
+  margin-top: 12px;
+}
+
 .picker-heading {
   display: flex;
   justify-content: space-between;
   align-items: center;
   gap: 8px;
-  margin-bottom: 12px;
+  /* [WHY] The panel rhythm rule spaces this heading row from the controls
+     below it; a margin here would double that gap. */
+  margin-bottom: 0;
 }
 .picker-heading h2 {
   margin: 0;

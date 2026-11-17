@@ -406,7 +406,7 @@ export function ThumbnailEditor(): React.JSX.Element {
                           </p>
                         </div>
                       )}
-                    <p className="helper mb-4">
+                    <p className="helper">
                       Play controls overlay the media. They never add a row or shrink your artwork.
                     </p>
                     <div className="field">
