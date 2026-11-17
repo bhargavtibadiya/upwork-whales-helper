@@ -31,7 +31,7 @@ Follow-up checks: 19 unit tests; TypeScript, Biome and production build; 103 new
 ## Custom browser URL and project name follow-up
 
 - The browser-window toggle now offers an editable address-bar URL. The text renders in a white address pill inside the chrome bar; an empty field keeps the plain "PROJECT PREVIEW" bar.
-- An optional text-only project name renders as a small dark strip inside the project image, anchored bottom-left so it stays clear of the media center. An empty field hides it. No logos or client branding are drawn.
+- An optional text-only project name renders as a small dark strip inside the project image. It anchors to a free bottom corner: bottom-left by default, bottom-right on Project spotlight and Minimal showcase, whose cards overlap the image's left edge. An empty field hides it. No logos or client branding are drawn.
 - Both options are browser-local like every other edit, apply across every layout with a project screenshot, and are preserved when switching styles.
 
-Follow-up checks: 20 unit tests; TypeScript, Biome and production build; 82 browser checks including URL/strip pixel changes and restore-on-clear; 179 responsive-layout checks; 103 slider/reset checks; 50 original/overlay checks; 5,760 render cases with no out-of-canvas text warnings. Actual preview pixels were inspected for the address pill, the name strip and the unchanged empty defaults on desktop and mobile.
+Follow-up checks: 20 unit tests; TypeScript, Biome and production build; 82 browser checks including URL/strip pixel changes and restore-on-clear; 179 responsive-layout checks; 103 slider/reset checks; 50 original/overlay checks; 5,760 render cases with no out-of-canvas text warnings. Actual preview and exported PNG pixels were inspected for the address pill and the name strip on every screenshot layout at both portfolio sizes and the intro size, confirming the full label stays visible.
