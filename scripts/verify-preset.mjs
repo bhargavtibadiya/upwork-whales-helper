@@ -37,12 +37,30 @@ const preset = {
 };
 await page.goto(`${base}/?p=${encode(preset)}#portfolio`, { waitUntil: "domcontentloaded" });
 await page.waitForTimeout(900);
-check("preset restores edited words", (await page.getByLabel("Big result").inputValue()) === "42K VISITS");
-check("preset restores the pill", (await page.getByLabel("Button text").inputValue()) === "SEE HOW");
-check("preset restores the theme", await page.locator('.palette-option[aria-pressed="true"]', { hasText: "Green" }).count() === 1);
-check("preset restores the browser URL field", (await page.getByLabel("Browser address bar URL").inputValue()) === "preset-check.app");
-check("preset restores the project label", (await page.getByLabel("Project name in image").inputValue()) === "Preset Check");
-check("address bar keeps the preset", page.url().includes("?p=") && page.url().endsWith("#portfolio"));
+check(
+  "preset restores edited words",
+  (await page.getByLabel("Big result").inputValue()) === "42K VISITS",
+);
+check(
+  "preset restores the pill",
+  (await page.getByLabel("Button text").inputValue()) === "SEE HOW",
+);
+check(
+  "preset restores the theme",
+  (await page.locator('.palette-option[aria-pressed="true"]', { hasText: "Green" }).count()) === 1,
+);
+check(
+  "preset restores the browser URL field",
+  (await page.getByLabel("Browser address bar URL").inputValue()) === "preset-check.app",
+);
+check(
+  "preset restores the project label",
+  (await page.getByLabel("Project name in image").inputValue()) === "Preset Check",
+);
+check(
+  "address bar keeps the preset",
+  page.url().includes("?p=") && page.url().endsWith("#portfolio"),
+);
 
 // 2. Edits rewrite the URL, so copying the address bar always shares the current design.
 const before = new URL(page.url()).searchParams.get("p");
@@ -54,7 +72,10 @@ check("editing rewrites the preset in the URL", before !== after && after.length
 // 3. Mode navigation still works and keeps the preset in the URL.
 await page.locator(".mode-selector button").filter({ hasText: "Intro video" }).click();
 await page.waitForTimeout(400);
-check("mode switch keeps the preset in the URL", page.url().includes("?p=") && page.url().endsWith("#intro"));
+check(
+  "mode switch keeps the preset in the URL",
+  page.url().includes("?p=") && page.url().endsWith("#intro"),
+);
 
 // 4. A preset can reference a bundled demo image, which loads into the editor.
 const withImage = {
@@ -74,8 +95,14 @@ check("demo image renders on the canvas", ringCanvas.length > 20000);
 // 5. A corrupt preset never breaks the editor.
 await page.goto(`${base}/?p=%%%broken#portfolio`, { waitUntil: "domcontentloaded" });
 await page.waitForTimeout(900);
-check("corrupt preset still renders the editor", (await page.locator('[data-testid="main-canvas"]').count()) === 1);
-check("corrupt preset falls back to defaults", (await page.getByLabel("Big result").inputValue()) === "120K CLICKS");
+check(
+  "corrupt preset still renders the editor",
+  (await page.locator('[data-testid="main-canvas"]').count()) === 1,
+);
+check(
+  "corrupt preset falls back to defaults",
+  (await page.getByLabel("Big result").inputValue()) === "120K CLICKS",
+);
 
 // 6. No console errors anywhere in the flow.
 check("no page errors", errors.length === 0);
