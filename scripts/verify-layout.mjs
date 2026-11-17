@@ -98,6 +98,28 @@ try {
           return cards.every((c, i) => i === 0 || c.top - cards[i - 1].bottom >= 12);
         }),
       );
+      // [WHY] Controls used to pack together inside panels because spacing was
+      // opt-in per element. The panel rhythm rule must keep a clear gap
+      // between every pair of neighbours, whatever control types are added.
+      check(
+        `${tag}: clear gaps between every control inside each panel`,
+        await page.evaluate(() => {
+          const gaps = [];
+          for (const surface of document.querySelectorAll(".studio-panel .surface")) {
+            const children = [...surface.children].filter((el) => {
+              const rect = el.getBoundingClientRect();
+              return getComputedStyle(el).display !== "none" && rect.height > 0;
+            });
+            for (let i = 1; i < children.length; i++) {
+              gaps.push(
+                children[i].getBoundingClientRect().top -
+                  children[i - 1].getBoundingClientRect().bottom,
+              );
+            }
+          }
+          return gaps.length > 0 && gaps.every((gap) => gap >= 14);
+        }),
+      );
       check(
         `${tag}: clear gap between tabs and panel`,
         await page.evaluate(() => {
