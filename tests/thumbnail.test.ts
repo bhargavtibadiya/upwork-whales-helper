@@ -98,3 +98,50 @@ describe("reference contract", () => {
     ]);
   });
 });
+
+describe("research-led revision contract", () => {
+  it("keeps every original style and editing field", () => {
+    const originals: Record<string, string[]> = {
+      result: ["pill", "headline", "subline"],
+      stat: ["pill", "headline", "subline", "stats", "services"],
+      reviews: ["pill", "headline", "subline", "badge", "stats"],
+      meet: ["headline", "name", "role"],
+      banner: ["headline", "headline2", "subline", "chips", "badge", "badge2"],
+      hello: ["headline", "name", "role"],
+      proof: ["pill", "stats", "services"],
+    };
+    for (const [id, fields] of Object.entries(originals)) {
+      const item = STYLES.find((s) => s.id === id);
+      expect(item).toBeDefined();
+      for (const f of fields) expect(item?.fields).toContain(f);
+    }
+  });
+  it("uses a small media play control without default arrow or label", () => {
+    const s = initialState();
+    expect(s.play).toBe(true);
+    expect(s.arrow).toBe(false);
+    expect(s.overlayLabel).toBe(false);
+  });
+  it("preserves finishing choices when changing styles", () => {
+    const s = {
+      ...initialState(),
+      originalLayout: true,
+      browserFrame: true,
+      portraitShape: "circle" as const,
+      backdrop: "clean" as const,
+    };
+    const next = changeStyle(s, "reviews");
+    expect(next.originalLayout).toBe(true);
+    expect(next.browserFrame).toBe(true);
+    expect(next.portraitShape).toBe("circle");
+    expect(next.backdrop).toBe("clean");
+  });
+  it("keeps all three stats editable in every supporting style", () => {
+    for (const spec of STYLES.filter((s) => s.fields.includes("stats"))) {
+      expect(spec.statCount).toBe(3);
+      let s = changeStyle(initialState(spec.mode), spec.id);
+      s = setField(s, "stat3v", "777");
+      expect(fieldValue(s, "stat3v")).toBe("777");
+    }
+  });
+});
