@@ -1,5 +1,13 @@
 # Verification
 
+## Reset controls (November 17, 2026)
+
+Verified against the local production build (`next build` + `next start`).
+
+- The header logo and the "Start fresh" button right of the hero title both reset the editor to its default state: preset-loaded words, images, theme and options clear, the mode returns to portfolio and the page scrolls to the top.
+- The address bar keeps carrying a working `?p=` preset of the fresh state, so the copy-link flow is unaffected.
+- 14 browser reset assertions pass (`npm run test:reset`); the 30 unit tests, 13 preset checks and 82-check browser suite pass unchanged. Biome lint and the production build are clean.
+
 ## Preset links (November 17, 2026)
 
 Verified against the local production build (`next build` + `next start`).

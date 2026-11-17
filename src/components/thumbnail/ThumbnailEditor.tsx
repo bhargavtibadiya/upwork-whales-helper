@@ -138,6 +138,18 @@ export function ThumbnailEditor(): React.JSX.Element {
   );
   const onRing = (patch: Partial<Ring>) =>
     setState((current) => ({ ...current, ring: { ...current.ring, ...patch } }));
+  // [WHY] A preset link fills every field; visitors need an obvious way back
+  // to a blank editor. The URL-sync effect rewrites the address bar from the
+  // fresh state, so the copied link keeps working after a reset.
+  const resetEditor = useCallback(() => {
+    setState(initialState());
+    setError("");
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  }, []);
+  const onLogoClick = (event: React.MouseEvent<HTMLAnchorElement>) => {
+    event.preventDefault();
+    resetEditor();
+  };
   useEffect(() => {
     const prevent = (event: DragEvent) => event.preventDefault();
     const paste = (event: ClipboardEvent) => {
@@ -222,12 +234,20 @@ export function ThumbnailEditor(): React.JSX.Element {
   );
   return (
     <div className="min-h-screen" data-mode={state.mode} id="top">
-      <SiteHeader />
+      <SiteHeader onLogoClick={onLogoClick} />
       <div className="studio-container">
         <section className="hero">
-          <h1>
-            Thumbnails that get <em>clicked</em>
-          </h1>
+          <div className="hero-heading">
+            <h1>
+              Thumbnails that get <em>clicked</em>
+            </h1>
+            <button type="button" className="reset-button" onClick={resetEditor}>
+              <svg viewBox="0 0 24 24" aria-hidden="true">
+                <path d="M3 12a9 9 0 1 0 3-6.7M3 4v5h5" />
+              </svg>
+              Start fresh
+            </button>
+          </div>
           <p className="lede">
             Make a ringed profile picture, a portfolio thumbnail or an intro video cover. Pick a
             style, add your photo and download a PNG.

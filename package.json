@@ -13,7 +13,8 @@
     "test:compare": "node scripts/compare-reference.mjs",
     "test:site": "node scripts/verify-fullsite.mjs",
     "test:layout": "node scripts/verify-layout.mjs",
-    "test:preset": "node scripts/verify-preset.mjs"
+    "test:preset": "node scripts/verify-preset.mjs",
+    "test:reset": "node scripts/verify-reset.mjs"
   },
   "dependencies": {
     "next": "16.4.6",

@@ -16,11 +16,18 @@ export function LogoMark(): React.JSX.Element {
   );
 }
 
-export function SiteHeader(): React.JSX.Element {
+interface SiteHeaderProps {
+  // [WHY] The logo doubles as the "back to a clean homepage" control: the
+  // editor owns the state, so the header just forwards the click.
+  onLogoClick?: (event: React.MouseEvent<HTMLAnchorElement>) => void;
+}
+
+export function SiteHeader({ onLogoClick }: SiteHeaderProps): React.JSX.Element {
   return (
     <header className="site-header">
       <div className="studio-container">
-        <a className="logo" href="#top">
+        {/* biome-ignore lint/a11y/useValidAnchor: the logo is a real link to the homepage top; the handler also resets the editor */}
+        <a className="logo" href="#top" onClick={onLogoClick}>
           <LogoMark />
           <span className="logo-text">
             Upwork Helper
