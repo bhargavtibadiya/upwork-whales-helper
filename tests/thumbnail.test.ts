@@ -180,4 +180,15 @@ describe("desktop screenshot and play positioning", () => {
     const next = changeStyle({ ...s, playOffsetX: -30, playOffsetY: 20 }, "cover");
     expect([next.playOffsetX, next.playOffsetY]).toEqual([-30, 20]);
   });
+  it("starts with an empty browser URL and project label and keeps them across styles", () => {
+    const s = initialState();
+    expect(s.browserUrl).toBe("");
+    expect(s.projectLabel).toBe("");
+    const next = changeStyle(
+      { ...s, browserUrl: "clinicos.app", projectLabel: "ClinicOS" },
+      "cover",
+    );
+    expect(next.browserUrl).toBe("clinicos.app");
+    expect(next.projectLabel).toBe("ClinicOS");
+  });
 });

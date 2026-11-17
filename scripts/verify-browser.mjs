@@ -127,6 +127,26 @@ try {
   await page.getByRole("checkbox", { name: "Play button", exact: true }).check();
   await settle();
   check("play toggle changes pixels", noPlay !== (await pixels()));
+  await page.getByRole("checkbox", { name: "Browser-window screenshot", exact: true }).check();
+  await settle();
+  const plainFrame = await pixels();
+  check("browser frame toggle changes pixels", plainFrame !== uploaded);
+  const urlBox = page.getByRole("textbox", { name: "Browser address bar URL", exact: true });
+  await urlBox.fill("clinicos.app");
+  await settle();
+  check("custom browser URL changes pixels", plainFrame !== (await pixels()));
+  await urlBox.fill("");
+  await settle();
+  check("clearing browser URL restores the plain bar", plainFrame === (await pixels()));
+  const labelBox = page.getByRole("textbox", { name: "Project name in image", exact: true });
+  await labelBox.fill("ClinicOS");
+  await settle();
+  check("project name strip changes pixels", plainFrame !== (await pixels()));
+  await labelBox.fill("");
+  await settle();
+  check("clearing project name hides the strip", plainFrame === (await pixels()));
+  await page.getByRole("checkbox", { name: "Browser-window screenshot", exact: true }).uncheck();
+  await settle();
   const introStyles = [
     "Meet me",
     "Title banner",
