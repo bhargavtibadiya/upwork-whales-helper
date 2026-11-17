@@ -471,6 +471,47 @@ export function ThumbnailEditor(): React.JSX.Element {
                         />
                       </label>
                     )}
+                    {state.play && (
+                      <fieldset className="field">
+                        <legend>Play button position</legend>
+                        <p className="helper">
+                          Move from the layout's starting position. Zero restores that position.
+                        </p>
+                        {(
+                          [
+                            ["playOffsetX", "Horizontal position"],
+                            ["playOffsetY", "Vertical position"],
+                          ] as const
+                        ).map(([key, label]) => (
+                          <label className="range-control" key={key}>
+                            <span className="field-label">
+                              {label} <output>{state[key]}%</output>
+                            </span>
+                            <input
+                              type="range"
+                              min={-100}
+                              max={100}
+                              step={1}
+                              value={state[key]}
+                              aria-label={label}
+                              onChange={(event) => {
+                                const position = Number(event.currentTarget.value);
+                                setState((current) => ({ ...current, [key]: position }));
+                              }}
+                            />
+                          </label>
+                        ))}
+                        <button
+                          type="button"
+                          className="text-button"
+                          onClick={() =>
+                            setState((current) => ({ ...current, playOffsetX: 0, playOffsetY: 0 }))
+                          }
+                        >
+                          Reset play position
+                        </button>
+                      </fieldset>
+                    )}
                     <div className="extra-toggles">
                       {(
                         [

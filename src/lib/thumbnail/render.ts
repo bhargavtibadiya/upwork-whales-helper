@@ -1,5 +1,6 @@
 import { Brush, blend, translucent } from "./brush";
 import { compositionCallout, editorial } from "./editorial";
+import { desktopFrame, playCenter } from "./geometry";
 import { skillIcon } from "./icons";
 import { dimensions, fieldValue, type Style, setField, type ThumbnailState } from "./model";
 
@@ -63,27 +64,39 @@ function meet(b: Brush): void {
   const x = w * 0.5,
     cw = w - m - x;
   const title = words(b, "headline").toUpperCase();
-  let y = m,
-    cap = 0,
+  let cap = 0,
     left = x;
   if (title) {
     b.fit(title, 108 * s, cw, 800);
     cap = b.cap();
     left = x + (cw - c.measureText(title).width) / 2;
-    b.shadow("rgba(0,0,0,.35)", 22 * s, 4 * s);
-    b.text(title, left, y + cap, 108 * s, "#fff", cw, 800);
-    b.noShadow();
-    y += cap + 34 * s;
   }
-  const fh = h - m - y;
-  b.frame([x, y, cw, fh], 16 * s, 6 * s, b.state.play ? 134 * s : 0);
-  const px = x + cw / 2,
-    py = y + fh / 2;
+  const border = 6 * s;
+  const chrome = b.state.browserFrame ? 38 * s : 0;
+  const fitted = desktopFrame([x, m, cw, h - 2 * m - (title ? cap + 34 * s : 0)], border, chrome);
+  const total = fitted[3] + (title ? cap + 34 * s : 0);
+  const top = (h - total) / 2;
+  if (title) {
+    b.shadow("rgba(0,0,0,.35)", 22 * s, 4 * s);
+    b.text(title, left, top + cap, 108 * s, "#fff", cw, 800);
+    b.noShadow();
+  }
+  const box = [fitted[0], top + (title ? cap + 34 * s : 0), fitted[2], fitted[3]] as const;
+  b.frame(box, 16 * s, border);
+  const [px, py] = playCenter(
+    w,
+    h,
+    box[0] + box[2] / 2,
+    box[1] + box[3] / 2,
+    50 * s,
+    b.state.playOffsetX,
+    b.state.playOffsetY,
+  );
   if (b.state.play) b.play(px, py, 50 * s);
   if (b.state.arrow && title)
     b.arrow(
-      [left - 18 * s, m + cap * 0.5],
-      b.state.play ? [px - 66 * s, py] : [x + cw * 0.3, y + fh * 0.35],
+      [left - 18 * s, top + cap * 0.5],
+      b.state.play ? [px - 66 * s, py] : [box[0] + box[2] * 0.3, box[1] + box[3] * 0.35],
       -150 * s,
       24 * s,
     );
@@ -669,11 +682,9 @@ function reviews(b: Brush): void {
     sh = rows.length ? 132 * s : 0,
     bh = bar || b.state.play ? 92 * s : 0,
     by = h - m - bh;
-  const gap = Math.max(
-    14 * s,
-    ((bh ? by : h - m) - (m + 6 * s + titleH) - rh - sh) / ((sh ? 2 : 1) + 1),
-  );
-  let y = m + 6 * s;
+  const gap = 40 * s;
+  const contentHeight = titleH + rh + sh + gap * (sh ? 2 : 1);
+  let y = Math.max(m, ((bh ? by - 24 * s : h) - contentHeight) / 2);
   if (l1) {
     b.text(l1, m, y + cap, tp, "#fff", Infinity, 400, "left", "Anton");
     y += cap + (l2 ? 18 * s : 0);
