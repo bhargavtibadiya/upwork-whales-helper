@@ -18,3 +18,12 @@ TypeScript, Biome, production build and 16 unit tests passed. Local production c
 The demo portrait and sample dashboard shown in the review images are not shipped app content. The portrait source is https://unsplash.com/photos/man-in-white-crew-neck-t-shirt-smiling-644AhjsZNQs . The demo dashboard is original artwork.
 
 The prior design-pass.md describes the earlier release. Detailed visual-research notes from the overnight revision are not included here; this note does not claim those notes were recovered in full.
+
+## Live feedback follow-up
+
+- Project cover, Project spotlight and Meet me use a 16:9 desktop screenshot viewport. Optional browser chrome is outside that ratio.
+- Original Client results centers its heading, rating and stats as one group.
+- Horizontal and vertical play-position sliders adjust the overlay from each layout's initial position; zero/reset returns to the initial position. Edge limits keep the control within the canvas. Both sliders apply across all twenty portfolio and intro layouts.
+- The specialist and Split intro use dark theme gradients for their portrait panels, distinct from the adjacent composition, rather than a flat accent fill.
+
+Follow-up checks: 19 unit tests; TypeScript, Biome and production build; 103 new slider/reset/extreme/mobile checks; 170 responsive-layout checks; 120 features and real PNG checks; 50 original/overlay checks; 3,264 and 5,760 render cases with no out-of-canvas text warnings. Actual updated artwork and the mobile slider UI inspected before release.

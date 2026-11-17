@@ -1,5 +1,6 @@
 import { describe, expect, it } from "vitest";
 import { cropPlacement } from "../src/lib/thumbnail/brush";
+import { desktopFrame, playCenter } from "../src/lib/thumbnail/geometry";
 import {
   changeMode,
   changeStyle,
@@ -143,5 +144,40 @@ describe("research-led revision contract", () => {
       s = setField(s, "stat3v", "777");
       expect(fieldValue(s, "stat3v")).toBe("777");
     }
+  });
+});
+
+describe("desktop screenshot and play positioning", () => {
+  it("preserves the inner desktop ratio with and without browser chrome", () => {
+    for (const chrome of [0, 38])
+      for (const bounds of [
+        [20, 30, 520, 540],
+        [10, 10, 700, 200],
+      ] as const) {
+        const [x, y, w, h] = desktopFrame(bounds, 4, chrome);
+        expect((w - 8) / (h - 8 - chrome)).toBeCloseTo(16 / 9, 8);
+        expect(x).toBeGreaterThanOrEqual(bounds[0]);
+        expect(y).toBeGreaterThanOrEqual(bounds[1]);
+        expect(x + w).toBeLessThanOrEqual(bounds[0] + bounds[2] + 0.001);
+        expect(y + h).toBeLessThanOrEqual(bounds[1] + bounds[3] + 0.001);
+      }
+  });
+  it("keeps the full play control inside the canvas at slider extremes", () => {
+    for (const x of [-100, 0, 100])
+      for (const y of [-100, 0, 100]) {
+        const [cx, cy] = playCenter(1280, 720, 900, 560, 33, x, y);
+        expect(cx - 33).toBeGreaterThanOrEqual(0);
+        expect(cy - 33).toBeGreaterThanOrEqual(0);
+        expect(cx + 33).toBeLessThanOrEqual(1280);
+        expect(cy + 33).toBeLessThanOrEqual(720);
+      }
+    expect(playCenter(1280, 720, 900, 560, 33)).toEqual([900, 560]);
+  });
+  it("starts sliders at zero and retains positions when styles change", () => {
+    const s = initialState();
+    expect(s.playOffsetX).toBe(0);
+    expect(s.playOffsetY).toBe(0);
+    const next = changeStyle({ ...s, playOffsetX: -30, playOffsetY: 20 }, "cover");
+    expect([next.playOffsetX, next.playOffsetY]).toEqual([-30, 20]);
   });
 });
