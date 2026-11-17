@@ -59,6 +59,8 @@ export interface ThumbnailState {
   overlayLabel: boolean;
   originalLayout: boolean;
   browserFrame: boolean;
+  browserUrl: string;
+  projectLabel: string;
   portraitShape: "rounded" | "square" | "circle";
   backdrop: "glow" | "clean";
   ring: Ring;
@@ -506,6 +508,8 @@ export function initialState(mode: Mode = "portfolio"): ThumbnailState {
     overlayLabel: false,
     originalLayout: false,
     browserFrame: false,
+    browserUrl: "",
+    projectLabel: "",
     portraitShape: "rounded",
     backdrop: "glow",
     arrow: false,

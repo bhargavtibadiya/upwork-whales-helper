@@ -436,6 +436,43 @@ export function ThumbnailEditor(): React.JSX.Element {
                         />
                       </label>
                     )}
+                    {spec(state.style).images.includes("shot") && state.browserFrame && (
+                      <div className="field">
+                        <label htmlFor="browser-url">Browser address bar URL</label>
+                        <input
+                          id="browser-url"
+                          maxLength={48}
+                          placeholder="yourproject.com"
+                          value={state.browserUrl}
+                          onChange={(event) => {
+                            const browserUrl = event.currentTarget.value;
+                            setState((current) => ({ ...current, browserUrl }));
+                          }}
+                        />
+                        <p className="helper">
+                          Shown inside the browser window's address bar. Leave empty for the plain
+                          bar.
+                        </p>
+                      </div>
+                    )}
+                    {spec(state.style).images.includes("shot") && (
+                      <div className="field">
+                        <label htmlFor="project-label">Project name in image</label>
+                        <input
+                          id="project-label"
+                          maxLength={28}
+                          placeholder="Project name"
+                          value={state.projectLabel}
+                          onChange={(event) => {
+                            const projectLabel = event.currentTarget.value;
+                            setState((current) => ({ ...current, projectLabel }));
+                          }}
+                        />
+                        <p className="helper">
+                          Adds a text-only name strip inside the project image. Empty hides it.
+                        </p>
+                      </div>
+                    )}
                     {spec(state.style).images.includes("face") &&
                       !["meet", "hello", "banner", "proof", "centered", "signature"].includes(
                         state.style,

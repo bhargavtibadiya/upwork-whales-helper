@@ -366,16 +366,35 @@ export class Brush {
       this.rect([x, y + bar, w, radius], "#F5F5F7");
       for (const [i, color] of ["#f08080", "#edc566", "#70b997"].entries())
         this.circle(x + 17 * s + i * 15 * s, y + bar / 2, 4 * s, color);
-      this.text(
-        "PROJECT PREVIEW",
-        x + w / 2,
-        y + bar * 0.66,
-        Math.min(12 * s, bar * 0.36),
-        "#626576",
-        w * 0.55,
-        600,
-        "center",
-      );
+      const url = this.state.browserUrl.trim();
+      if (url) {
+        const pillX = x + 58 * s,
+          pillW = w - 78 * s,
+          pillH = bar * 0.62,
+          pillY = y + (bar - pillH) / 2;
+        this.rect([pillX, pillY, pillW, pillH], "#ffffff", pillH / 2);
+        this.text(
+          url,
+          pillX + pillW / 2,
+          pillY + pillH * 0.68,
+          Math.min(12 * s, pillH * 0.52),
+          "#3f4150",
+          pillW - 20 * s,
+          500,
+          "center",
+        );
+      } else {
+        this.text(
+          "PROJECT PREVIEW",
+          x + w / 2,
+          y + bar * 0.66,
+          Math.min(12 * s, bar * 0.36),
+          "#626576",
+          w * 0.55,
+          600,
+          "center",
+        );
+      }
       return;
     }
     this.shadow("rgba(0,0,0,.55)", 44 * s, 14 * s);
@@ -450,6 +469,20 @@ export class Brush {
         700,
         "center",
       );
+    }
+    const label = this.state.projectLabel.trim();
+    if (label) {
+      const [lx, ly, lw, lh] = inside,
+        margin = 16 * s,
+        padX = 18 * s;
+      const size = this.fit(label, Math.min(24 * s, lh * 0.12), lw - 2 * (margin + padX), 700);
+      const cap = this.cap(),
+        tw = c.measureText(label).width,
+        ph = cap + 20 * s,
+        px = lx + margin,
+        py = ly + lh - margin - ph;
+      this.rect([px, py, tw + 2 * padX, ph], "rgba(0,0,0,.58)", ph / 2);
+      this.text(label, px + padX, py + ph / 2 + cap / 2, size, "#fff", Infinity, 700);
     }
     c.restore();
   }
