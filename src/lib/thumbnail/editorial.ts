@@ -321,6 +321,8 @@ function ratingStars(b: Brush, rating: number, x: number, cy: number, r: number)
       c.beginPath();
       c.rect(cx - r, cy - r, r * 2 * fill, r * 2);
       c.clip();
+      // Black stars get a thin light edge so they stay visible on dark artwork.
+      if (on === "#14131a") b.star(cx, cy, r + 1.8 * b.scale, "rgba(255,255,255,.85)");
       b.star(cx, cy, r, on);
       c.restore();
     }
