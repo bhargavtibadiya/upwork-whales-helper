@@ -229,3 +229,10 @@ fieldset.palette-options,fieldset.background-options { margin-top: 16px; }
 fieldset.segments { padding: 4px; }
 
 .field textarea { resize: vertical; line-height: 1.4; }
+.tune-group { margin: 20px 0 0; padding: 4px 0 0; border: 0; border-top: 1px dashed var(--ds-color-border-light); }
+.tune-group>legend { display: block; margin-bottom: 4px; padding-right: 8px; color: var(--ds-color-text-secondary); font-size: 12px; font-weight: var(--ds-label-weight); letter-spacing: var(--ds-label-tracking); }
+.tune-group .range-control { margin-top: 12px; }
+.tune-group>.field-label { margin-top: 8px; }
+.tune-group .segments+.field-label { margin-top: 12px; }
+.tune-group .field-label+.segments { margin-top: 4px; }
+.quote-image-toggle { margin-top: 16px; }

@@ -13,8 +13,11 @@ import {
   MODES,
   type Mode,
   PALETTES,
+  QUOTE_STYLES,
+  quoteImageShown,
   type Ring,
   STYLES,
+  setTune,
   spec,
   type ThumbnailState,
 } from "@/lib/thumbnail/model";
@@ -23,7 +26,6 @@ import { artworkFonts, drawThumbnail } from "@/lib/thumbnail/render";
 import { SiteFooter } from "../site/SiteFooter";
 import { SiteHeader } from "../site/SiteHeader";
 import { ImageUpload, PreviewCanvas, readLocalImage } from "./Images";
-import { QuoteControls } from "./QuoteControls";
 import { BackgroundControls, RingControls } from "./RingControls";
 import { Words } from "./Words";
 
@@ -447,6 +449,27 @@ export function ThumbnailEditor(): React.JSX.Element {
                       mode={state.mode}
                     />
                   ))}
+                  {QUOTE_STYLES.includes(state.style) && (
+                    <div className="field quote-image-toggle">
+                      <label className="toggle">
+                        <span>Show image</span>
+                        <input
+                          type="checkbox"
+                          checked={quoteImageShown(state)}
+                          onChange={(event) =>
+                            setState((current) =>
+                              setTune(
+                                current,
+                                "showImage",
+                                event.currentTarget.checked ? "1" : "0",
+                              ),
+                            )
+                          }
+                        />
+                      </label>
+                      <p className="helper">Turn the image off and the text uses the full width.</p>
+                    </div>
+                  )}
                 </section>
                 {profile ? (
                   <BackgroundControls state={state} onRing={onRing} />
@@ -627,55 +650,6 @@ export function ThumbnailEditor(): React.JSX.Element {
                         />
                       </label>
                     </div>
-                    <hr className="section-divider" />
-                    {(state.style === "quote" || state.style === "review") && (
-                      <QuoteControls state={state} setState={setState} />
-                    )}
-                    {state.style === "casestudy" && (
-                      <fieldset className="field">
-                        <legend>Case study badge</legend>
-                        <fieldset className="segments" aria-label="Badge style">
-                          {(
-                            [
-                              { id: "blue", name: "Blue" },
-                              { id: "dark", name: "Dark" },
-                              { id: "white", name: "White" },
-                            ] as const
-                          ).map((variant) => (
-                            <button
-                              key={variant.id}
-                              type="button"
-                              aria-pressed={state.badgeVariant === variant.id}
-                              onClick={() =>
-                                setState((current) => ({ ...current, badgeVariant: variant.id }))
-                              }
-                            >
-                              {variant.name}
-                            </button>
-                          ))}
-                        </fieldset>
-                        <label className="range-control">
-                          <span className="field-label">
-                            Badge size <output>{state.badgeSize}%</output>
-                          </span>
-                          <input
-                            type="range"
-                            min={50}
-                            max={200}
-                            step={5}
-                            value={state.badgeSize}
-                            aria-label="Badge size"
-                            onChange={(event) => {
-                              const badgeSize = Number(event.currentTarget.value);
-                              setState((current) => ({ ...current, badgeSize }));
-                            }}
-                          />
-                        </label>
-                        <p className="helper">
-                          Edit the badge text under "4. Your words". 100% is the default size.
-                        </p>
-                      </fieldset>
-                    )}
                     <fieldset className="field">
                       <legend>Watch-me button</legend>
                       {state.play || state.loom ? (
