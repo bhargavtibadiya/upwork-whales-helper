@@ -475,8 +475,8 @@ export function ThumbnailEditor(): React.JSX.Element {
                       <fieldset className="segments" aria-label="Size">
                         {(
                           [
-                            { id: "4x3", name: "Portfolio", size: "1000 x 750" },
-                            { id: "16x9", name: "Video / YouTube", size: "1280 x 720" },
+                            { id: "4x3", name: "Portfolio" },
+                            { id: "16x9", name: "Video / YouTube" },
                           ] as const
                         ).map((size) => (
                           <button
@@ -486,7 +486,7 @@ export function ThumbnailEditor(): React.JSX.Element {
                             onClick={() => setState((current) => ({ ...current, size: size.id }))}
                           >
                             {size.name}
-                            <small>{size.size}</small>
+                            <small>{dimensions({ ...state, size: size.id }).join(" x ")}</small>
                           </button>
                         ))}
                       </fieldset>
