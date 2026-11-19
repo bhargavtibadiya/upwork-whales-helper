@@ -721,11 +721,14 @@ export function ThumbnailEditor(): React.JSX.Element {
                             const loom = event.currentTarget.checked;
                             // Play and Loom are alternative icons for the same
                             // Watch-me button: switching one on switches the
-                            // other off.
+                            // other off. The Loom logo only lives inside the
+                            // labelled button, so turning it on shows the
+                            // button label too.
                             setState((current) => ({
                               ...current,
                               loom,
                               play: loom ? false : current.play,
+                              overlayLabel: loom ? true : current.overlayLabel,
                             }));
                           }}
                         />
@@ -766,8 +769,9 @@ export function ThumbnailEditor(): React.JSX.Element {
                             />
                           </label>
                           <p className="helper">
-                            The Loom logo sits inside the Watch-me button in place of the play
-                            triangle. It never appears anywhere else on the artwork.
+                            The Loom logo sits inside the labelled Watch-me button in place of the
+                            play triangle, so it shows the button label. It never appears anywhere
+                            else on the artwork.
                           </p>
                         </>
                       )}

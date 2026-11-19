@@ -536,11 +536,16 @@ export class Brush {
     c.restore();
   }
   // The Watch-me button's icon is either the play triangle or the Loom logo;
-  // they are mutually exclusive and share the exact same slots, so the Loom
-  // logo never appears anywhere the play button would not. Position offsets
-  // are shared too.
+  // they are mutually exclusive. The Loom logo is a brand mark, not an action
+  // affordance, so it only ever renders inside the labelled Watch-me button.
+  // Icon-only slots (the media overlays and the icon-only callout) belong to
+  // the play triangle alone: a standalone Loom badge never floats on the
+  // artwork. Position offsets are shared.
   overlayOn(): boolean {
     return this.state.play || this.state.loom;
+  }
+  bareOverlayOn(): boolean {
+    return this.state.play && !this.state.loom;
   }
   overlayOffsets(): [number, number] {
     return [this.state.playOffsetX, this.state.playOffsetY];

@@ -446,7 +446,10 @@ export function compositionCallout(b: Brush): void {
   const showLabel = b.state.overlayLabel && Boolean(text);
   let overlayLeft = cx - r,
     overlayRight = cx + r;
-  if (b.overlayOn()) {
+  // The Loom logo only shows inside the labelled Watch-me pill; the
+  // icon-only callout is the play triangle alone, never a standalone badge.
+  const iconDrawn = showLabel ? b.overlayOn() : b.bareOverlayOn();
+  if (iconDrawn) {
     b.shadow("rgba(0,0,0,.35)", 18 * s, 3 * s);
     if (showLabel) {
       const labelSize = b.fit(text, 23 * s, w * 0.24, 700),
@@ -466,7 +469,7 @@ export function compositionCallout(b: Brush): void {
   }
   if (b.state.arrow) {
     const direction = cx > w * 0.5 ? -1 : 1,
-      edge = b.overlayOn()
+      edge = iconDrawn
         ? direction < 0
           ? overlayLeft - 10 * s
           : overlayRight + 10 * s
