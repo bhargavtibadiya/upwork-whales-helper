@@ -550,6 +550,12 @@ export class Brush {
   overlayOffsets(): [number, number] {
     return [this.state.playOffsetX, this.state.playOffsetY];
   }
+  // Whole-button size slider: scales the entire Watch-me button (bar,
+  // padding, text and icon together), independently of the icon-size
+  // sliders. 100 is the layout's default, 50 halves it, 200 doubles it.
+  buttonScale(): number {
+    return (this.state.buttonSize || 100) / 100;
+  }
   play(
     cx: number,
     cy: number,

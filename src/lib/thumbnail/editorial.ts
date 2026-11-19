@@ -439,7 +439,10 @@ export function compositionCallout(b: Brush): void {
     w = b.width,
     h = b.height,
     s = b.scale,
-    r = 33 * s;
+    // The whole-button slider scales the bar, padding, text and icon
+    // together; the icon-size sliders then apply inside that.
+    k = b.buttonScale(),
+    r = 33 * s * k;
   const [cx, cy] = playCenter(w, h, rx * w, ry * h, r, ...b.overlayOffsets());
   const usePill = ["result", "proof", "stat", "reviews", "split"].includes(b.state.style),
     text = (usePill ? value(b, "pill") : b.state.calloutText).trim();
@@ -452,7 +455,7 @@ export function compositionCallout(b: Brush): void {
   if (iconDrawn) {
     b.shadow("rgba(0,0,0,.35)", 18 * s, 3 * s);
     if (showLabel) {
-      const labelSize = b.fit(text, 23 * s, w * 0.24, 700),
+      const labelSize = b.fit(text, 23 * s * k, Math.min(w * 0.24 * k, w * 0.86 - r * 2.6), 700),
         tw = b.ctx.measureText(text).width,
         pw = tw + r * 2.6,
         xx = Math.max(w * 0.04, Math.min(w * 0.96 - pw, cx - pw / 2));

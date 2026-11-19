@@ -201,6 +201,19 @@ describe("preset links", () => {
     expect(small?.loomSize).toBe(50);
   });
 
+  it("round-trips the whole-button size, with safe defaults", () => {
+    expect(roundTrip({ ...initialState("portfolio"), buttonSize: 175 }).buttonSize).toBe(175);
+
+    const raw = { v: 1, mode: "portfolio", style: "result" };
+    const encoded = Buffer.from(JSON.stringify(raw)).toString("base64");
+    expect(decodePreset(`?p=${encoded}`)?.buttonSize).toBe(100);
+
+    const hostile = Buffer.from(JSON.stringify({ ...raw, buttonSize: 999 })).toString("base64");
+    expect(decodePreset(`?p=${hostile}`)?.buttonSize).toBe(200);
+    const tiny = Buffer.from(JSON.stringify({ ...raw, buttonSize: 1 })).toString("base64");
+    expect(decodePreset(`?p=${tiny}`)?.buttonSize).toBe(50);
+  });
+
   it("reads legacy playIcon links as the loom overlay", () => {
     const raw = { v: 1, mode: "portfolio", style: "result", play: true, playIcon: "loom" };
     const encoded = Buffer.from(JSON.stringify(raw)).toString("base64");

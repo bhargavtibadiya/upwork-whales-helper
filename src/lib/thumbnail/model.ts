@@ -59,6 +59,7 @@ export interface ThumbnailState {
   playOffsetX: number;
   playOffsetY: number;
   playSize: number;
+  buttonSize: number;
   loom: boolean;
   loomVariant: "light" | "dark" | "image";
   loomOffsetX: number;
@@ -528,6 +529,7 @@ export function initialState(mode: Mode = "portfolio"): ThumbnailState {
     playOffsetX: 0,
     playOffsetY: 0,
     playSize: 100,
+    buttonSize: 100,
     loom: false,
     loomVariant: "light",
     loomOffsetX: 0,

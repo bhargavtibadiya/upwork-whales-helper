@@ -145,6 +145,125 @@ await settle();
 const allOff = await stablePixels();
 assert.equal(loomLabelOff, allOff, "label-off suppresses the Loom badge entirely");
 
+// --- Whole-button size and shared position controls.
+const ACCENT = [0x6d, 0x3e, 0xf0]; // default "Whales purple" pill colour
+const pillBox = async (src) =>
+  page.evaluate(
+    async ([sa, color]) => {
+      const img = await new Promise((res) => {
+        const i = new Image();
+        i.onload = () => res(i);
+        i.src = sa;
+      });
+      const cv = document.createElement("canvas");
+      cv.width = img.width;
+      cv.height = img.height;
+      const g = cv.getContext("2d");
+      g.drawImage(img, 0, 0);
+      const d = g.getImageData(0, 0, cv.width, cv.height).data;
+      let minX = 1e9,
+        minY = 1e9,
+        maxX = -1,
+        maxY = -1,
+        count = 0;
+      for (let py = 0; py < cv.height; py++) {
+        for (let px = 0; px < cv.width; px++) {
+          const i = (py * cv.width + px) * 4;
+          if (
+            Math.abs(d[i] - color[0]) < 24 &&
+            Math.abs(d[i + 1] - color[1]) < 24 &&
+            Math.abs(d[i + 2] - color[2]) < 24
+          ) {
+            count++;
+            if (px < minX) minX = px;
+            if (px > maxX) maxX = px;
+            if (py < minY) minY = py;
+            if (py > maxY) maxY = py;
+          }
+        }
+      }
+      return { w: cv.width, h: cv.height, count, minX, minY, maxX, maxY };
+    },
+    [src, ACCENT],
+  );
+const setRange = async (label, value) => {
+  await page.getByLabel(label, { exact: true }).evaluate((e, v) => {
+    Object.getOwnPropertyDescriptor(HTMLInputElement.prototype, "value").set.call(e, String(v));
+    e.dispatchEvent(new Event("input", { bubbles: true }));
+    e.dispatchEvent(new Event("change", { bubbles: true }));
+  }, value);
+  await settle();
+};
+
+// State here: result style, play off, loom off, label off, arrow off.
+await playToggle().click();
+await labelToggle().click(); // the labelled Watch-me button with the play icon
+await settle();
+const size100 = await stablePixels();
+await canvas().screenshot({ path: `${out}/08-button-size-100.png` });
+await setRange("Button size", 200);
+const size200 = await stablePixels();
+await canvas().screenshot({ path: `${out}/09-button-size-200.png` });
+assert.notEqual(size100, size200, "button size changes the render");
+const box100 = await pillBox(size100);
+const box200 = await pillBox(size200);
+console.log("pill box 100%:", JSON.stringify(box100));
+console.log("pill box 200%:", JSON.stringify(box200));
+assert.ok(box100.count > 1000, "pill found at 100%");
+assert.ok(box200.count > box100.count * 2.5, "pill area roughly quadruples at 200%");
+assert.ok(
+  box200.maxX - box200.minX > (box100.maxX - box100.minX) * 1.5,
+  "pill bar grows wider at 200%",
+);
+assert.ok(
+  box200.maxY - box200.minY > (box100.maxY - box100.minY) * 1.5,
+  "pill bar grows taller at 200%",
+);
+
+// Icon size stays independent: it never grows the bar.
+await setRange("Button size", 100);
+await setRange("Icon size", 200);
+const iconBox = await pillBox(await stablePixels());
+assert.ok(
+  Math.abs(iconBox.maxY - iconBox.minY - (box100.maxY - box100.minY)) <
+    (box100.maxY - box100.minY) * 0.25,
+  "icon size alone leaves the bar height unchanged",
+);
+assert.ok(
+  Math.abs(iconBox.maxX - iconBox.minX - (box100.maxX - box100.minX)) <
+    (box100.maxX - box100.minX) * 0.25,
+  "icon size alone leaves the bar width unchanged",
+);
+await setRange("Icon size", 100);
+
+// --- Position sliders work with the Loom icon too, all the way to the bottom.
+await loomToggle().click(); // loom on: play off, label stays on
+await settle();
+const loomHome = await stablePixels();
+const homeBox = await pillBox(loomHome);
+await setRange("Vertical position", 100);
+const loomBottom = await stablePixels();
+await canvas().screenshot({ path: `${out}/10-loom-bottom.png` });
+const bottomBox = await pillBox(loomBottom);
+console.log("loom home box:", JSON.stringify(homeBox));
+console.log("loom bottom box:", JSON.stringify(bottomBox));
+assert.ok(bottomBox.count > 500, "pill still found at the bottom");
+assert.ok(bottomBox.minY > homeBox.maxY + homeBox.h * 0.1, "button moved fully below its home");
+assert.ok(bottomBox.maxY > homeBox.h * 0.95, "button reaches the bottom edge");
+// The whole button (bar and Loom icon) moved: nothing Loom stays behind.
+await loomToggle().click(); // loom off: no button at all
+await settle();
+const neitherBottom = await stablePixels();
+const dMove = await diffBox(loomBottom, neitherBottom);
+console.log("loom bottom vs off:", JSON.stringify(dMove));
+assert.ok(dMove.count > 500, "loom button renders at the bottom");
+assert.ok(dMove.minY > dMove.h * 0.75, "no part of the Loom button left at the home position");
+await loomToggle().click(); // loom back on
+await settle();
+await page.getByRole("button", { name: "Reset button position", exact: true }).click();
+await settle();
+assert.equal(await stablePixels(), loomHome, "reset restores the home position exactly");
+
 // --- meet (intro): icon-only centre video button. Loom suppressed there too.
 await page.locator(".mode-selector button").filter({ hasText: "Intro video thumbnail" }).click();
 await settle();

@@ -40,6 +40,7 @@ export interface Preset {
   playOffsetX: number;
   playOffsetY: number;
   playSize: number;
+  buttonSize: number;
   loom: boolean;
   loomVariant: ThumbnailState["loomVariant"];
   loomOffsetX: number;
@@ -176,6 +177,7 @@ export function encodePreset(state: ThumbnailState): string {
     playOffsetX: state.playOffsetX,
     playOffsetY: state.playOffsetY,
     playSize: state.playSize,
+    buttonSize: state.buttonSize,
     loom: state.loom,
     loomVariant: state.loomVariant,
     loomOffsetX: state.loomOffsetX,
@@ -262,6 +264,7 @@ export function decodePreset(search: string): Preset | null {
       playOffsetX: clamp(raw.playOffsetX, -100, 100, 0),
       playOffsetY: clamp(raw.playOffsetY, -100, 100, 0),
       playSize: clamp(raw.playSize, 50, 200, base.playSize),
+      buttonSize: clamp(raw.buttonSize, 50, 200, base.buttonSize),
       loom,
       loomVariant: oneOf(LOOM_VARIANTS, raw.loomVariant, base.loomVariant),
       loomOffsetX: clamp(raw.loomOffsetX, -100, 100, 0),
@@ -303,6 +306,7 @@ export function applyPreset(preset: Preset): ThumbnailState {
     playOffsetX: preset.playOffsetX,
     playOffsetY: preset.playOffsetY,
     playSize: preset.playSize,
+    buttonSize: preset.buttonSize,
     loom: preset.loom,
     loomVariant: preset.loomVariant,
     loomOffsetX: preset.loomOffsetX,

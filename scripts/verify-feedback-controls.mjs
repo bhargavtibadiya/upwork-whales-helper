@@ -46,7 +46,7 @@ try {
       await range("Vertical position", -25);
       const shifted = await image();
       check(shifted !== initial, `${id} vertical slider moves play`);
-      await page.getByRole("button", { name: "Reset play position", exact: true }).click();
+      await page.getByRole("button", { name: "Reset button position", exact: true }).click();
       await page.waitForTimeout(90);
       check((await image()) === initial, `${id} reset restores exact initial pixels`);
       for (const v of [-100, 100]) {
@@ -54,7 +54,7 @@ try {
         await range("Vertical position", v);
         check((await image()) !== initial, `${id} extreme ${v} renders`);
       }
-      await page.getByRole("button", { name: "Reset play position", exact: true }).click();
+      await page.getByRole("button", { name: "Reset button position", exact: true }).click();
     }
   }
   await page.locator('[data-style="editorial"]').click();
@@ -66,9 +66,7 @@ try {
   await page.getByLabel("Play button", { exact: true }).check();
   await page.screenshot({ path: `${dir}/desktop-sliders.png`, fullPage: true });
   await page.setViewportSize({ width: 390, height: 844 });
-  await page
-    .getByRole("group", { name: "Play button position", exact: true })
-    .scrollIntoViewIfNeeded();
+  await page.getByRole("group", { name: "Watch-me button", exact: true }).scrollIntoViewIfNeeded();
   await page.screenshot({ path: `${dir}/mobile-sliders.png` });
   check(
     await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth),

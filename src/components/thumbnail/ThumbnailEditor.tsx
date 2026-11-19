@@ -628,46 +628,29 @@ export function ThumbnailEditor(): React.JSX.Element {
                     </div>
                     <hr className="section-divider" />
                     <fieldset className="field">
-                      <legend>Play button</legend>
-                      <label className="toggle">
-                        <span>Play button</span>
-                        <input
-                          type="checkbox"
-                          checked={state.play}
-                          onChange={(event) => {
-                            const play = event.currentTarget.checked;
-                            // Play and Loom are alternative icons for the same
-                            // Watch-me button: switching one on switches the
-                            // other off.
-                            setState((current) => ({
-                              ...current,
-                              play,
-                              loom: play ? false : current.loom,
-                            }));
-                          }}
-                        />
-                      </label>
-                      {state.play && (
+                      <legend>Watch-me button</legend>
+                      {state.play || state.loom ? (
                         <>
                           <label className="range-control">
                             <span className="field-label">
-                              Button size <output>{state.playSize}%</output>
+                              Button size <output>{state.buttonSize}%</output>
                             </span>
                             <input
                               type="range"
                               min={50}
                               max={200}
                               step={5}
-                              value={state.playSize}
+                              value={state.buttonSize}
                               aria-label="Button size"
                               onChange={(event) => {
-                                const playSize = Number(event.currentTarget.value);
-                                setState((current) => ({ ...current, playSize }));
+                                const buttonSize = Number(event.currentTarget.value);
+                                setState((current) => ({ ...current, buttonSize }));
                               }}
                             />
                           </label>
                           <p className="helper">
-                            Move from the layout's starting position. Zero restores that position.
+                            Scales the whole button: bar, label text and icon together. Use Icon
+                            size or Logo size for the icon inside it.
                           </p>
                           {(
                             [
@@ -693,6 +676,10 @@ export function ThumbnailEditor(): React.JSX.Element {
                               />
                             </label>
                           ))}
+                          <p className="helper">
+                            Moves the whole button for either icon. Zero restores the layout's
+                            starting position.
+                          </p>
                           <button
                             type="button"
                             className="text-button"
@@ -704,8 +691,56 @@ export function ThumbnailEditor(): React.JSX.Element {
                               }))
                             }
                           >
-                            Reset play position
+                            Reset button position
                           </button>
+                        </>
+                      ) : (
+                        <p className="helper">
+                          Turn on the Play button or Loom logo to size and move the Watch-me button.
+                        </p>
+                      )}
+                    </fieldset>
+                    <hr className="section-divider" />
+                    <fieldset className="field">
+                      <legend>Play button</legend>
+                      <label className="toggle">
+                        <span>Play button</span>
+                        <input
+                          type="checkbox"
+                          checked={state.play}
+                          onChange={(event) => {
+                            const play = event.currentTarget.checked;
+                            // Play and Loom are alternative icons for the same
+                            // Watch-me button: switching one on switches the
+                            // other off.
+                            setState((current) => ({
+                              ...current,
+                              play,
+                              loom: play ? false : current.loom,
+                            }));
+                          }}
+                        />
+                      </label>
+                      {state.play && (
+                        <>
+                          <label className="range-control">
+                            <span className="field-label">
+                              Icon size <output>{state.playSize}%</output>
+                            </span>
+                            <input
+                              type="range"
+                              min={50}
+                              max={200}
+                              step={5}
+                              value={state.playSize}
+                              aria-label="Icon size"
+                              onChange={(event) => {
+                                const playSize = Number(event.currentTarget.value);
+                                setState((current) => ({ ...current, playSize }));
+                              }}
+                            />
+                          </label>
+                          <p className="helper">Scales just the triangle inside the button.</p>
                         </>
                       )}
                     </fieldset>
