@@ -554,6 +554,78 @@ function result(b: Brush): void {
     b.arrow(from, to, (to[1] >= from[1] ? 1 : -1) * 2 * (peak - (from[0] + to[0]) / 2), 30 * s);
   }
 }
+function casestudy(b: Brush): void {
+  const { width: w, height: h } = b,
+    s = b.scale,
+    c = b.ctx,
+    m = 44 * s;
+  b.background(w / 2, h * 0.36, Math.max(w, h) * 0.42);
+  const max = w - 2 * (m + (b.state.arrow ? 92 * s : 0));
+  const badge = words(b, "badge").toUpperCase().trim(),
+    title = words(b, "headline").toUpperCase(),
+    sub = words(b, "subline");
+  const bk = (b.state.badgeSize || 100) / 100;
+  let y = 30 * s,
+    br = w / 2,
+    bc = 0;
+  if (badge) {
+    const px = b.fit(badge, 30 * s * bk, max - 52 * s * bk, 800),
+      cap = b.cap(),
+      padX = 26 * s * bk,
+      padY = 12 * s * bk,
+      bw = c.measureText(badge).width + padX * 2,
+      bh = cap + padY * 2,
+      x = (w - bw) / 2;
+    br = x + bw;
+    bc = y + bh / 2;
+    const variant = b.state.badgeVariant,
+      bg = variant === "white" ? "#FFFFFF" : variant === "dark" ? "#111A3A" : "#2563EB",
+      fg = variant === "white" ? "#0B1130" : "#FFFFFF";
+    b.shadow("rgba(0,0,0,.35)", 16 * s, 4 * s);
+    b.rect(
+      [x, y, bw, bh],
+      bg,
+      bh / 2,
+      variant === "dark" ? "rgba(255,255,255,.35)" : undefined,
+      2 * s,
+    );
+    b.noShadow();
+    b.font(px, 800);
+    b.text(badge, x + padX, y + padY + cap, px, fg, Infinity, 800);
+    y += bh + 28 * s;
+  }
+  const top = y + 30 * s;
+  let hr = w / 2,
+    hc = 0;
+  if (title) {
+    const p = b.fit(title, 108 * s, max, 800);
+    hc = b.cap();
+    const hw = c.measureText(title).width;
+    hr = (w + hw) / 2;
+    b.shadow("rgba(0,0,0,.35)", 24 * s, 4 * s);
+    b.text(title, (w - hw) / 2, top + hc, p, "#fff", Infinity, 800);
+    b.noShadow();
+    y = top + hc;
+  }
+  if (sub) {
+    const px = b.fit(sub, 30 * s, w - 2 * m, 600),
+      cap = b.cap();
+    b.text(sub, w / 2, y + 22 * s + cap, px, "rgba(255,255,255,.85)", Infinity, 600, "center");
+    y += 22 * s + cap;
+  }
+  const fx = w * (w / h > 1.45 ? 0.15 : 0.07),
+    fy = y + 62 * s;
+  b.frame([fx, fy, w - 2 * fx, h - fy + 60 * s], 18 * s, 6 * s, 0, h - fy);
+  if (b.state.arrow && title) {
+    const from: [number, number] = badge
+        ? [br + 12 * s, bc]
+        : [hr + 40 * s, Math.max(14 * s, top - 90 * s)],
+      to: [number, number] = [hr + 16 * s, top + hc * 0.5],
+      peak = Math.min(w - 18 * s, Math.max(from[0], to[0]) + 70 * s);
+    b.arrow(from, to, (to[1] >= from[1] ? 1 : -1) * 2 * (peak - (from[0] + to[0]) / 2), 30 * s);
+  }
+}
+
 function stat(b: Brush): void {
   const { width: w, height: h } = b,
     s = b.scale,
@@ -1295,6 +1367,7 @@ export function drawThumbnail(
   const painters: Record<Style, (brush: Brush) => void> = {
     profile,
     result,
+    casestudy,
     stat,
     reviews,
     quote,

@@ -41,6 +41,8 @@ export interface Preset {
   playOffsetY: number;
   playSize: number;
   buttonSize: number;
+  badgeSize: number;
+  badgeVariant: ThumbnailState["badgeVariant"];
   loom: boolean;
   loomVariant: ThumbnailState["loomVariant"];
   loomOffsetX: number;
@@ -63,6 +65,7 @@ const MODES: Mode[] = ["profile", "portfolio", "intro"];
 const SIZES: ThumbnailState["size"][] = ["4x3", "16x9"];
 const FONTS: ThumbnailState["font"][] = ["original", "Montserrat", "Manrope", "Anton"];
 const LOOM_VARIANTS: ThumbnailState["loomVariant"][] = ["light", "dark", "image"];
+const BADGE_VARIANTS: ThumbnailState["badgeVariant"][] = ["blue", "dark", "white"];
 const SHAPES: ThumbnailState["portraitShape"][] = ["rounded", "square", "circle"];
 const BACKDROPS: ThumbnailState["backdrop"][] = ["glow", "clean"];
 const GAPS: Ring["gap"][] = ["white", "dark", "none"];
@@ -178,6 +181,8 @@ export function encodePreset(state: ThumbnailState): string {
     playOffsetY: state.playOffsetY,
     playSize: state.playSize,
     buttonSize: state.buttonSize,
+    badgeSize: state.badgeSize,
+    badgeVariant: state.badgeVariant,
     loom: state.loom,
     loomVariant: state.loomVariant,
     loomOffsetX: state.loomOffsetX,
@@ -265,6 +270,8 @@ export function decodePreset(search: string): Preset | null {
       playOffsetY: clamp(raw.playOffsetY, -100, 100, 0),
       playSize: clamp(raw.playSize, 50, 200, base.playSize),
       buttonSize: clamp(raw.buttonSize, 50, 200, base.buttonSize),
+      badgeSize: clamp(raw.badgeSize, 50, 200, base.badgeSize),
+      badgeVariant: oneOf(BADGE_VARIANTS, raw.badgeVariant, base.badgeVariant),
       loom,
       loomVariant: oneOf(LOOM_VARIANTS, raw.loomVariant, base.loomVariant),
       loomOffsetX: clamp(raw.loomOffsetX, -100, 100, 0),
@@ -307,6 +314,8 @@ export function applyPreset(preset: Preset): ThumbnailState {
     playOffsetY: preset.playOffsetY,
     playSize: preset.playSize,
     buttonSize: preset.buttonSize,
+    badgeSize: preset.badgeSize,
+    badgeVariant: preset.badgeVariant,
     loom: preset.loom,
     loomVariant: preset.loomVariant,
     loomOffsetX: preset.loomOffsetX,

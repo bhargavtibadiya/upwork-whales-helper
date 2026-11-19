@@ -2,6 +2,7 @@ export type Mode = "profile" | "portfolio" | "intro";
 export type Style =
   | "profile"
   | "result"
+  | "casestudy"
   | "stat"
   | "reviews"
   | "quote"
@@ -60,6 +61,8 @@ export interface ThumbnailState {
   playOffsetY: number;
   playSize: number;
   buttonSize: number;
+  badgeSize: number;
+  badgeVariant: "blue" | "dark" | "white";
   loom: boolean;
   loomVariant: "light" | "dark" | "image";
   loomOffsetX: number;
@@ -110,6 +113,26 @@ export const STYLES: StyleSpec[] = [
       pill: "Button text",
       headline: "Big result",
       subline: "Small line under it (optional)",
+    },
+  },
+  {
+    id: "casestudy",
+    mode: "portfolio",
+    name: "Case study cover",
+    fields: ["badge", "headline", "subline", "pill"],
+    images: ["shot"],
+    extras: ["play", "arrow"],
+    defaults: {
+      badge: "CASE STUDY",
+      headline: "BUILT IN WEEKS",
+      subline: "From kickoff to a working product",
+      pill: "WATCH THIS",
+    },
+    labels: {
+      badge: "Case study badge",
+      headline: "Title",
+      subline: "Description (optional)",
+      pill: "Button text",
     },
   },
   {
@@ -530,6 +553,8 @@ export function initialState(mode: Mode = "portfolio"): ThumbnailState {
     playOffsetY: 0,
     playSize: 100,
     buttonSize: 100,
+    badgeSize: 100,
+    badgeVariant: "blue",
     loom: false,
     loomVariant: "light",
     loomOffsetX: 0,

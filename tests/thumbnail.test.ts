@@ -26,9 +26,10 @@ describe("reference contract", () => {
       "The specialist",
       "Personal brand",
     ]));
-  it("provides ten portfolio layouts and one profile ring", () => {
+  it("provides eleven portfolio layouts and one profile ring", () => {
     expect(STYLES.filter((s) => s.mode === "portfolio").map((s) => s.name)).toEqual([
       "Result + screenshot",
+      "Case study cover",
       "Face + big stat",
       "Client results",
       "Client quote",

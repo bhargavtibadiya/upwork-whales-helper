@@ -128,6 +128,9 @@ export function Words({ state, setState }: WordsProps): React.JSX.Element | null
           <div className="field" key={key}>
             <label htmlFor={`word-${key}`}>{style.labels[key] ?? key}</label>
             {input(key, style.labels[key] ?? key, LIMITS[key] ?? 60)}
+            {key === "headline" && state.style === "casestudy" && (
+              <p className="helper">Three or four words read best at thumbnail size.</p>
+            )}
             {key === "headline" && state.style === "result" && (
               <p className="helper">Keep it short: a number and a word works best.</p>
             )}

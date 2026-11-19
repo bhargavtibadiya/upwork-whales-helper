@@ -214,6 +214,26 @@ describe("preset links", () => {
     expect(decodePreset(`?p=${tiny}`)?.buttonSize).toBe(50);
   });
 
+  it("round-trips the badge size and variant, with safe defaults", () => {
+    expect(roundTrip({ ...initialState("portfolio"), badgeSize: 160 }).badgeSize).toBe(160);
+    expect(roundTrip({ ...initialState("portfolio"), badgeVariant: "white" }).badgeVariant).toBe(
+      "white",
+    );
+
+    const raw = { v: 1, mode: "portfolio", style: "casestudy" };
+    const encoded = Buffer.from(JSON.stringify(raw)).toString("base64");
+    expect(decodePreset(`?p=${encoded}`)?.badgeSize).toBe(100);
+    expect(decodePreset(`?p=${encoded}`)?.badgeVariant).toBe("blue");
+
+    const hostile = Buffer.from(
+      JSON.stringify({ ...raw, badgeSize: 999, badgeVariant: "neon" }),
+    ).toString("base64");
+    expect(decodePreset(`?p=${hostile}`)?.badgeSize).toBe(200);
+    expect(decodePreset(`?p=${hostile}`)?.badgeVariant).toBe("blue");
+    const tiny = Buffer.from(JSON.stringify({ ...raw, badgeSize: 1 })).toString("base64");
+    expect(decodePreset(`?p=${tiny}`)?.badgeSize).toBe(50);
+  });
+
   it("reads legacy playIcon links as the loom overlay", () => {
     const raw = { v: 1, mode: "portfolio", style: "result", play: true, playIcon: "loom" };
     const encoded = Buffer.from(JSON.stringify(raw)).toString("base64");

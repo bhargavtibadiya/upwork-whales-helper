@@ -322,7 +322,7 @@ export function ThumbnailEditor(): React.JSX.Element {
                       >
                         ←
                       </button>
-                      <span>10 styles</span>
+                      <span>11 styles</span>
                       <button
                         type="button"
                         aria-label="Next styles"
@@ -491,7 +491,7 @@ export function ThumbnailEditor(): React.JSX.Element {
                         ))}
                       </fieldset>
                     )}
-                    {!["result", "meet", "proof"].includes(state.style) &&
+                    {!["result", "meet", "proof", "casestudy"].includes(state.style) &&
                       !(state.originalLayout && ["stat", "reviews"].includes(state.style)) && (
                         <div className="field">
                           <label htmlFor="callout-text">Callout text</label>
@@ -627,6 +627,51 @@ export function ThumbnailEditor(): React.JSX.Element {
                       </label>
                     </div>
                     <hr className="section-divider" />
+                    {state.style === "casestudy" && (
+                      <fieldset className="field">
+                        <legend>Case study badge</legend>
+                        <fieldset className="segments" aria-label="Badge style">
+                          {(
+                            [
+                              { id: "blue", name: "Blue" },
+                              { id: "dark", name: "Dark" },
+                              { id: "white", name: "White" },
+                            ] as const
+                          ).map((variant) => (
+                            <button
+                              key={variant.id}
+                              type="button"
+                              aria-pressed={state.badgeVariant === variant.id}
+                              onClick={() =>
+                                setState((current) => ({ ...current, badgeVariant: variant.id }))
+                              }
+                            >
+                              {variant.name}
+                            </button>
+                          ))}
+                        </fieldset>
+                        <label className="range-control">
+                          <span className="field-label">
+                            Badge size <output>{state.badgeSize}%</output>
+                          </span>
+                          <input
+                            type="range"
+                            min={50}
+                            max={200}
+                            step={5}
+                            value={state.badgeSize}
+                            aria-label="Badge size"
+                            onChange={(event) => {
+                              const badgeSize = Number(event.currentTarget.value);
+                              setState((current) => ({ ...current, badgeSize }));
+                            }}
+                          />
+                        </label>
+                        <p className="helper">
+                          Edit the badge text under "4. Your words". 100% is the default size.
+                        </p>
+                      </fieldset>
+                    )}
                     <fieldset className="field">
                       <legend>Watch-me button</legend>
                       {state.play || state.loom ? (

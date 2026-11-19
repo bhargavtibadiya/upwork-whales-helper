@@ -393,6 +393,7 @@ export function editorial(b: Brush): void {
 
 const OVERLAY_ANCHORS: Record<string, [number, number]> = {
   result: [0.5, 0.66],
+  casestudy: [0.5, 0.66],
   stat: [0.765, 0.79],
   reviews: [0.78, 0.8],
   quote: [0.775, 0.8],
@@ -444,7 +445,9 @@ export function compositionCallout(b: Brush): void {
     k = b.buttonScale(),
     r = 33 * s * k;
   const [cx, cy] = playCenter(w, h, rx * w, ry * h, r, ...b.overlayOffsets());
-  const usePill = ["result", "proof", "stat", "reviews", "split"].includes(b.state.style),
+  const usePill = ["result", "proof", "stat", "reviews", "split", "casestudy"].includes(
+      b.state.style,
+    ),
     text = (usePill ? value(b, "pill") : b.state.calloutText).trim();
   const showLabel = b.state.overlayLabel && Boolean(text);
   let overlayLeft = cx - r,
