@@ -1286,8 +1286,10 @@ export function drawThumbnail(
     !["profile", "result", "meet", "banner", "hello", "proof"].includes(style) &&
     !(state.originalLayout && ["stat", "reviews"].includes(style));
   // Button words are drawn once, in the image overlay. No duplicate header/button row.
+  // The Loom logo is stripped alongside the play button so it can never show
+  // up as a stray badge outside the Watch-me button the overlay draws.
   const baseState = ["result", "proof", "stat", "reviews", "split"].includes(style)
-    ? setField({ ...chosen, play: false, arrow: false }, "pill", "")
+    ? { ...setField({ ...chosen, play: false, arrow: false }, "pill", ""), loom: false }
     : chosen;
   const b = new Brush(c, baseState, w, h);
   const painters: Record<Style, (brush: Brush) => void> = {

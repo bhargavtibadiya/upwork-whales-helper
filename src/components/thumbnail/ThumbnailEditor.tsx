@@ -511,8 +511,8 @@ export function ThumbnailEditor(): React.JSX.Element {
                         </div>
                       )}
                     <p className="helper">
-                      Play and Loom controls overlay the media. They never add a row or shrink your
-                      artwork.
+                      The play button can also sit on the media; it never adds a row or shrinks your
+                      artwork. The Loom logo only replaces the icon inside the Watch-me button.
                     </p>
                     <div className="field">
                       <label htmlFor="artwork-backdrop">Background treatment</label>
@@ -636,8 +636,9 @@ export function ThumbnailEditor(): React.JSX.Element {
                           checked={state.play}
                           onChange={(event) => {
                             const play = event.currentTarget.checked;
-                            // Play and Loom share one overlay slot: switching
-                            // one on always switches the other off.
+                            // Play and Loom are alternative icons for the same
+                            // Watch-me button: switching one on switches the
+                            // other off.
                             setState((current) => ({
                               ...current,
                               play,
@@ -718,8 +719,9 @@ export function ThumbnailEditor(): React.JSX.Element {
                           checked={state.loom}
                           onChange={(event) => {
                             const loom = event.currentTarget.checked;
-                            // Play and Loom share one overlay slot: switching
-                            // one on always switches the other off.
+                            // Play and Loom are alternative icons for the same
+                            // Watch-me button: switching one on switches the
+                            // other off.
                             setState((current) => ({
                               ...current,
                               loom,
@@ -764,45 +766,9 @@ export function ThumbnailEditor(): React.JSX.Element {
                             />
                           </label>
                           <p className="helper">
-                            Move from the layout's starting position. Zero restores that position.
+                            The Loom logo sits inside the Watch-me button in place of the play
+                            triangle. It never appears anywhere else on the artwork.
                           </p>
-                          {(
-                            [
-                              ["loomOffsetX", "Horizontal position"],
-                              ["loomOffsetY", "Vertical position"],
-                            ] as const
-                          ).map(([key, label]) => (
-                            <label className="range-control" key={key}>
-                              <span className="field-label">
-                                {label} <output>{state[key]}%</output>
-                              </span>
-                              <input
-                                type="range"
-                                min={-100}
-                                max={100}
-                                step={1}
-                                value={state[key]}
-                                aria-label={label}
-                                onChange={(event) => {
-                                  const position = Number(event.currentTarget.value);
-                                  setState((current) => ({ ...current, [key]: position }));
-                                }}
-                              />
-                            </label>
-                          ))}
-                          <button
-                            type="button"
-                            className="text-button"
-                            onClick={() =>
-                              setState((current) => ({
-                                ...current,
-                                loomOffsetX: 0,
-                                loomOffsetY: 0,
-                              }))
-                            }
-                          >
-                            Reset logo position
-                          </button>
                         </>
                       )}
                     </fieldset>

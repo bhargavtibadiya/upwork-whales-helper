@@ -535,15 +535,15 @@ export class Brush {
     }
     c.restore();
   }
-  // Play button and Loom badge share the same overlay slot in every layout
-  // and are mutually exclusive; these helpers keep the call sites simple.
+  // The Watch-me button's icon is either the play triangle or the Loom logo;
+  // they are mutually exclusive and share the exact same slots, so the Loom
+  // logo never appears anywhere the play button would not. Position offsets
+  // are shared too.
   overlayOn(): boolean {
     return this.state.play || this.state.loom;
   }
   overlayOffsets(): [number, number] {
-    return this.state.loom
-      ? [this.state.loomOffsetX, this.state.loomOffsetY]
-      : [this.state.playOffsetX, this.state.playOffsetY];
+    return [this.state.playOffsetX, this.state.playOffsetY];
   }
   play(
     cx: number,

@@ -328,6 +328,13 @@ fieldset.mode-tabs,
 .studio-panel .toggle {
   font-size: 14px;
 }
+/* Toggles grouped inside fieldset.field (Play button, Loom logo) keep the
+   standard toggle row: label on the left, switch on the right, same row.
+   Without this the generic .field > label rule stacks them vertically. */
+.studio-panel fieldset.field > label.toggle {
+  display: flex;
+  margin-bottom: 0;
+}
 .studio-panel .preview-column {
   grid-area: preview;
 }
