@@ -30,14 +30,17 @@ export interface Preset {
   style: Style;
   lastStyle: Record<Mode, Style>;
   palette: ThumbnailState["palette"];
+  customPaletteColor: string;
   size: ThumbnailState["size"];
   values: Record<string, string>;
   icons: string[];
   font: ThumbnailState["font"];
   arrow: boolean;
   play: boolean;
+  playIcon: ThumbnailState["playIcon"];
   playOffsetX: number;
   playOffsetY: number;
+  playSize: number;
   calloutText: string;
   overlayLabel: boolean;
   originalLayout: boolean;
@@ -54,6 +57,7 @@ export interface Preset {
 const MODES: Mode[] = ["profile", "portfolio", "intro"];
 const SIZES: ThumbnailState["size"][] = ["4x3", "16x9"];
 const FONTS: ThumbnailState["font"][] = ["original", "Montserrat", "Manrope", "Anton"];
+const PLAY_ICONS: ThumbnailState["playIcon"][] = ["play", "loom"];
 const SHAPES: ThumbnailState["portraitShape"][] = ["rounded", "square", "circle"];
 const BACKDROPS: ThumbnailState["backdrop"][] = ["glow", "clean"];
 const GAPS: Ring["gap"][] = ["white", "dark", "none"];
@@ -158,14 +162,17 @@ export function encodePreset(state: ThumbnailState): string {
     style: state.style,
     lastStyle: state.lastStyle,
     palette: state.palette,
+    customPaletteColor: state.customPaletteColor,
     size: state.size,
     values: state.values,
     icons: state.icons,
     font: state.font,
     arrow: state.arrow,
     play: state.play,
+    playIcon: state.playIcon,
     playOffsetX: state.playOffsetX,
     playOffsetY: state.playOffsetY,
+    playSize: state.playSize,
     calloutText: state.calloutText,
     overlayLabel: state.overlayLabel,
     originalLayout: state.originalLayout,
@@ -233,14 +240,17 @@ export function decodePreset(search: string): Preset | null {
       palette: PALETTE_IDS.has(raw.palette as ThumbnailState["palette"])
         ? (raw.palette as ThumbnailState["palette"])
         : base.palette,
+      customPaletteColor: hex(raw.customPaletteColor, base.customPaletteColor),
       size: oneOf(SIZES, raw.size, base.size),
       values: cleanValues(raw.values),
       icons: icons.length ? icons.slice(0, 4) : base.icons,
       font: oneOf(FONTS, raw.font, base.font),
       arrow: raw.arrow === true,
       play: raw.play !== false,
+      playIcon: oneOf(PLAY_ICONS, raw.playIcon, base.playIcon),
       playOffsetX: clamp(raw.playOffsetX, -100, 100, 0),
       playOffsetY: clamp(raw.playOffsetY, -100, 100, 0),
+      playSize: clamp(raw.playSize, 50, 200, base.playSize),
       calloutText: text(raw.calloutText, 22, base.calloutText),
       overlayLabel: raw.overlayLabel === true,
       originalLayout: raw.originalLayout === true,
@@ -267,14 +277,17 @@ export function applyPreset(preset: Preset): ThumbnailState {
     ...base,
     lastStyle: preset.lastStyle,
     palette: preset.palette,
+    customPaletteColor: preset.customPaletteColor,
     size: preset.size,
     values: preset.values,
     icons: preset.icons,
     font: preset.font,
     arrow: preset.arrow,
     play: preset.play,
+    playIcon: preset.playIcon,
     playOffsetX: preset.playOffsetX,
     playOffsetY: preset.playOffsetY,
+    playSize: preset.playSize,
     calloutText: preset.calloutText,
     overlayLabel: preset.overlayLabel,
     originalLayout: preset.originalLayout,

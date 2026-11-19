@@ -21,7 +21,7 @@ export type Style =
   | "minimal"
   | "editorial"
   | "signature";
-export type Palette = "purple" | "green" | "blue" | "black" | "red" | "orange" | "teal" | "pink";
+export type Palette = "purple" | "green" | "blue" | "black" | "red" | "orange" | "teal" | "custom";
 export type ImageKind = "face" | "shot";
 export interface Crop {
   image: HTMLImageElement | null;
@@ -48,6 +48,7 @@ export interface ThumbnailState {
   style: Style;
   lastStyle: Record<Mode, Style>;
   palette: Palette;
+  customPaletteColor: string;
   size: "4x3" | "16x9";
   values: Record<string, string>;
   icons: string[];
@@ -55,8 +56,10 @@ export interface ThumbnailState {
   shot: Crop;
   arrow: boolean;
   play: boolean;
+  playIcon: "play" | "loom";
   playOffsetX: number;
   playOffsetY: number;
+  playSize: number;
   calloutText: string;
   font: "original" | "Montserrat" | "Manrope" | "Anton";
   overlayLabel: boolean;
@@ -501,6 +504,7 @@ export function initialState(mode: Mode = "portfolio"): ThumbnailState {
     style: mode === "profile" ? "profile" : mode === "intro" ? "meet" : "result",
     lastStyle: { profile: "profile", portfolio: "result", intro: "meet" },
     palette: "purple",
+    customPaletteColor: "#2563EB",
     size: "4x3",
     values: {},
     icons: ["code", "database", "ai", "cloud"],
@@ -517,8 +521,10 @@ export function initialState(mode: Mode = "portfolio"): ThumbnailState {
     backdrop: "glow",
     arrow: false,
     play: true,
+    playIcon: "play",
     playOffsetX: 0,
     playOffsetY: 0,
+    playSize: 100,
     ring: {
       color: "#8360F5",
       preset: "whales",
@@ -560,7 +566,7 @@ export const PALETTES: { id: Palette; name: string }[] = [
   { id: "red", name: "Red" },
   { id: "orange", name: "Orange" },
   { id: "teal", name: "Teal" },
-  { id: "pink", name: "Pink" },
+  { id: "custom", name: "Custom" },
 ];
 export const BACKGROUNDS = [
   { name: "White", color: "#FFFFFF" },

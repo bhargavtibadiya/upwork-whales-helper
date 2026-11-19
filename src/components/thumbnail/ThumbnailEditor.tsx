@@ -1,7 +1,7 @@
 "use client";
 
 import { useCallback, useEffect, useRef, useState } from "react";
-import { ARTWORK_PALETTES } from "@/lib/thumbnail/brush";
+import { ARTWORK_PALETTES, customArtworkPalette } from "@/lib/thumbnail/brush";
 import {
   type Crop,
   changeMode,
@@ -364,34 +364,66 @@ export function ThumbnailEditor(): React.JSX.Element {
                 <section className="surface theme-panel">
                   <h2>2. Theme</h2>
                   <fieldset className="palette-options" aria-label="Theme colour">
-                    {PALETTES.map((item) => (
-                      <button
-                        className="choice palette-option"
-                        key={item.id}
-                        type="button"
-                        aria-pressed={state.palette === item.id}
-                        onClick={() => setState((current) => ({ ...current, palette: item.id }))}
-                      >
-                        <svg viewBox="0 0 32 32" aria-hidden="true">
-                          <defs>
-                            <radialGradient id={`palette-${item.id}`} cx="35%" cy="35%" r="75%">
-                              <stop stopColor={ARTWORK_PALETTES[item.id].glow} />
-                              <stop offset="1" stopColor={ARTWORK_PALETTES[item.id].base} />
-                            </radialGradient>
-                          </defs>
-                          <circle cx="16" cy="16" r="15" fill={`url(#palette-${item.id})`} />
-                          <path
-                            d="M16 16h15a15 15 0 0 1-15 15z"
-                            fill={
-                              item.id === "black"
-                                ? ARTWORK_PALETTES[item.id].accent
-                                : ARTWORK_PALETTES[item.id].line
-                            }
-                          />
-                        </svg>
-                        <span>{item.name}</span>
-                      </button>
-                    ))}
+                    {PALETTES.map((item) => {
+                      const artwork =
+                        item.id === "custom"
+                          ? customArtworkPalette(state.customPaletteColor)
+                          : ARTWORK_PALETTES[item.id];
+                      const swatch = (
+                        <>
+                          <svg viewBox="0 0 32 32" aria-hidden="true">
+                            <defs>
+                              <radialGradient id={`palette-${item.id}`} cx="35%" cy="35%" r="75%">
+                                <stop stopColor={artwork.glow} />
+                                <stop offset="1" stopColor={artwork.base} />
+                              </radialGradient>
+                            </defs>
+                            <circle cx="16" cy="16" r="15" fill={`url(#palette-${item.id})`} />
+                            <path
+                              d="M16 16h15a15 15 0 0 1-15 15z"
+                              fill={item.id === "black" ? artwork.accent : artwork.line}
+                            />
+                          </svg>
+                          <span>{item.name}</span>
+                        </>
+                      );
+                      if (item.id === "custom") {
+                        return (
+                          <label
+                            className={`choice palette-option custom-color ${
+                              state.palette === "custom" ? "is-selected" : ""
+                            }`}
+                            key={item.id}
+                          >
+                            {swatch}
+                            <input
+                              type="color"
+                              aria-label="Custom theme colour"
+                              value={state.customPaletteColor}
+                              onChange={(event) => {
+                                const customPaletteColor = event.currentTarget.value;
+                                setState((current) => ({
+                                  ...current,
+                                  palette: "custom",
+                                  customPaletteColor,
+                                }));
+                              }}
+                            />
+                          </label>
+                        );
+                      }
+                      return (
+                        <button
+                          className="choice palette-option"
+                          key={item.id}
+                          type="button"
+                          aria-pressed={state.palette === item.id}
+                          onClick={() => setState((current) => ({ ...current, palette: item.id }))}
+                        >
+                          {swatch}
+                        </button>
+                      );
+                    })}
                   </fieldset>
                 </section>
               )}
@@ -577,7 +609,39 @@ export function ThumbnailEditor(): React.JSX.Element {
                     )}
                     {state.play && (
                       <fieldset className="field">
-                        <legend>Play button position</legend>
+                        <legend>Play button</legend>
+                        <div className="field">
+                          <label htmlFor="play-icon">Button icon</label>
+                          <select
+                            id="play-icon"
+                            value={state.playIcon}
+                            onChange={(event) => {
+                              const playIcon = event.currentTarget
+                                .value as ThumbnailState["playIcon"];
+                              setState((current) => ({ ...current, playIcon }));
+                            }}
+                          >
+                            <option value="play">Play triangle</option>
+                            <option value="loom">Loom logo</option>
+                          </select>
+                        </div>
+                        <label className="range-control">
+                          <span className="field-label">
+                            Button size <output>{state.playSize}%</output>
+                          </span>
+                          <input
+                            type="range"
+                            min={50}
+                            max={200}
+                            step={5}
+                            value={state.playSize}
+                            aria-label="Button size"
+                            onChange={(event) => {
+                              const playSize = Number(event.currentTarget.value);
+                              setState((current) => ({ ...current, playSize }));
+                            }}
+                          />
+                        </label>
                         <p className="helper">
                           Move from the layout's starting position. Zero restores that position.
                         </p>

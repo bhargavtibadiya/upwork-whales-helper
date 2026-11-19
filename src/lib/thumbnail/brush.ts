@@ -12,7 +12,7 @@ export interface ArtworkPalette {
   highlight: string;
   triangle: string;
 }
-export const ARTWORK_PALETTES: Record<Palette, ArtworkPalette> = {
+export const ARTWORK_PALETTES: Record<Exclude<Palette, "custom">, ArtworkPalette> = {
   purple: {
     base: "#0b0a10",
     surface: "#15111F",
@@ -97,18 +97,6 @@ export const ARTWORK_PALETTES: Record<Palette, ArtworkPalette> = {
     highlight: "#5EEAD4",
     triangle: "#0F766E",
   },
-  pink: {
-    base: "#140616",
-    surface: "#220b24",
-    glow: "#D946EF",
-    alpha: 0.55,
-    accent: "#A21CAF",
-    line: "#E879F9",
-    foreground: "#ffffff",
-    arrow: "#14AE5C",
-    highlight: "#F0ABFC",
-    triangle: "#A21CAF",
-  },
 };
 export type Box = readonly [number, number, number, number];
 export function translucent(hex: string, opacity: number): string {
@@ -128,6 +116,55 @@ export function blend(hex: string, target: string, amount: number): string {
 }
 export function customRingGradient(color: string): readonly [string, string] {
   return [blend(color, "#ffffff", 0.32), blend(color, "#000000", 0.22)];
+}
+function hueRotate(hex: string, degrees: number): string {
+  const n = Number.parseInt(hex.slice(1), 16);
+  const r = ((n >> 16) & 255) / 255,
+    g = ((n >> 8) & 255) / 255,
+    b = (n & 255) / 255;
+  const max = Math.max(r, g, b),
+    min = Math.min(r, g, b),
+    l = (max + min) / 2;
+  // A grey has no hue to rotate; keep it as-is.
+  if (max === min) return hex;
+  const d = max - min,
+    s = l > 0.5 ? d / (2 - max - min) : d / (max + min);
+  let h: number;
+  if (max === r) h = (g - b) / d + (g < b ? 6 : 0);
+  else if (max === g) h = (b - r) / d + 2;
+  else h = (r - g) / d + 4;
+  h = (((h * 60 + degrees) % 360) + 360) % 360;
+  const hue2rgb = (p2: number, q2: number, t0: number): number => {
+    let t1 = t0;
+    if (t1 < 0) t1 += 1;
+    if (t1 > 1) t1 -= 1;
+    if (t1 < 1 / 6) return p2 + (q2 - p2) * 6 * t1;
+    if (t1 < 1 / 2) return q2;
+    if (t1 < 2 / 3) return p2 + (q2 - p2) * (2 / 3 - t1) * 6;
+    return p2;
+  };
+  const q = l < 0.5 ? l * (1 + s) : l + s - l * s,
+    p2 = 2 * l - q,
+    to = (v: number) =>
+      Math.round(v * 255)
+        .toString(16)
+        .padStart(2, "0");
+  return `#${to(hue2rgb(p2, q, h / 360 + 1 / 3))}${to(hue2rgb(p2, q, h / 360))}${to(hue2rgb(p2, q, h / 360 - 1 / 3))}`;
+}
+// Custom theme: one picked colour, every shade of the artwork derived from it.
+export function customArtworkPalette(color: string): ArtworkPalette {
+  return {
+    base: blend(color, "#000000", 0.93),
+    surface: blend(color, "#000000", 0.85),
+    glow: color,
+    alpha: 0.55,
+    accent: blend(color, "#000000", 0.18),
+    line: blend(color, "#ffffff", 0.38),
+    foreground: "#ffffff",
+    arrow: blend(hueRotate(color, 180), "#ffffff", 0.1),
+    highlight: blend(color, "#ffffff", 0.5),
+    triangle: blend(color, "#000000", 0.2),
+  };
 }
 export function cropPlacement(
   sourceWidth: number,
@@ -152,7 +189,9 @@ export class Brush {
     return Math.min(this.width / 1000, this.height / 750);
   }
   get palette(): ArtworkPalette {
-    return ARTWORK_PALETTES[this.state.palette];
+    return this.state.palette === "custom"
+      ? customArtworkPalette(this.state.customPaletteColor)
+      : ARTWORK_PALETTES[this.state.palette];
   }
   rect(box: Box, fill: string | CanvasGradient, radius = 0, stroke?: string, lineWidth = 0): void {
     const c = this.ctx;
@@ -501,6 +540,8 @@ export class Brush {
       t = this.palette,
       s = this.scale,
       fg = foreground ?? (outline ? t.foreground : t.triangle);
+    // Button size slider: 100 is the layout's default, 50 halves it, 200 doubles it.
+    r = (r * (this.state.playSize || 100)) / 100;
     c.save();
     if (outline) {
       this.circle(cx, cy, r - r * 0.07, "transparent", fg, r * 0.14);
@@ -509,20 +550,40 @@ export class Brush {
       this.circle(cx, cy, r, background ?? "rgba(255,255,255,.96)");
       this.noShadow();
     }
-    const left = outline ? -0.24 : -0.26,
-      tip = outline ? 0.42 : 0.44,
-      top = outline ? 0.38 : 0.4;
-    c.lineJoin = "round";
-    c.lineWidth = r * (outline ? 0.1 : 0.12);
-    c.fillStyle = fg;
-    c.strokeStyle = fg;
-    c.beginPath();
-    c.moveTo(cx + r * left, cy - r * top);
-    c.lineTo(cx + r * left, cy + r * top);
-    c.lineTo(cx + r * tip, cy);
-    c.closePath();
-    c.fill();
-    c.stroke();
+    if (this.state.playIcon === "loom") {
+      // Loom mark: two rings joined by eight spokes.
+      c.strokeStyle = fg;
+      c.lineCap = "round";
+      c.lineWidth = r * 0.13;
+      c.beginPath();
+      c.arc(cx, cy, r * 0.42, 0, Math.PI * 2);
+      c.stroke();
+      c.beginPath();
+      c.arc(cx, cy, r * 0.15, 0, Math.PI * 2);
+      c.stroke();
+      for (let i = 0; i < 8; i++) {
+        const a = (i * Math.PI) / 4 + Math.PI / 8;
+        c.beginPath();
+        c.moveTo(cx + Math.cos(a) * r * 0.15, cy + Math.sin(a) * r * 0.15);
+        c.lineTo(cx + Math.cos(a) * r * 0.42, cy + Math.sin(a) * r * 0.42);
+        c.stroke();
+      }
+    } else {
+      const left = outline ? -0.24 : -0.26,
+        tip = outline ? 0.42 : 0.44,
+        top = outline ? 0.38 : 0.4;
+      c.lineJoin = "round";
+      c.lineWidth = r * (outline ? 0.1 : 0.12);
+      c.fillStyle = fg;
+      c.strokeStyle = fg;
+      c.beginPath();
+      c.moveTo(cx + r * left, cy - r * top);
+      c.lineTo(cx + r * left, cy + r * top);
+      c.lineTo(cx + r * tip, cy);
+      c.closePath();
+      c.fill();
+      c.stroke();
+    }
     c.restore();
   }
   star(cx: number, cy: number, r: number, color: string): void {

@@ -163,6 +163,54 @@ describe("preset links", () => {
     expect(preset.values).toEqual({ headline: "ok" });
   });
 
+  it("round-trips the play icon and size, with safe defaults", () => {
+    const state = { ...initialState("portfolio"), playIcon: "loom" as const, playSize: 150 };
+    const restored = roundTrip(state);
+    expect(restored.playIcon).toBe("loom");
+    expect(restored.playSize).toBe(150);
+
+    const raw = { v: 1, mode: "portfolio", style: "result" };
+    const encoded = Buffer.from(JSON.stringify(raw)).toString("base64");
+    const preset = decodePreset(`?p=${encoded}`);
+    expect(preset?.playIcon).toBe("play");
+    expect(preset?.playSize).toBe(100);
+
+    const hostile = Buffer.from(
+      JSON.stringify({ ...raw, playIcon: "triangle", playSize: 999 }),
+    ).toString("base64");
+    const cleaned = decodePreset(`?p=${hostile}`);
+    expect(cleaned?.playIcon).toBe("play");
+    expect(cleaned?.playSize).toBe(200);
+
+    const tiny = Buffer.from(JSON.stringify({ ...raw, playIcon: "loom", playSize: 5 })).toString(
+      "base64",
+    );
+    const small = decodePreset(`?p=${tiny}`);
+    expect(small?.playIcon).toBe("loom");
+    expect(small?.playSize).toBe(50);
+  });
+
+  it("round-trips the custom theme colour", () => {
+    const state = {
+      ...initialState("portfolio"),
+      palette: "custom" as const,
+      customPaletteColor: "#1D4ED8",
+    };
+    const restored = roundTrip(state);
+    expect(restored.palette).toBe("custom");
+    expect(restored.customPaletteColor).toBe("#1D4ED8");
+
+    const raw = { v: 1, mode: "portfolio", style: "result", palette: "custom" };
+    const encoded = Buffer.from(JSON.stringify(raw)).toString("base64");
+    const preset = decodePreset(`?p=${encoded}`);
+    expect(preset?.customPaletteColor).toBe("#2563EB");
+
+    const bad = Buffer.from(JSON.stringify({ ...raw, customPaletteColor: "blue" })).toString(
+      "base64",
+    );
+    expect(decodePreset(`?p=${bad}`)?.customPaletteColor).toBe("#2563EB");
+  });
+
   it("keeps play on unless explicitly off", () => {
     const raw = { v: 1, mode: "portfolio", style: "result" };
     const encoded = Buffer.from(JSON.stringify(raw)).toString("base64");
