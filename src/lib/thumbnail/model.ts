@@ -520,11 +520,17 @@ export function changeStyle(state: ThumbnailState, style: Style): ThumbnailState
   return { ...state, mode, style, lastStyle: { ...state.lastStyle, [mode]: style } };
 }
 export function dimensions(state: ThumbnailState): readonly [number, number] {
+  // The case study cover is made for 16:9 video thumbnails, so its wide
+  // export is full HD. Every other style keeps its original dimensions.
   return state.mode === "profile"
     ? [1000, 1000]
-    : state.mode === "intro" || state.size === "16x9"
+    : state.mode === "intro"
       ? [1280, 720]
-      : [1000, 750];
+      : state.size === "16x9"
+        ? state.style === "casestudy"
+          ? [1920, 1080]
+          : [1280, 720]
+        : [1000, 750];
 }
 export function initialState(mode: Mode = "portfolio"): ThumbnailState {
   return {

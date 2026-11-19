@@ -52,6 +52,16 @@ describe("reference contract", () => {
     expect(dimensions(initialState("profile"))).toEqual([1000, 1000]);
     expect(dimensions(initialState())).toEqual([1000, 750]);
   });
+  it("exports only the case study cover at 1920x1080 in 16:9", () => {
+    const wide = {
+      ...initialState("portfolio"),
+      style: "casestudy" as const,
+      size: "16x9" as const,
+    };
+    expect(dimensions(wide)).toEqual([1920, 1080]);
+    expect(dimensions({ ...wide, size: "4x3" as const })).toEqual([1000, 750]);
+    expect(dimensions({ ...wide, style: "result" as const })).toEqual([1280, 720]);
+  });
   it("retains each mode's last layout", () => {
     let s = changeStyle(initialState("intro"), "hello");
     s = changeMode(s, "portfolio");
