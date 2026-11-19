@@ -150,10 +150,10 @@ function cleanValues(value: unknown): Record<string, string> {
   if (typeof value !== "object" || value === null || Array.isArray(value)) return {};
   const out: Record<string, string> = {};
   for (const [key, entry] of Object.entries(value as Record<string, unknown>)) {
-    if (Object.keys(out).length >= 48) break;
+    if (Object.keys(out).length >= 64) break;
     const cleanKey = text(key, 48);
     if (!cleanKey || typeof entry !== "string") continue;
-    out[cleanKey] = text(entry, 200);
+    out[cleanKey] = text(entry, 600);
   }
   return out;
 }

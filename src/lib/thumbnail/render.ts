@@ -1371,6 +1371,7 @@ export function drawThumbnail(
     stat,
     reviews,
     quote,
+    review: editorial,
     checklist,
     cover,
     duo,

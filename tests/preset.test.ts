@@ -2,8 +2,11 @@ import { describe, expect, it } from "vitest";
 import {
   changeStyle,
   initialState,
+  quoteImageShown,
   setField,
+  setTune,
   type ThumbnailState,
+  tune,
 } from "../src/lib/thumbnail/model";
 import { applyPreset, decodePreset, encodePreset } from "../src/lib/thumbnail/preset";
 
@@ -274,5 +277,29 @@ describe("preset links", () => {
     expect(decodePreset(`?p=${encoded}`)?.play).toBe(true);
     const off = Buffer.from(JSON.stringify({ ...raw, play: false })).toString("base64");
     expect(decodePreset(`?p=${off}`)?.play).toBe(false);
+  });
+});
+
+describe("client review layout controls", () => {
+  it("round-trips review text, project, tuning and the hidden image", () => {
+    let state = changeStyle(initialState("portfolio"), "review");
+    state = setField(state, "title", "CLIENT TESTIMONIAL");
+    state = setField(state, "quote", "x".repeat(450));
+    state = setField(state, "project", "Viewings");
+    state = setTune(state, "showImage", "0");
+    state = setTune(state, "titleX", -40);
+    state = setTune(state, "starStyle", "black");
+    const restored = roundTrip(state);
+    expect(restored.style).toBe("review");
+    expect(restored.values["review:title"]).toBe("CLIENT TESTIMONIAL");
+    expect(restored.values["review:quote"]).toHaveLength(450);
+    expect(quoteImageShown(restored)).toBe(false);
+    expect(tune(restored, "titleX")).toBe(-40);
+  });
+  it("keeps tuning separate per style and defaults the image to shown", () => {
+    const quote = setTune(changeStyle(initialState("portfolio"), "quote"), "titleSize", 150);
+    expect(tune(quote, "titleSize", 100)).toBe(150);
+    expect(tune(changeStyle(quote, "review"), "titleSize", 100)).toBe(100);
+    expect(quoteImageShown(quote)).toBe(true);
   });
 });

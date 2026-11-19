@@ -30,8 +30,11 @@ const LIMITS: Record<string, number> = {
   badge: 18,
   badge2: 18,
   services: 60,
-  quote: 90,
+  quote: 225,
+  title: 28,
+  project: 40,
 };
+const REVIEW_QUOTE_LIMIT = 450;
 interface WordsProps {
   state: ThumbnailState;
   setState: Dispatch<SetStateAction<ThumbnailState>>;
@@ -127,7 +130,21 @@ export function Words({ state, setState }: WordsProps): React.JSX.Element | null
         ) : (
           <div className="field" key={key}>
             <label htmlFor={`word-${key}`}>{style.labels[key] ?? key}</label>
-            {input(key, style.labels[key] ?? key, LIMITS[key] ?? 60)}
+            {key === "quote" && ["quote", "review"].includes(state.style) ? (
+              <textarea
+                id={`word-${key}`}
+                aria-label={style.labels[key] ?? key}
+                maxLength={state.style === "review" ? REVIEW_QUOTE_LIMIT : LIMITS.quote}
+                rows={state.style === "review" ? 6 : 4}
+                value={fieldValue(state, key)}
+                onChange={(event) => {
+                  const value = event.currentTarget.value;
+                  setState((current) => setField(current, key, value));
+                }}
+              />
+            ) : (
+              input(key, style.labels[key] ?? key, LIMITS[key] ?? 60)
+            )}
             {key === "headline" && state.style === "casestudy" && (
               <p className="helper">Three or four words read best at thumbnail size.</p>
             )}
@@ -147,7 +164,11 @@ export function Words({ state, setState }: WordsProps): React.JSX.Element | null
               <p className="helper">Separate with a dot: · (or just use commas)</p>
             )}
             {key === "quote" && (
-              <p className="helper">One or two short sentences from a real client work best.</p>
+              <p className="helper">
+                {state.style === "review"
+                  ? "Up to 450 characters. The text shrinks to fit; use the size slider to adjust."
+                  : "Up to 225 characters. A short real client quote reads best."}
+              </p>
             )}
             {key === "badge2" && (
               <p className="helper">Leave both badge lines empty to hide the badge.</p>

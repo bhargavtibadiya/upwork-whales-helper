@@ -23,6 +23,7 @@ import { artworkFonts, drawThumbnail } from "@/lib/thumbnail/render";
 import { SiteFooter } from "../site/SiteFooter";
 import { SiteHeader } from "../site/SiteHeader";
 import { ImageUpload, PreviewCanvas, readLocalImage } from "./Images";
+import { QuoteControls } from "./QuoteControls";
 import { BackgroundControls, RingControls } from "./RingControls";
 import { Words } from "./Words";
 
@@ -627,6 +628,9 @@ export function ThumbnailEditor(): React.JSX.Element {
                       </label>
                     </div>
                     <hr className="section-divider" />
+                    {(state.style === "quote" || state.style === "review") && (
+                      <QuoteControls state={state} setState={setState} />
+                    )}
                     {state.style === "casestudy" && (
                       <fieldset className="field">
                         <legend>Case study badge</legend>

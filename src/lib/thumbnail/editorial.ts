@@ -1,7 +1,7 @@
 import { type Box, type Brush, translucent } from "./brush";
 import { desktopFrame, playCenter } from "./geometry";
 import { skillIcon } from "./icons";
-import { fieldValue } from "./model";
+import { fieldValue, quoteImageShown, tune, tuneText } from "./model";
 
 const value = (b: Brush, key: string) => fieldValue(b.state, key).replace(/\s+/g, " ").trim();
 const white = "#f8f8fb",
@@ -264,6 +264,142 @@ function specialties(b: Brush, text: string, box: Box, numbered = false): void {
   });
 }
 
+function wrapLines(b: Brush, text: string, width: number, size: number): string[] {
+  b.font(size, 800);
+  const lines: string[] = [];
+  let current = "";
+  for (const word of text.split(" ")) {
+    const next = current ? `${current} ${word}` : word;
+    if (current && b.ctx.measureText(next).width > width) {
+      lines.push(current);
+      current = word;
+    } else current = next;
+  }
+  if (current) lines.push(current);
+  return lines;
+}
+// Long copy: shrink to fit the box, then apply the user's size multiplier on top.
+function paragraph(
+  b: Brush,
+  text: string,
+  box: Box,
+  max: number,
+  k: number,
+  dx: number,
+  dy: number,
+): void {
+  if (!text) return;
+  const [x, y, w, h] = box;
+  let size = max * b.scale;
+  for (; size > 9; size -= 0.5) {
+    const lines = wrapLines(b, text, w, size);
+    if (lines.length * size * 1.18 <= h && lines.every((l) => b.ctx.measureText(l).width <= w))
+      break;
+  }
+  size *= k;
+  const lines = wrapLines(b, text, w, size),
+    lh = size * 1.18;
+  lines.forEach((l, i) => {
+    b.text(l, x + dx, y + dy + i * lh + size * 0.9, size, white, Infinity, 800);
+  });
+}
+function starColors(style: string): [string, string] {
+  if (style === "black") return ["#14131a", "rgba(20,19,26,.28)"];
+  if (style === "white") return ["#ffffff", "rgba(255,255,255,.3)"];
+  return ["#FFB400", "rgba(255,255,255,.22)"];
+}
+function ratingStars(b: Brush, rating: number, x: number, cy: number, r: number): number {
+  const [on, off] = starColors(tuneText(b.state, "starStyle", "yellow")),
+    gap = r * 2.3,
+    c = b.ctx;
+  for (let i = 0; i < 5; i++) {
+    const cx = x + r + i * gap;
+    b.star(cx, cy, r, off);
+    const fill = Math.max(0, Math.min(1, rating - i));
+    if (fill > 0) {
+      c.save();
+      c.beginPath();
+      c.rect(cx - r, cy - r, r * 2 * fill, r * 2);
+      c.clip();
+      b.star(cx, cy, r, on);
+      c.restore();
+    }
+  }
+  return 5 * gap;
+}
+function quoteLayout(b: Brush): void {
+  const w = b.width,
+    h = b.height,
+    m = w * 0.06,
+    s = b.scale,
+    t = b.palette,
+    review = b.state.style === "review",
+    image = quoteImageShown(b.state),
+    textW = image ? w * 0.48 : w - 2 * m,
+    px = (key: string) => (tune(b.state, key) / 100) * 0.2 * w,
+    py = (key: string) => (tune(b.state, key) / 100) * 0.2 * h,
+    k = (key: string) => tune(b.state, key, 100) / 100;
+  if (image) portrait(b, [w * 0.61, h * 0.09, w * 0.33, h * 0.82]);
+  const ts = k("titleSize");
+  line(
+    b,
+    value(b, "title"),
+    [m + px("titleX"), h * 0.085 + py("titleY"), textW, h * 0.045 * ts],
+    20 * s * ts,
+    t.highlight,
+    "left",
+    700,
+  );
+  const ms = k("markSize");
+  line(
+    b,
+    "\u201c",
+    [m + px("markX"), h * 0.15 + py("markY"), w * 0.15 * ms, h * 0.13 * ms],
+    120 * s * ms,
+    t.highlight,
+    "left",
+    800,
+  );
+  paragraph(
+    b,
+    value(b, "quote"),
+    [m, h * 0.27, textW, h * 0.43],
+    review ? 50 : 60,
+    k("quoteSize"),
+    px("quoteX"),
+    py("quoteY"),
+  );
+  smallRule(b, m, h * 0.735, w * 0.08);
+  const as = k("authorSize"),
+    name = value(b, "name"),
+    project = value(b, "project"),
+    badge = value(b, "badge"),
+    mode = tuneText(b.state, "ratingMode", review ? "stars" : "number");
+  let y = h * 0.76;
+  if (name) {
+    const nh = 34 * s * as * 1.25;
+    line(b, name, [m, y, textW, nh], 34 * s * as, white, "left", 800);
+    y += nh;
+  }
+  if (project) {
+    const ph = 22 * s * as * 1.35;
+    line(b, project, [m, y, textW, ph], 22 * s * as, muted, "left", 500);
+    y += ph;
+  }
+  const rating = Number.parseFloat(badge);
+  if (badge) {
+    y += 8 * s;
+    const ss = k("starSize");
+    if (mode === "stars" && Number.isFinite(rating)) {
+      const r = 15 * s * ss;
+      ratingStars(b, Math.max(0, Math.min(5, rating)), m, y + r, r);
+    } else {
+      const sz = 22 * s * ss;
+      line(b, `${badge} / 5 client rating`, [m, y, textW, sz * 1.3], sz, t.highlight, "left", 700);
+    }
+  }
+}
+
 // Each layout has a separate hierarchy. Shared primitives supply measured type and insets,
 // not a shared footer or repeated card composition.
 export function editorial(b: Brush): void {
@@ -291,20 +427,8 @@ export function editorial(b: Brush): void {
     eyebrow(b, value(b, "badge"), m, h * 0.09, w * 0.51);
     headingPair(b, headline, sub, [m, h * 0.2, w * 0.51, h * 0.32], 88);
     metrics(b, [m, h * 0.59, w * 0.51, h * 0.24], "tiles");
-  } else if (id === "quote") {
-    portrait(b, [w * 0.61, h * 0.09, w * 0.33, h * 0.82]);
-    eyebrow(b, "CLIENT PERSPECTIVE", m, h * 0.1, w * 0.47);
-    line(b, "\u201c", [m, h * 0.19, w * 0.15, h * 0.13], 132 * s, t.highlight, "left", 800);
-    block(b, value(b, "quote"), [m, h * 0.31, w * 0.48, h * 0.35], 62);
-    smallRule(b, m, h * 0.73, w * 0.08);
-    line(b, name, [m, h * 0.77, w * 0.48, h * 0.07], 28 * s);
-    line(
-      b,
-      value(b, "badge") ? `${value(b, "badge")} / 5 client rating` : "",
-      [m, h * 0.85, w * 0.48, h * 0.04],
-      18 * s,
-      t.highlight,
-    );
+  } else if (id === "quote" || id === "review") {
+    quoteLayout(b);
   } else if (id === "checklist") {
     portrait(b, [w * 0.61, h * 0.09, w * 0.33, h * 0.82]);
     eyebrow(b, "WHAT'S INCLUDED", m, h * 0.1, w * 0.49);
@@ -397,6 +521,7 @@ const OVERLAY_ANCHORS: Record<string, [number, number]> = {
   stat: [0.765, 0.79],
   reviews: [0.78, 0.8],
   quote: [0.775, 0.8],
+  review: [0.775, 0.8],
   checklist: [0.775, 0.8],
   cover: [0.68, 0.51],
   duo: [0.22, 0.8],
@@ -418,10 +543,13 @@ export function compositionCallout(b: Brush): void {
   let anchor = OVERLAY_ANCHORS[b.state.style];
   if (!anchor) return;
   if (b.state.originalLayout && b.state.style === "stat") anchor = [0.24, 0.81];
+  const textOnly = ["quote", "review"].includes(b.state.style) && !quoteImageShown(b.state);
+  if (textOnly) anchor = [0.86, 0.88];
   const portraitBoxes: Record<string, [number, number, number, number]> = {
     stat: [0.59, 0.09, 0.35, 0.82],
     reviews: [0.62, 0.08, 0.32, 0.84],
     quote: [0.61, 0.09, 0.33, 0.82],
+    review: [0.61, 0.09, 0.33, 0.82],
     checklist: [0.61, 0.09, 0.33, 0.82],
     duo: [0.06, 0.09, 0.32, 0.82],
     split: [0.59, 0.07, 0.35, 0.86],
@@ -429,7 +557,7 @@ export function compositionCallout(b: Brush): void {
     tagline: [0.61, 0.08, 0.33, 0.84],
     editorial: [0.06, 0.1, 0.31, 0.8],
   };
-  const pb = portraitBoxes[b.state.style];
+  const pb = textOnly ? undefined : portraitBoxes[b.state.style];
   if (pb && b.state.portraitShape === "circle" && !b.state.originalLayout) {
     anchor = [
       pb[0] + pb[2] / 2,

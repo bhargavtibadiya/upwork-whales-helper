@@ -6,6 +6,7 @@ export type Style =
   | "stat"
   | "reviews"
   | "quote"
+  | "review"
   | "checklist"
   | "cover"
   | "duo"
@@ -193,18 +194,44 @@ export const STYLES: StyleSpec[] = [
     id: "quote",
     mode: "portfolio",
     name: "Client quote",
-    fields: ["quote", "name", "badge"],
+    fields: ["title", "quote", "name", "project", "badge"],
     images: ["face"],
     extras: ["play"],
     defaults: {
+      title: "CLIENT PERSPECTIVE",
       quote: "Your client quote here",
       name: "Client name",
+      project: "",
       badge: "",
     },
     labels: {
+      title: "Heading above the quote",
       quote: "Client quote",
       name: "Client name",
-      badge: "Client rating (optional)",
+      project: "Project name (optional)",
+      badge: "Client rating (optional, like 5.0)",
+    },
+  },
+  {
+    id: "review",
+    mode: "portfolio",
+    name: "Client review",
+    fields: ["title", "quote", "name", "project", "badge"],
+    images: ["face"],
+    extras: ["play"],
+    defaults: {
+      title: "CLIENT REVIEW",
+      quote: "Your full client review goes here. There is room for a few sentences.",
+      name: "Client name",
+      project: "Project name",
+      badge: "5.0",
+    },
+    labels: {
+      title: "Heading above the review",
+      quote: "Client review",
+      name: "Client name",
+      project: "Project name (optional)",
+      badge: "Client rating (optional, like 5.0)",
     },
   },
   {
@@ -508,6 +535,31 @@ export function valueKey(style: Style, key: string): string {
 }
 export function fieldValue(state: ThumbnailState, key: string, style: Style = state.style): string {
   return state.values[valueKey(style, key)] ?? spec(style).defaults[key] ?? "";
+}
+// Layout tuning for the quote and review styles lives in `values` under `t_` keys, so it
+// travels with share links and stays separate for each style.
+export const QUOTE_STYLES: Style[] = ["quote", "review"];
+export function tuneKey(key: string): string {
+  return `t_${key}`;
+}
+export function tuneText(state: ThumbnailState, key: string, fallback: string): string {
+  return state.values[valueKey(state.style, tuneKey(key))] ?? fallback;
+}
+export function tune(state: ThumbnailState, key: string, fallback = 0): number {
+  const raw = state.values[valueKey(state.style, tuneKey(key))];
+  if (raw === undefined || raw.trim() === "") return fallback;
+  const n = Number(raw);
+  return Number.isFinite(n) ? n : fallback;
+}
+export function setTune(
+  state: ThumbnailState,
+  key: string,
+  value: string | number,
+): ThumbnailState {
+  return setField(state, tuneKey(key), String(value));
+}
+export function quoteImageShown(state: ThumbnailState): boolean {
+  return tuneText(state, "showImage", "1") !== "0";
 }
 export function setField(state: ThumbnailState, key: string, value: string): ThumbnailState {
   return { ...state, values: { ...state.values, [valueKey(state.style, key)]: value } };

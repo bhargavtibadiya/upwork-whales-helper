@@ -93,7 +93,7 @@
 * { box-sizing: border-box; }
 html { -webkit-text-size-adjust: 100%; color-scheme: light; }
 body { margin: 0; background: var(--ds-color-bg-base); color: var(--ds-color-text-primary); font-family: var(--ds-font-body); font-size: 16px; line-height: 1.5; }
-button, input, select { font: inherit; }
+button, input, select, textarea { font: inherit; }
 button { cursor: pointer; }
 button, input, select, a { -webkit-tap-highlight-color: transparent; }
 button, input, select { transition: color var(--ds-duration-fast) var(--ds-ease-standard), background-color var(--ds-duration-fast) var(--ds-ease-standard), border-color var(--ds-duration-fast) var(--ds-ease-standard), box-shadow var(--ds-duration-fast) var(--ds-ease-standard), transform var(--ds-duration-fast) var(--ds-ease-standard); }
@@ -164,8 +164,8 @@ h2 { font-size: 12px; line-height: 1.5; font-weight: var(--ds-label-weight); let
 input[type="range"] { width: 100%; margin: 0; accent-color: var(--ds-color-primary); min-height: 24px; }
 .field { display: block; padding: 0; margin: 0; border: 0; min-width: 0; }
 .field+.field { margin-top: 16px; }
-.field input[type="text"],.field select { display: block; width: 100%; min-width: 0; padding: 10px 14px; border: 1px solid var(--ds-color-border-medium); border-radius: var(--ds-radius-md); color: var(--ds-color-text-primary); background: var(--ds-color-bg-surface); font-size: 16px; }
-.field input:focus,.field select:focus { outline: none; border-color: var(--ds-color-primary); box-shadow: var(--ds-focus-ring); }
+.field input[type="text"],.field textarea,.field select { display: block; width: 100%; min-width: 0; padding: 10px 14px; border: 1px solid var(--ds-color-border-medium); border-radius: var(--ds-radius-md); color: var(--ds-color-text-primary); background: var(--ds-color-bg-surface); font-size: 16px; }
+.field input:focus,.field textarea:focus,.field select:focus { outline: none; border-color: var(--ds-color-primary); box-shadow: var(--ds-focus-ring); }
 .field .helper { margin-top: 4px; }
 .field-pair { display: grid; grid-template-columns: minmax(0,.8fr) minmax(0,1.2fr); gap: 8px; margin-bottom: 8px; }
 .segments { display: flex; gap: 4px; padding: 4px; border-radius: var(--ds-radius-md); background: var(--ds-color-bg-sunken); }
@@ -227,3 +227,5 @@ fieldset.mode-selector,fieldset.style-options,fieldset.palette-options,fieldset.
 fieldset.style-options,fieldset.palette-options,fieldset.ring-options,fieldset.background-options,fieldset.segments { border: 0; padding: 0; }
 fieldset.palette-options,fieldset.background-options { margin-top: 16px; }
 fieldset.segments { padding: 4px; }
+
+.field textarea { resize: vertical; line-height: 1.4; }
