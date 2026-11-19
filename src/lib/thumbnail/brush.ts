@@ -1,3 +1,10 @@
+import {
+  LOOM_BRAND_BLUE,
+  LOOM_MARK_DARK,
+  LOOM_MARK_LIGHT,
+  loomBadgeImage,
+  loomMarkPath,
+} from "./loom";
 import type { Crop, Palette, ThumbnailState } from "./model";
 
 export interface ArtworkPalette {
@@ -528,6 +535,16 @@ export class Brush {
     }
     c.restore();
   }
+  // Play button and Loom badge share the same overlay slot in every layout
+  // and are mutually exclusive; these helpers keep the call sites simple.
+  overlayOn(): boolean {
+    return this.state.play || this.state.loom;
+  }
+  overlayOffsets(): [number, number] {
+    return this.state.loom
+      ? [this.state.loomOffsetX, this.state.loomOffsetY]
+      : [this.state.playOffsetX, this.state.playOffsetY];
+  }
   play(
     cx: number,
     cy: number,
@@ -536,6 +553,10 @@ export class Brush {
     background?: string,
     foreground?: string,
   ): void {
+    if (this.state.loom) {
+      this.loomBadge(cx, cy, r);
+      return;
+    }
     const c = this.ctx,
       t = this.palette,
       s = this.scale,
@@ -550,40 +571,62 @@ export class Brush {
       this.circle(cx, cy, r, background ?? "rgba(255,255,255,.96)");
       this.noShadow();
     }
-    if (this.state.playIcon === "loom") {
-      // Loom mark: two rings joined by eight spokes.
-      c.strokeStyle = fg;
-      c.lineCap = "round";
-      c.lineWidth = r * 0.13;
-      c.beginPath();
-      c.arc(cx, cy, r * 0.42, 0, Math.PI * 2);
-      c.stroke();
-      c.beginPath();
-      c.arc(cx, cy, r * 0.15, 0, Math.PI * 2);
-      c.stroke();
-      for (let i = 0; i < 8; i++) {
-        const a = (i * Math.PI) / 4 + Math.PI / 8;
+    const left = outline ? -0.24 : -0.26,
+      tip = outline ? 0.42 : 0.44,
+      top = outline ? 0.38 : 0.4;
+    c.lineJoin = "round";
+    c.lineWidth = r * (outline ? 0.1 : 0.12);
+    c.fillStyle = fg;
+    c.strokeStyle = fg;
+    c.beginPath();
+    c.moveTo(cx + r * left, cy - r * top);
+    c.lineTo(cx + r * left, cy + r * top);
+    c.lineTo(cx + r * tip, cy);
+    c.closePath();
+    c.fill();
+    c.stroke();
+    c.restore();
+  }
+  loomBadge(cx: number, cy: number, r: number): void {
+    const c = this.ctx,
+      s = this.scale;
+    // Loom size slider: 100 is the layout's default, 50 halves it, 200 doubles it.
+    r = (r * (this.state.loomSize || 100)) / 100;
+    c.save();
+    if (this.state.loomVariant === "image") {
+      const image = loomBadgeImage();
+      if (image) {
+        this.shadow("rgba(0,0,0,.4)", 24 * s, 6 * s);
+        this.circle(cx, cy, r, LOOM_BRAND_BLUE);
+        this.noShadow();
+        c.save();
         c.beginPath();
-        c.moveTo(cx + Math.cos(a) * r * 0.15, cy + Math.sin(a) * r * 0.15);
-        c.lineTo(cx + Math.cos(a) * r * 0.42, cy + Math.sin(a) * r * 0.42);
-        c.stroke();
+        c.arc(cx, cy, r, 0, Math.PI * 2);
+        c.clip();
+        c.drawImage(image, cx - r, cy - r, r * 2, r * 2);
+        c.restore();
+        c.restore();
+        return;
       }
-    } else {
-      const left = outline ? -0.24 : -0.26,
-        tip = outline ? 0.42 : 0.44,
-        top = outline ? 0.38 : 0.4;
-      c.lineJoin = "round";
-      c.lineWidth = r * (outline ? 0.1 : 0.12);
-      c.fillStyle = fg;
-      c.strokeStyle = fg;
-      c.beginPath();
-      c.moveTo(cx + r * left, cy - r * top);
-      c.lineTo(cx + r * left, cy + r * top);
-      c.lineTo(cx + r * tip, cy);
-      c.closePath();
-      c.fill();
-      c.stroke();
+      // The bundled badge is still loading: draw the dark variant so the
+      // canvas never shows a gap where the logo should be.
     }
+    const dark = this.state.loomVariant !== "light";
+    this.shadow("rgba(0,0,0,.4)", 24 * s, 6 * s);
+    this.circle(cx, cy, r, dark ? LOOM_MARK_LIGHT : "rgba(255,255,255,.96)");
+    this.noShadow();
+    this.loomMark(cx, cy, r * 0.62, dark ? LOOM_MARK_DARK : LOOM_MARK_LIGHT);
+    c.restore();
+  }
+  loomMark(cx: number, cy: number, r: number, color: string): void {
+    const path = loomMarkPath();
+    if (!path) return;
+    const c = this.ctx;
+    c.save();
+    c.translate(cx - r, cy - r);
+    c.scale(r / 31, r / 31);
+    c.fillStyle = color;
+    c.fill(path);
     c.restore();
   }
   star(cx: number, cy: number, r: number, color: string): void {

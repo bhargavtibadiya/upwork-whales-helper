@@ -2,6 +2,7 @@
 
 import { useCallback, useEffect, useRef, useState } from "react";
 import { ARTWORK_PALETTES, customArtworkPalette } from "@/lib/thumbnail/brush";
+import { onLoomBadgeReady } from "@/lib/thumbnail/loom";
 import {
   type Crop,
   changeMode,
@@ -100,6 +101,10 @@ export function ThumbnailEditor(): React.JSX.Element {
       else if (inner.right > outer.right) list.scrollLeft += inner.right - outer.right;
     }
   }, [state.style]);
+  useEffect(() => {
+    // The full-colour Loom badge arrives async; repaint once it is ready.
+    onLoomBadgeReady(() => setState((current) => ({ ...current })));
+  }, []);
   useEffect(() => {
     // A `?p=` preset link reopens an exact design. Apply it before the hash
     // sync and point the hash at the preset's mode so the two never fight.
@@ -506,7 +511,8 @@ export function ThumbnailEditor(): React.JSX.Element {
                         </div>
                       )}
                     <p className="helper">
-                      Play controls overlay the media. They never add a row or shrink your artwork.
+                      Play and Loom controls overlay the media. They never add a row or shrink your
+                      artwork.
                     </p>
                     <div className="field">
                       <label htmlFor="artwork-backdrop">Background treatment</label>
@@ -607,99 +613,199 @@ export function ThumbnailEditor(): React.JSX.Element {
                         />
                       </label>
                     )}
-                    {state.play && (
-                      <fieldset className="field">
-                        <legend>Play button</legend>
-                        <div className="field">
-                          <label htmlFor="play-icon">Button icon</label>
-                          <select
-                            id="play-icon"
-                            value={state.playIcon}
-                            onChange={(event) => {
-                              const playIcon = event.currentTarget
-                                .value as ThumbnailState["playIcon"];
-                              setState((current) => ({ ...current, playIcon }));
-                            }}
-                          >
-                            <option value="play">Play triangle</option>
-                            <option value="loom">Loom logo</option>
-                          </select>
-                        </div>
-                        <label className="range-control">
-                          <span className="field-label">
-                            Button size <output>{state.playSize}%</output>
-                          </span>
-                          <input
-                            type="range"
-                            min={50}
-                            max={200}
-                            step={5}
-                            value={state.playSize}
-                            aria-label="Button size"
-                            onChange={(event) => {
-                              const playSize = Number(event.currentTarget.value);
-                              setState((current) => ({ ...current, playSize }));
-                            }}
-                          />
-                        </label>
-                        <p className="helper">
-                          Move from the layout's starting position. Zero restores that position.
-                        </p>
-                        {(
-                          [
-                            ["playOffsetX", "Horizontal position"],
-                            ["playOffsetY", "Vertical position"],
-                          ] as const
-                        ).map(([key, label]) => (
-                          <label className="range-control" key={key}>
+                    <div className="extra-toggles">
+                      <label className="toggle">
+                        <span>Curved arrow</span>
+                        <input
+                          type="checkbox"
+                          checked={state.arrow}
+                          onChange={(event) => {
+                            const arrow = event.currentTarget.checked;
+                            setState((current) => ({ ...current, arrow }));
+                          }}
+                        />
+                      </label>
+                    </div>
+                    <hr className="section-divider" />
+                    <fieldset className="field">
+                      <legend>Play button</legend>
+                      <label className="toggle">
+                        <span>Play button</span>
+                        <input
+                          type="checkbox"
+                          checked={state.play}
+                          onChange={(event) => {
+                            const play = event.currentTarget.checked;
+                            // Play and Loom share one overlay slot: switching
+                            // one on always switches the other off.
+                            setState((current) => ({
+                              ...current,
+                              play,
+                              loom: play ? false : current.loom,
+                            }));
+                          }}
+                        />
+                      </label>
+                      {state.play && (
+                        <>
+                          <label className="range-control">
                             <span className="field-label">
-                              {label} <output>{state[key]}%</output>
+                              Button size <output>{state.playSize}%</output>
                             </span>
                             <input
                               type="range"
-                              min={-100}
-                              max={100}
-                              step={1}
-                              value={state[key]}
-                              aria-label={label}
+                              min={50}
+                              max={200}
+                              step={5}
+                              value={state.playSize}
+                              aria-label="Button size"
                               onChange={(event) => {
-                                const position = Number(event.currentTarget.value);
-                                setState((current) => ({ ...current, [key]: position }));
+                                const playSize = Number(event.currentTarget.value);
+                                setState((current) => ({ ...current, playSize }));
                               }}
                             />
                           </label>
-                        ))}
-                        <button
-                          type="button"
-                          className="text-button"
-                          onClick={() =>
-                            setState((current) => ({ ...current, playOffsetX: 0, playOffsetY: 0 }))
-                          }
-                        >
-                          Reset play position
-                        </button>
-                      </fieldset>
-                    )}
-                    <div className="extra-toggles">
-                      {(
-                        [
-                          ["arrow", "Curved arrow"],
-                          ["play", "Play button"],
-                        ] as const
-                      ).map(([key, name]) => (
-                        <label className="toggle" key={key}>
-                          <span>{name}</span>
-                          <input
-                            type="checkbox"
-                            checked={state[key]}
-                            onChange={(event) => {
-                              const checked = event.currentTarget.checked;
-                              setState((current) => ({ ...current, [key]: checked }));
-                            }}
-                          />
-                        </label>
-                      ))}
-                    </div>
+                          <p className="helper">
+                            Move from the layout's starting position. Zero restores that position.
+                          </p>
+                          {(
+                            [
+                              ["playOffsetX", "Horizontal position"],
+                              ["playOffsetY", "Vertical position"],
+                            ] as const
+                          ).map(([key, label]) => (
+                            <label className="range-control" key={key}>
+                              <span className="field-label">
+                                {label} <output>{state[key]}%</output>
+                              </span>
+                              <input
+                                type="range"
+                                min={-100}
+                                max={100}
+                                step={1}
+                                value={state[key]}
+                                aria-label={label}
+                                onChange={(event) => {
+                                  const position = Number(event.currentTarget.value);
+                                  setState((current) => ({ ...current, [key]: position }));
+                                }}
+                              />
+                            </label>
+                          ))}
+                          <button
+                            type="button"
+                            className="text-button"
+                            onClick={() =>
+                              setState((current) => ({
+                                ...current,
+                                playOffsetX: 0,
+                                playOffsetY: 0,
+                              }))
+                            }
+                          >
+                            Reset play position
+                          </button>
+                        </>
+                      )}
+                    </fieldset>
+                    <hr className="section-divider" />
+                    <fieldset className="field">
+                      <legend>Loom logo</legend>
+                      <label className="toggle">
+                        <span>Loom logo</span>
+                        <input
+                          type="checkbox"
+                          checked={state.loom}
+                          onChange={(event) => {
+                            const loom = event.currentTarget.checked;
+                            // Play and Loom share one overlay slot: switching
+                            // one on always switches the other off.
+                            setState((current) => ({
+                              ...current,
+                              loom,
+                              play: loom ? false : current.play,
+                            }));
+                          }}
+                        />
+                      </label>
+                      {state.loom && (
+                        <>
+                          <div className="field">
+                            <label htmlFor="loom-variant">Logo style</label>
+                            <select
+                              id="loom-variant"
+                              value={state.loomVariant}
+                              onChange={(event) => {
+                                const loomVariant = event.currentTarget
+                                  .value as ThumbnailState["loomVariant"];
+                                setState((current) => ({ ...current, loomVariant }));
+                              }}
+                            >
+                              <option value="light">Light mode (dark mark on white)</option>
+                              <option value="dark">Dark mode (white mark on dark)</option>
+                              <option value="image">Image (full-colour badge)</option>
+                            </select>
+                          </div>
+                          <label className="range-control">
+                            <span className="field-label">
+                              Logo size <output>{state.loomSize}%</output>
+                            </span>
+                            <input
+                              type="range"
+                              min={50}
+                              max={200}
+                              step={5}
+                              value={state.loomSize}
+                              aria-label="Logo size"
+                              onChange={(event) => {
+                                const loomSize = Number(event.currentTarget.value);
+                                setState((current) => ({ ...current, loomSize }));
+                              }}
+                            />
+                          </label>
+                          <p className="helper">
+                            Move from the layout's starting position. Zero restores that position.
+                          </p>
+                          {(
+                            [
+                              ["loomOffsetX", "Horizontal position"],
+                              ["loomOffsetY", "Vertical position"],
+                            ] as const
+                          ).map(([key, label]) => (
+                            <label className="range-control" key={key}>
+                              <span className="field-label">
+                                {label} <output>{state[key]}%</output>
+                              </span>
+                              <input
+                                type="range"
+                                min={-100}
+                                max={100}
+                                step={1}
+                                value={state[key]}
+                                aria-label={label}
+                                onChange={(event) => {
+                                  const position = Number(event.currentTarget.value);
+                                  setState((current) => ({ ...current, [key]: position }));
+                                }}
+                              />
+                            </label>
+                          ))}
+                          <button
+                            type="button"
+                            className="text-button"
+                            onClick={() =>
+                              setState((current) => ({
+                                ...current,
+                                loomOffsetX: 0,
+                                loomOffsetY: 0,
+                              }))
+                            }
+                          >
+                            Reset logo position
+                          </button>
+                        </>
+                      )}
+                    </fieldset>
                   </section>
                 )}
                 <div className="mobile-download">{downloadButton}</div>

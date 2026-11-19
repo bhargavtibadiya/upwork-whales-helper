@@ -56,10 +56,14 @@ export interface ThumbnailState {
   shot: Crop;
   arrow: boolean;
   play: boolean;
-  playIcon: "play" | "loom";
   playOffsetX: number;
   playOffsetY: number;
   playSize: number;
+  loom: boolean;
+  loomVariant: "light" | "dark" | "image";
+  loomOffsetX: number;
+  loomOffsetY: number;
+  loomSize: number;
   calloutText: string;
   font: "original" | "Montserrat" | "Manrope" | "Anton";
   overlayLabel: boolean;
@@ -521,10 +525,14 @@ export function initialState(mode: Mode = "portfolio"): ThumbnailState {
     backdrop: "glow",
     arrow: false,
     play: true,
-    playIcon: "play",
     playOffsetX: 0,
     playOffsetY: 0,
     playSize: 100,
+    loom: false,
+    loomVariant: "light",
+    loomOffsetX: 0,
+    loomOffsetY: 0,
+    loomSize: 100,
     ring: {
       color: "#8360F5",
       preset: "whales",

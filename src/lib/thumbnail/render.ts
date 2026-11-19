@@ -89,14 +89,13 @@ function meet(b: Brush): void {
     box[0] + box[2] / 2,
     box[1] + box[3] / 2,
     50 * s,
-    b.state.playOffsetX,
-    b.state.playOffsetY,
+    ...b.overlayOffsets(),
   );
-  if (b.state.play) b.play(px, py, 50 * s);
+  if (b.overlayOn()) b.play(px, py, 50 * s);
   if (b.state.arrow && title)
     b.arrow(
       [left - 18 * s, top + cap * 0.5],
-      b.state.play ? [px - 66 * s, py] : [box[0] + box[2] * 0.3, box[1] + box[3] * 0.35],
+      b.overlayOn() ? [px - 66 * s, py] : [box[0] + box[2] * 0.3, box[1] + box[3] * 0.35],
       -150 * s,
       24 * s,
     );
@@ -202,12 +201,12 @@ function proof(b: Brush): void {
     n = rows.length;
   const label = words(b, "pill").toUpperCase(),
     svc = words(b, "services"),
-    hasPill = Boolean(label || b.state.play);
+    hasPill = Boolean(label || b.overlayOn());
   const ph = hasPill ? 108 * s : 0,
     pad = 30 * s,
-    ir = b.state.play ? 35.64 * s : 0,
-    ig = b.state.play && label ? 18 * s : 0,
-    iw = b.state.play ? ir * 2 + ig : 0;
+    ir = b.overlayOn() ? 35.64 * s : 0,
+    ig = b.overlayOn() && label ? 18 * s : 0,
+    iw = b.overlayOn() ? ir * 2 + ig : 0;
   const psize = b.fit(label, 80 * s, cw - pad * 2 - iw, 800),
     pw = c.measureText(label).width + iw + pad * 2;
   const bw = n ? Math.min(270 * s, (cw - 18 * s * (n - 1)) / n) : 0,
@@ -246,7 +245,7 @@ function proof(b: Brush): void {
     b.rect([cx - pw / 2, y, pw, ph], t.accent, 24 * s);
     b.noShadow();
     let xx = cx - pw / 2 + pad;
-    if (b.state.play) {
+    if (b.overlayOn()) {
       b.play(xx + ir, y + ph / 2, ir, true);
       xx += iw;
     }
@@ -504,10 +503,10 @@ function result(b: Brush): void {
     sub = words(b, "subline");
   let y = 26 * s,
     pr = w / 2;
-  const has = Boolean(pill || b.state.play);
+  const has = Boolean(pill || b.overlayOn());
   if (has) {
     const ir = 40.6 * s,
-      iw = b.state.play ? ir * 2 + (pill ? 20 * s : 0) : 0,
+      iw = b.overlayOn() ? ir * 2 + (pill ? 20 * s : 0) : 0,
       px = b.fit(pill, 88 * s, max - 64 * s - iw, 800),
       pw = c.measureText(pill).width + iw + 64 * s,
       x = (w - pw) / 2;
@@ -516,7 +515,7 @@ function result(b: Brush): void {
     b.rect([x, 38 * s, pw, 116 * s], t.accent, 24 * s);
     b.noShadow();
     let xx = x + 32 * s;
-    if (b.state.play) {
+    if (b.overlayOn()) {
       b.play(xx + ir, 96 * s, ir, true);
       xx += iw;
     }
@@ -571,8 +570,8 @@ function stat(b: Brush): void {
     sub = words(b, "subline"),
     rows = statRows(b),
     svc = words(b, "services");
-  const ir = b.state.play ? 34 * s : 0,
-    iw = b.state.play ? 84 * s : 0,
+  const ir = b.overlayOn() ? 34 * s : 0,
+    iw = b.overlayOn() ? 84 * s : 0,
     tp = b.fit(top, 90 * s, cw - iw, 800),
     tc = top ? b.cap() : ir * 2,
     tw = c.measureText(top).width;
@@ -605,13 +604,13 @@ function stat(b: Brush): void {
         (rows.length ? 68 * s + rh : 0) +
         34 * s
       : 0;
-  const g1 = (top || b.state.play) && ph ? 34 * s : 0,
+  const g1 = (top || b.overlayOn()) && ph ? 34 * s : 0,
     g2 = svc && (ph || top) ? 24 * s : 0,
     sh = svc ? 64 * s : 0;
   let y = Math.max(44 * s, (h - tc - g1 - ph - g2 - sh) / 2);
-  if (top || b.state.play) {
+  if (top || b.overlayOn()) {
     let xx = cx - (iw + tw - (top ? 0 : 16 * s)) / 2;
-    if (b.state.play) {
+    if (b.overlayOn()) {
       b.play(xx + ir, y + tc / 2, ir, true);
       xx += iw;
     }
@@ -680,7 +679,7 @@ function reviews(b: Brush): void {
     titleH = (l1 ? cap : 0) + (l2 ? cap : 0) + (l1 && l2 ? 18 * s : 0),
     rh = badge ? 96 * s : 44 * s,
     sh = rows.length ? 132 * s : 0,
-    bh = bar || b.state.play ? 92 * s : 0,
+    bh = bar || b.overlayOn() ? 92 * s : 0,
     by = h - m - bh;
   const gap = 40 * s;
   const contentHeight = titleH + rh + sh + gap * (sh ? 2 : 1);
@@ -770,7 +769,7 @@ function reviews(b: Brush): void {
     c.roundRect(m + 1.5 * s, by + 1.5 * s, ww - 3 * s, bh - 3 * s, 19 * s);
     c.stroke();
     let tx = m + 30 * s;
-    if (b.state.play) {
+    if (b.overlayOn()) {
       b.play(tx + 28 * s, cy, 28 * s, false, t.accent, t.foreground);
       tx += 78 * s;
       if (bar) {
@@ -836,7 +835,7 @@ function quote(b: Brush): void {
       800,
     );
   }
-  if (b.state.play) b.play(x + 46 * s, h - m - 46 * s, 46 * s);
+  if (b.overlayOn()) b.play(x + 46 * s, h - m - 46 * s, 46 * s);
 }
 function checklist(b: Brush): void {
   const { width: w, height: h } = b,
@@ -893,13 +892,19 @@ function cover(b: Brush): void {
     sub = words(b, "subline");
   const fx = m * 0.8,
     fy = h * 0.3;
-  b.frame([fx, fy, w - 2 * fx, h - fy + 60 * s], 18 * s, 6 * s, b.state.play ? 120 * s : 0, h - fy);
+  b.frame(
+    [fx, fy, w - 2 * fx, h - fy + 60 * s],
+    18 * s,
+    6 * s,
+    b.overlayOn() ? 120 * s : 0,
+    h - fy,
+  );
   const shade = c.createLinearGradient(0, h * 0.52, 0, h);
   shade.addColorStop(0, "transparent");
   shade.addColorStop(1, "rgba(0,0,0,.85)");
   c.fillStyle = shade;
   c.fillRect(fx, h * 0.52, w - 2 * fx, h * 0.48);
-  if (b.state.play) b.play(w / 2, fy + (h * 0.5 - fy) / 2, 52 * s);
+  if (b.overlayOn()) b.play(w / 2, fy + (h * 0.5 - fy) / 2, 52 * s);
   let titleTop = h - m;
   if (sub) {
     const size = b.fit(sub, 32 * s, w - 2 * m - 40 * s, 600);
@@ -1010,7 +1015,7 @@ function duo(b: Brush): void {
       if (l) b.text(l, xx + bw / 2, iy + lc, ls, "rgba(255,255,255,.7)", Infinity, 500, "center");
     });
   }
-  if (b.state.play) b.play(w * 0.23, h - m - 50 * s, 46 * s);
+  if (b.overlayOn()) b.play(w * 0.23, h - m - 50 * s, 46 * s);
 }
 function split(b: Brush): void {
   const { width: w, height: h } = b,
@@ -1026,9 +1031,9 @@ function split(b: Brush): void {
     name = words(b, "name"),
     role = words(b, "role");
   let y = m;
-  if (pill || b.state.play) {
-    const ir = b.state.play ? 28 * s : 0,
-      iw = b.state.play ? ir * 2 + (pill ? 16 * s : 0) : 0;
+  if (pill || b.overlayOn()) {
+    const ir = b.overlayOn() ? 28 * s : 0,
+      iw = b.overlayOn() ? ir * 2 + (pill ? 16 * s : 0) : 0;
     const size = b.fit(pill, 48 * s, cw - iw - 56 * s, 800);
     b.font(size, 800);
     const pc = b.cap(),
@@ -1038,7 +1043,7 @@ function split(b: Brush): void {
     b.rect([x, y, pw, ph], t.accent, ph / 2);
     b.noShadow();
     let xx = x + 28 * s;
-    if (b.state.play) {
+    if (b.overlayOn()) {
       b.play(xx + ir, y + ph / 2, ir, true);
       xx += iw;
     }
@@ -1093,7 +1098,7 @@ function centered(b: Brush): void {
   b.shadow(translucent(t.highlight, 0.9), 24 * s);
   b.circle(cx, cy, r - 4 * s, "transparent", t.highlight, 7 * s);
   b.noShadow();
-  if (b.state.play) b.play(cx, cy, r * 0.44);
+  if (b.overlayOn()) b.play(cx, cy, r * 0.44);
   let y = cy + r + 42 * s;
   if (name) {
     const size = b.fit(name, 116 * s, w * 0.7, 900);
@@ -1145,7 +1150,7 @@ function statline(b: Brush): void {
     b.noShadow();
     y += tc + (lines.length - 1) * lh;
   }
-  if (b.state.play) b.play(x + 48 * s, Math.min(y + 68 * s, stripY - 84 * s), 42 * s);
+  if (b.overlayOn()) b.play(x + 48 * s, Math.min(y + 68 * s, stripY - 84 * s), 42 * s);
   if (svc) {
     const size = b.fit(svc, 24 * s, cw, 600);
     b.font(size, 600);

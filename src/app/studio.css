@@ -603,3 +603,11 @@ fieldset.mode-tabs,
 .studio-panel .carousel-nav button:hover {
   background: var(--ds-btn-secondary-bg);
 }
+
+/* [WHY] The overlay controls now form three parts (arrow, Play, Loom) inside
+   one panel section; a hairline between them keeps the parts easy to scan. */
+.studio-panel .section-divider {
+  border: 0;
+  border-top: 1px solid var(--ds-color-border-light);
+  margin: 20px 0;
+}

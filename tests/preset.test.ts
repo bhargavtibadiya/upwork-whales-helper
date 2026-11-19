@@ -163,31 +163,55 @@ describe("preset links", () => {
     expect(preset.values).toEqual({ headline: "ok" });
   });
 
-  it("round-trips the play icon and size, with safe defaults", () => {
-    const state = { ...initialState("portfolio"), playIcon: "loom" as const, playSize: 150 };
+  it("round-trips the loom overlay and play size, with safe defaults", () => {
+    const state = {
+      ...initialState("portfolio"),
+      play: false,
+      loom: true,
+      loomVariant: "dark" as const,
+      loomSize: 150,
+    };
     const restored = roundTrip(state);
-    expect(restored.playIcon).toBe("loom");
-    expect(restored.playSize).toBe(150);
+    expect(restored.loom).toBe(true);
+    expect(restored.play).toBe(false);
+    expect(restored.loomVariant).toBe("dark");
+    expect(restored.loomSize).toBe(150);
 
     const raw = { v: 1, mode: "portfolio", style: "result" };
     const encoded = Buffer.from(JSON.stringify(raw)).toString("base64");
     const preset = decodePreset(`?p=${encoded}`);
-    expect(preset?.playIcon).toBe("play");
+    expect(preset?.loom).toBe(false);
+    expect(preset?.play).toBe(true);
+    expect(preset?.loomVariant).toBe("light");
     expect(preset?.playSize).toBe(100);
 
     const hostile = Buffer.from(
-      JSON.stringify({ ...raw, playIcon: "triangle", playSize: 999 }),
+      JSON.stringify({ ...raw, loomVariant: "neon", playSize: 999 }),
     ).toString("base64");
     const cleaned = decodePreset(`?p=${hostile}`);
-    expect(cleaned?.playIcon).toBe("play");
+    expect(cleaned?.loomVariant).toBe("light");
     expect(cleaned?.playSize).toBe(200);
 
-    const tiny = Buffer.from(JSON.stringify({ ...raw, playIcon: "loom", playSize: 5 })).toString(
+    const tiny = Buffer.from(JSON.stringify({ ...raw, loom: true, loomSize: 5 })).toString(
       "base64",
     );
     const small = decodePreset(`?p=${tiny}`);
-    expect(small?.playIcon).toBe("loom");
-    expect(small?.playSize).toBe(50);
+    expect(small?.loom).toBe(true);
+    expect(small?.play).toBe(false);
+    expect(small?.loomSize).toBe(50);
+  });
+
+  it("reads legacy playIcon links as the loom overlay", () => {
+    const raw = { v: 1, mode: "portfolio", style: "result", play: true, playIcon: "loom" };
+    const encoded = Buffer.from(JSON.stringify(raw)).toString("base64");
+    const preset = decodePreset(`?p=${encoded}`);
+    expect(preset?.loom).toBe(true);
+    expect(preset?.play).toBe(false);
+
+    const triangle = Buffer.from(JSON.stringify({ ...raw, playIcon: "play" })).toString("base64");
+    const playFirst = decodePreset(`?p=${triangle}`);
+    expect(playFirst?.loom).toBe(false);
+    expect(playFirst?.play).toBe(true);
   });
 
   it("round-trips the custom theme colour", () => {

@@ -413,7 +413,7 @@ const OVERLAY_ANCHORS: Record<string, [number, number]> = {
   proof: [0.22, 0.81],
 };
 export function compositionCallout(b: Brush): void {
-  if (!b.state.play && !b.state.arrow) return;
+  if (!b.overlayOn() && !b.state.arrow) return;
   let anchor = OVERLAY_ANCHORS[b.state.style];
   if (!anchor) return;
   if (b.state.originalLayout && b.state.style === "stat") anchor = [0.24, 0.81];
@@ -440,13 +440,13 @@ export function compositionCallout(b: Brush): void {
     h = b.height,
     s = b.scale,
     r = 33 * s;
-  const [cx, cy] = playCenter(w, h, rx * w, ry * h, r, b.state.playOffsetX, b.state.playOffsetY);
+  const [cx, cy] = playCenter(w, h, rx * w, ry * h, r, ...b.overlayOffsets());
   const usePill = ["result", "proof", "stat", "reviews", "split"].includes(b.state.style),
     text = (usePill ? value(b, "pill") : b.state.calloutText).trim();
   const showLabel = b.state.overlayLabel && Boolean(text);
   let overlayLeft = cx - r,
     overlayRight = cx + r;
-  if (b.state.play) {
+  if (b.overlayOn()) {
     b.shadow("rgba(0,0,0,.35)", 18 * s, 3 * s);
     if (showLabel) {
       const labelSize = b.fit(text, 23 * s, w * 0.24, 700),
@@ -466,7 +466,7 @@ export function compositionCallout(b: Brush): void {
   }
   if (b.state.arrow) {
     const direction = cx > w * 0.5 ? -1 : 1,
-      edge = b.state.play
+      edge = b.overlayOn()
         ? direction < 0
           ? overlayLeft - 10 * s
           : overlayRight + 10 * s

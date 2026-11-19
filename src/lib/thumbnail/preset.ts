@@ -37,10 +37,14 @@ export interface Preset {
   font: ThumbnailState["font"];
   arrow: boolean;
   play: boolean;
-  playIcon: ThumbnailState["playIcon"];
   playOffsetX: number;
   playOffsetY: number;
   playSize: number;
+  loom: boolean;
+  loomVariant: ThumbnailState["loomVariant"];
+  loomOffsetX: number;
+  loomOffsetY: number;
+  loomSize: number;
   calloutText: string;
   overlayLabel: boolean;
   originalLayout: boolean;
@@ -57,7 +61,7 @@ export interface Preset {
 const MODES: Mode[] = ["profile", "portfolio", "intro"];
 const SIZES: ThumbnailState["size"][] = ["4x3", "16x9"];
 const FONTS: ThumbnailState["font"][] = ["original", "Montserrat", "Manrope", "Anton"];
-const PLAY_ICONS: ThumbnailState["playIcon"][] = ["play", "loom"];
+const LOOM_VARIANTS: ThumbnailState["loomVariant"][] = ["light", "dark", "image"];
 const SHAPES: ThumbnailState["portraitShape"][] = ["rounded", "square", "circle"];
 const BACKDROPS: ThumbnailState["backdrop"][] = ["glow", "clean"];
 const GAPS: Ring["gap"][] = ["white", "dark", "none"];
@@ -168,11 +172,15 @@ export function encodePreset(state: ThumbnailState): string {
     icons: state.icons,
     font: state.font,
     arrow: state.arrow,
-    play: state.play,
-    playIcon: state.playIcon,
+    play: state.loom ? false : state.play,
     playOffsetX: state.playOffsetX,
     playOffsetY: state.playOffsetY,
     playSize: state.playSize,
+    loom: state.loom,
+    loomVariant: state.loomVariant,
+    loomOffsetX: state.loomOffsetX,
+    loomOffsetY: state.loomOffsetY,
+    loomSize: state.loomSize,
     calloutText: state.calloutText,
     overlayLabel: state.overlayLabel,
     originalLayout: state.originalLayout,
@@ -232,6 +240,7 @@ export function decodePreset(search: string): Preset | null {
     const icons = Array.isArray(raw.icons)
       ? raw.icons.filter((icon): icon is string => typeof icon === "string" && ICON_IDS.has(icon))
       : base.icons;
+    const loom = typeof raw.loom === "boolean" ? raw.loom : raw.playIcon === "loom";
     const preset: Preset = {
       v: 1,
       mode,
@@ -246,11 +255,18 @@ export function decodePreset(search: string): Preset | null {
       icons: icons.length ? icons.slice(0, 4) : base.icons,
       font: oneOf(FONTS, raw.font, base.font),
       arrow: raw.arrow === true,
-      play: raw.play !== false,
-      playIcon: oneOf(PLAY_ICONS, raw.playIcon, base.playIcon),
+      // Play and Loom are mutually exclusive: a Loom badge always wins so a
+      // stored link never renders both overlays at once. Links saved before
+      // Loom became its own overlay carry `playIcon: "loom"` instead.
+      play: loom ? false : raw.play !== false,
       playOffsetX: clamp(raw.playOffsetX, -100, 100, 0),
       playOffsetY: clamp(raw.playOffsetY, -100, 100, 0),
       playSize: clamp(raw.playSize, 50, 200, base.playSize),
+      loom,
+      loomVariant: oneOf(LOOM_VARIANTS, raw.loomVariant, base.loomVariant),
+      loomOffsetX: clamp(raw.loomOffsetX, -100, 100, 0),
+      loomOffsetY: clamp(raw.loomOffsetY, -100, 100, 0),
+      loomSize: clamp(raw.loomSize, 50, 200, base.loomSize),
       calloutText: text(raw.calloutText, 22, base.calloutText),
       overlayLabel: raw.overlayLabel === true,
       originalLayout: raw.originalLayout === true,
@@ -283,11 +299,15 @@ export function applyPreset(preset: Preset): ThumbnailState {
     icons: preset.icons,
     font: preset.font,
     arrow: preset.arrow,
-    play: preset.play,
-    playIcon: preset.playIcon,
+    play: preset.loom ? false : preset.play,
     playOffsetX: preset.playOffsetX,
     playOffsetY: preset.playOffsetY,
     playSize: preset.playSize,
+    loom: preset.loom,
+    loomVariant: preset.loomVariant,
+    loomOffsetX: preset.loomOffsetX,
+    loomOffsetY: preset.loomOffsetY,
+    loomSize: preset.loomSize,
     calloutText: preset.calloutText,
     overlayLabel: preset.overlayLabel,
     originalLayout: preset.originalLayout,
