@@ -412,7 +412,7 @@ export function Words({ state, setState }: WordsProps): React.JSX.Element | null
               />
             )}
             {quoteStyle && key === "badge" && <RatingControls state={state} setState={setState} />}
-            {state.style === "casestudy" && key === "badge2" && (
+            {state.style === "casestudy" && key === "badge" && (
               <BadgeControls state={state} setState={setState} />
             )}
           </div>
