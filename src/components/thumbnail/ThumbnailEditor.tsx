@@ -248,7 +248,12 @@ export function ThumbnailEditor(): React.JSX.Element {
   };
   const style = spec(state.style),
     [width, height] = dimensions(state),
-    profile = state.mode === "profile";
+    profile = state.mode === "profile",
+    showPortraitShape =
+      style.images.includes("face") &&
+      !["meet", "hello", "banner", "proof", "centered", "signature"].includes(state.style) &&
+      !(state.originalLayout && ["stat", "reviews"].includes(state.style)),
+    showImageAppearance = style.images.includes("shot") || showPortraitShape;
   const downloadButton = (
     <button
       type="button"
@@ -477,364 +482,373 @@ export function ThumbnailEditor(): React.JSX.Element {
                   <Words state={state} setState={setState} />
                 )}{" "}
                 {!profile && (
-                  <section className="surface">
-                    <h2>5. Finishing touches</h2>
-                    {["stat", "reviews"].includes(state.style) && (
-                      <div className="field">
-                        <label htmlFor="original-layout">Layout version</label>
-                        <select
-                          id="original-layout"
-                          value={state.originalLayout ? "original" : "reworked"}
-                          onChange={(e) => {
-                            const originalLayout = e.currentTarget.value === "original";
-                            setState((current) => ({ ...current, originalLayout }));
-                          }}
-                        >
-                          <option value="reworked">Reworked composition</option>
-                          <option value="original">Original reference composition</option>
-                        </select>
-                      </div>
-                    )}
-                    {state.mode === "portfolio" && (
-                      <fieldset className="segments" aria-label="Size">
-                        {(
-                          [
-                            { id: "4x3", name: "Portfolio" },
-                            { id: "16x9", name: "Video / YouTube" },
-                          ] as const
-                        ).map((size) => (
-                          <button
-                            key={size.id}
-                            type="button"
-                            aria-pressed={state.size === size.id}
-                            onClick={() => setState((current) => ({ ...current, size: size.id }))}
-                          >
-                            {size.name}
-                            <small>{dimensions({ ...state, size: size.id }).join(" x ")}</small>
-                          </button>
-                        ))}
-                      </fieldset>
-                    )}
-                    {!["result", "meet", "proof", "casestudy"].includes(state.style) &&
-                      !(state.originalLayout && ["stat", "reviews"].includes(state.style)) && (
+                  <>
+                    <section className="surface">
+                      <h2>5. Canvas &amp; background</h2>
+                      {["stat", "reviews"].includes(state.style) && (
                         <div className="field">
-                          <label htmlFor="callout-text">Callout text</label>
-                          <input
-                            id="callout-text"
-                            maxLength={22}
-                            value={state.calloutText}
-                            onChange={(event) => {
-                              const calloutText = event.currentTarget.value;
-                              setState((current) => ({ ...current, calloutText }));
-                            }}
-                          />
-                          <p className="helper">
-                            Overlays an image corner, away from the face and headline. Clear for an
-                            icon-only button.
-                          </p>
-                        </div>
-                      )}
-                    <p className="helper">
-                      The play button can also sit on the media; it never adds a row or shrinks your
-                      artwork. The Loom logo only replaces the icon inside the Watch-me button.
-                    </p>
-                    <div className="field">
-                      <label htmlFor="artwork-backdrop">Background treatment</label>
-                      <select
-                        id="artwork-backdrop"
-                        value={state.backdrop}
-                        onChange={(e) => {
-                          const backdrop = e.currentTarget.value as ThumbnailState["backdrop"];
-                          setState((current) => ({ ...current, backdrop }));
-                        }}
-                      >
-                        <option value="glow">Studio glow</option>
-                        <option value="clean">Clean solid</option>
-                      </select>
-                    </div>
-                    {spec(state.style).images.includes("shot") && (
-                      <label className="toggle">
-                        <span>Browser-window screenshot</span>
-                        <input
-                          type="checkbox"
-                          checked={state.browserFrame}
-                          onChange={(e) => {
-                            const browserFrame = e.currentTarget.checked;
-                            setState((current) => ({ ...current, browserFrame }));
-                          }}
-                        />
-                      </label>
-                    )}
-                    {spec(state.style).images.includes("shot") && state.browserFrame && (
-                      <div className="field">
-                        <label htmlFor="browser-url">Browser address bar URL</label>
-                        <input
-                          id="browser-url"
-                          maxLength={48}
-                          placeholder="yourproject.com"
-                          value={state.browserUrl}
-                          onChange={(event) => {
-                            const browserUrl = event.currentTarget.value;
-                            setState((current) => ({ ...current, browserUrl }));
-                          }}
-                        />
-                        <p className="helper">
-                          Shown inside the browser window's address bar. Leave empty for the plain
-                          bar.
-                        </p>
-                      </div>
-                    )}
-                    {spec(state.style).images.includes("shot") && (
-                      <div className="field">
-                        <label htmlFor="project-label">Project name in image</label>
-                        <input
-                          id="project-label"
-                          maxLength={28}
-                          placeholder="Project name"
-                          value={state.projectLabel}
-                          onChange={(event) => {
-                            const projectLabel = event.currentTarget.value;
-                            setState((current) => ({ ...current, projectLabel }));
-                          }}
-                        />
-                        <p className="helper">
-                          Adds a text-only name strip inside the project image. Empty hides it.
-                        </p>
-                      </div>
-                    )}
-                    {spec(state.style).images.includes("face") &&
-                      !["meet", "hello", "banner", "proof", "centered", "signature"].includes(
-                        state.style,
-                      ) &&
-                      !(state.originalLayout && ["stat", "reviews"].includes(state.style)) && (
-                        <div className="field">
-                          <label htmlFor="portrait-shape">Portrait shape</label>
+                          <label htmlFor="original-layout">Layout version</label>
                           <select
-                            id="portrait-shape"
-                            value={state.portraitShape}
+                            id="original-layout"
+                            value={state.originalLayout ? "original" : "reworked"}
                             onChange={(e) => {
-                              const portraitShape = e.currentTarget
-                                .value as ThumbnailState["portraitShape"];
-                              setState((current) => ({ ...current, portraitShape }));
+                              const originalLayout = e.currentTarget.value === "original";
+                              setState((current) => ({ ...current, originalLayout }));
                             }}
                           >
-                            <option value="rounded">Soft corners</option>
-                            <option value="square">Square corners</option>
-                            <option value="circle">Circle crop</option>
+                            <option value="reworked">Reworked composition</option>
+                            <option value="original">Original reference composition</option>
                           </select>
                         </div>
                       )}
-                    {state.style !== "meet" && (
-                      <label className="toggle">
-                        <span>Show button label</span>
-                        <input
-                          type="checkbox"
-                          checked={state.overlayLabel}
+                      {state.mode === "portfolio" && (
+                        <fieldset className="segments" aria-label="Size">
+                          {(
+                            [
+                              { id: "4x3", name: "Portfolio" },
+                              { id: "16x9", name: "Video / YouTube" },
+                            ] as const
+                          ).map((size) => (
+                            <button
+                              key={size.id}
+                              type="button"
+                              aria-pressed={state.size === size.id}
+                              onClick={() => setState((current) => ({ ...current, size: size.id }))}
+                            >
+                              {size.name}
+                              <small>{dimensions({ ...state, size: size.id }).join(" x ")}</small>
+                            </button>
+                          ))}
+                        </fieldset>
+                      )}
+                      <div className="field">
+                        <label htmlFor="artwork-backdrop">Background treatment</label>
+                        <select
+                          id="artwork-backdrop"
+                          value={state.backdrop}
                           onChange={(e) => {
-                            const overlayLabel = e.currentTarget.checked;
-                            setState((current) => ({ ...current, overlayLabel }));
+                            const backdrop = e.currentTarget.value as ThumbnailState["backdrop"];
+                            setState((current) => ({ ...current, backdrop }));
                           }}
-                        />
-                      </label>
-                    )}
-                    <div className="extra-toggles">
-                      <label className="toggle">
-                        <span>Curved arrow</span>
-                        <input
-                          type="checkbox"
-                          checked={state.arrow}
-                          onChange={(event) => {
-                            const arrow = event.currentTarget.checked;
-                            setState((current) => ({ ...current, arrow }));
-                          }}
-                        />
-                      </label>
-                    </div>
-                    <fieldset className="field">
-                      <legend>Watch-me button</legend>
-                      {state.play || state.loom ? (
-                        <>
-                          <label className="range-control">
-                            <span className="field-label">
-                              Button size <output>{state.buttonSize}%</output>
-                            </span>
+                        >
+                          <option value="glow">Studio glow</option>
+                          <option value="clean">Clean solid</option>
+                        </select>
+                      </div>
+                    </section>
+                    {showImageAppearance && (
+                      <section className="surface" aria-labelledby="image-controls-title">
+                        <h2 id="image-controls-title">6. Image appearance</h2>
+                        {spec(state.style).images.includes("shot") && (
+                          <label className="toggle">
+                            <span>Browser-window screenshot</span>
                             <input
-                              type="range"
-                              min={50}
-                              max={200}
-                              step={5}
-                              value={state.buttonSize}
-                              aria-label="Button size"
-                              onChange={(event) => {
-                                const buttonSize = Number(event.currentTarget.value);
-                                setState((current) => ({ ...current, buttonSize }));
+                              type="checkbox"
+                              checked={state.browserFrame}
+                              onChange={(e) => {
+                                const browserFrame = e.currentTarget.checked;
+                                setState((current) => ({ ...current, browserFrame }));
                               }}
                             />
                           </label>
-                          <p className="helper">
-                            Scales the whole button: bar, label text and icon together. Use Icon
-                            size or Logo size for the icon inside it.
-                          </p>
-                          {(
-                            [
-                              ["playOffsetX", "Horizontal position"],
-                              ["playOffsetY", "Vertical position"],
-                            ] as const
-                          ).map(([key, label]) => (
-                            <label className="range-control" key={key}>
+                        )}
+                        {spec(state.style).images.includes("shot") && state.browserFrame && (
+                          <div className="field">
+                            <label htmlFor="browser-url">Browser address bar URL</label>
+                            <input
+                              type="text"
+                              id="browser-url"
+                              maxLength={48}
+                              placeholder="yourproject.com"
+                              value={state.browserUrl}
+                              onChange={(event) => {
+                                const browserUrl = event.currentTarget.value;
+                                setState((current) => ({ ...current, browserUrl }));
+                              }}
+                            />
+                            <p className="helper">
+                              Shown inside the browser window's address bar. Leave empty for the
+                              plain bar.
+                            </p>
+                          </div>
+                        )}
+                        {spec(state.style).images.includes("shot") && (
+                          <div className="field">
+                            <label htmlFor="project-label">Project name in image</label>
+                            <input
+                              type="text"
+                              id="project-label"
+                              maxLength={28}
+                              placeholder="Project name"
+                              value={state.projectLabel}
+                              onChange={(event) => {
+                                const projectLabel = event.currentTarget.value;
+                                setState((current) => ({ ...current, projectLabel }));
+                              }}
+                            />
+                            <p className="helper">
+                              Adds a text-only name strip inside the project image. Empty hides it.
+                            </p>
+                          </div>
+                        )}
+                        {showPortraitShape && (
+                          <div className="field">
+                            <label htmlFor="portrait-shape">Portrait shape</label>
+                            <select
+                              id="portrait-shape"
+                              value={state.portraitShape}
+                              onChange={(e) => {
+                                const portraitShape = e.currentTarget
+                                  .value as ThumbnailState["portraitShape"];
+                                setState((current) => ({ ...current, portraitShape }));
+                              }}
+                            >
+                              <option value="rounded">Soft corners</option>
+                              <option value="square">Square corners</option>
+                              <option value="circle">Circle crop</option>
+                            </select>
+                          </div>
+                        )}
+                      </section>
+                    )}
+                    <section className="surface" aria-labelledby="button-controls-title">
+                      <h2 id="button-controls-title">
+                        {showImageAppearance ? "7" : "6"}. Buttons &amp; overlays
+                      </h2>
+                      {!["result", "meet", "proof", "casestudy"].includes(state.style) &&
+                        !(state.originalLayout && ["stat", "reviews"].includes(state.style)) && (
+                          <div className="field">
+                            <label htmlFor="callout-text">Callout text</label>
+                            <input
+                              type="text"
+                              id="callout-text"
+                              maxLength={22}
+                              value={state.calloutText}
+                              onChange={(event) => {
+                                const calloutText = event.currentTarget.value;
+                                setState((current) => ({ ...current, calloutText }));
+                              }}
+                            />
+                            <p className="helper">
+                              Overlays an image corner, away from the face and headline. Clear for
+                              an icon-only button.
+                            </p>
+                          </div>
+                        )}
+                      <p className="helper">
+                        The play button can also sit on the media; it never adds a row or shrinks
+                        your artwork. The Loom logo only replaces the icon inside the Watch-me
+                        button.
+                      </p>
+                      {state.style !== "meet" && (
+                        <label className="toggle">
+                          <span>Show button label</span>
+                          <input
+                            type="checkbox"
+                            checked={state.overlayLabel}
+                            onChange={(e) => {
+                              const overlayLabel = e.currentTarget.checked;
+                              setState((current) => ({ ...current, overlayLabel }));
+                            }}
+                          />
+                        </label>
+                      )}
+                      <div className="extra-toggles">
+                        <label className="toggle">
+                          <span>Curved arrow</span>
+                          <input
+                            type="checkbox"
+                            checked={state.arrow}
+                            onChange={(event) => {
+                              const arrow = event.currentTarget.checked;
+                              setState((current) => ({ ...current, arrow }));
+                            }}
+                          />
+                        </label>
+                      </div>
+                      <fieldset className="field">
+                        <legend>Watch-me button</legend>
+                        {state.play || state.loom ? (
+                          <>
+                            <label className="range-control">
                               <span className="field-label">
-                                {label} <output>{state[key]}%</output>
+                                Button size <output>{state.buttonSize}%</output>
                               </span>
                               <input
                                 type="range"
-                                min={-100}
-                                max={100}
-                                step={1}
-                                value={state[key]}
-                                aria-label={label}
+                                min={50}
+                                max={200}
+                                step={5}
+                                value={state.buttonSize}
+                                aria-label="Button size"
                                 onChange={(event) => {
-                                  const position = Number(event.currentTarget.value);
-                                  setState((current) => ({ ...current, [key]: position }));
+                                  const buttonSize = Number(event.currentTarget.value);
+                                  setState((current) => ({ ...current, buttonSize }));
                                 }}
                               />
                             </label>
-                          ))}
+                            <p className="helper">
+                              Scales the whole button: bar, label text and icon together. Use Icon
+                              size or Logo size for the icon inside it.
+                            </p>
+                            {(
+                              [
+                                ["playOffsetX", "Horizontal position"],
+                                ["playOffsetY", "Vertical position"],
+                              ] as const
+                            ).map(([key, label]) => (
+                              <label className="range-control" key={key}>
+                                <span className="field-label">
+                                  {label} <output>{state[key]}%</output>
+                                </span>
+                                <input
+                                  type="range"
+                                  min={-100}
+                                  max={100}
+                                  step={1}
+                                  value={state[key]}
+                                  aria-label={label}
+                                  onChange={(event) => {
+                                    const position = Number(event.currentTarget.value);
+                                    setState((current) => ({ ...current, [key]: position }));
+                                  }}
+                                />
+                              </label>
+                            ))}
+                            <p className="helper">
+                              Moves the whole button for either icon. Zero restores the layout's
+                              starting position.
+                            </p>
+                            <button
+                              type="button"
+                              className="text-button"
+                              onClick={() =>
+                                setState((current) => ({
+                                  ...current,
+                                  playOffsetX: 0,
+                                  playOffsetY: 0,
+                                }))
+                              }
+                            >
+                              Reset button position
+                            </button>
+                          </>
+                        ) : (
                           <p className="helper">
-                            Moves the whole button for either icon. Zero restores the layout's
-                            starting position.
+                            Turn on the Play button or Loom logo to size and move the Watch-me
+                            button.
                           </p>
-                          <button
-                            type="button"
-                            className="text-button"
-                            onClick={() =>
+                        )}
+                      </fieldset>
+                      <fieldset className="field">
+                        <label className="toggle">
+                          <span>Play button</span>
+                          <input
+                            type="checkbox"
+                            checked={state.play}
+                            onChange={(event) => {
+                              const play = event.currentTarget.checked;
+                              // Play and Loom are alternative icons for the same
+                              // Watch-me button: switching one on switches the
+                              // other off.
                               setState((current) => ({
                                 ...current,
-                                playOffsetX: 0,
-                                playOffsetY: 0,
-                              }))
-                            }
-                          >
-                            Reset button position
-                          </button>
-                        </>
-                      ) : (
-                        <p className="helper">
-                          Turn on the Play button or Loom logo to size and move the Watch-me button.
-                        </p>
-                      )}
-                    </fieldset>
-                    <hr className="section-divider" />
-                    <fieldset className="field">
-                      <legend>Play button</legend>
-                      <label className="toggle">
-                        <span>Play button</span>
-                        <input
-                          type="checkbox"
-                          checked={state.play}
-                          onChange={(event) => {
-                            const play = event.currentTarget.checked;
-                            // Play and Loom are alternative icons for the same
-                            // Watch-me button: switching one on switches the
-                            // other off.
-                            setState((current) => ({
-                              ...current,
-                              play,
-                              loom: play ? false : current.loom,
-                            }));
-                          }}
-                        />
-                      </label>
-                      {state.play && (
-                        <>
-                          <label className="range-control">
-                            <span className="field-label">
-                              Icon size <output>{state.playSize}%</output>
-                            </span>
-                            <input
-                              type="range"
-                              min={50}
-                              max={200}
-                              step={5}
-                              value={state.playSize}
-                              aria-label="Icon size"
-                              onChange={(event) => {
-                                const playSize = Number(event.currentTarget.value);
-                                setState((current) => ({ ...current, playSize }));
-                              }}
-                            />
-                          </label>
-                          <p className="helper">Scales just the triangle inside the button.</p>
-                        </>
-                      )}
-                    </fieldset>
-                    <hr className="section-divider" />
-                    <fieldset className="field">
-                      <legend>Loom logo</legend>
-                      <label className="toggle">
-                        <span>Loom logo</span>
-                        <input
-                          type="checkbox"
-                          checked={state.loom}
-                          onChange={(event) => {
-                            const loom = event.currentTarget.checked;
-                            // Play and Loom are alternative icons for the same
-                            // Watch-me button: switching one on switches the
-                            // other off. The Loom logo only lives inside the
-                            // labelled button, so turning it on shows the
-                            // button label too.
-                            setState((current) => ({
-                              ...current,
-                              loom,
-                              play: loom ? false : current.play,
-                              overlayLabel: loom ? true : current.overlayLabel,
-                            }));
-                          }}
-                        />
-                      </label>
-                      {state.loom && (
-                        <>
-                          <div className="field">
-                            <label htmlFor="loom-variant">Logo style</label>
-                            <select
-                              id="loom-variant"
-                              value={state.loomVariant}
-                              onChange={(event) => {
-                                const loomVariant = event.currentTarget
-                                  .value as ThumbnailState["loomVariant"];
-                                setState((current) => ({ ...current, loomVariant }));
-                              }}
-                            >
-                              <option value="light">Light mode (dark mark on white)</option>
-                              <option value="dark">Dark mode (white mark on dark)</option>
-                              <option value="image">Image (full-colour badge)</option>
-                            </select>
-                          </div>
-                          <label className="range-control">
-                            <span className="field-label">
-                              Logo size <output>{state.loomSize}%</output>
-                            </span>
-                            <input
-                              type="range"
-                              min={50}
-                              max={200}
-                              step={5}
-                              value={state.loomSize}
-                              aria-label="Logo size"
-                              onChange={(event) => {
-                                const loomSize = Number(event.currentTarget.value);
-                                setState((current) => ({ ...current, loomSize }));
-                              }}
-                            />
-                          </label>
-                          <p className="helper">
-                            The Loom logo sits inside the labelled Watch-me button in place of the
-                            play triangle, so it shows the button label. It never appears anywhere
-                            else on the artwork.
-                          </p>
-                        </>
-                      )}
-                    </fieldset>
-                  </section>
+                                play,
+                                loom: play ? false : current.loom,
+                              }));
+                            }}
+                          />
+                        </label>
+                        {state.play && (
+                          <>
+                            <label className="range-control">
+                              <span className="field-label">
+                                Icon size <output>{state.playSize}%</output>
+                              </span>
+                              <input
+                                type="range"
+                                min={50}
+                                max={200}
+                                step={5}
+                                value={state.playSize}
+                                aria-label="Icon size"
+                                onChange={(event) => {
+                                  const playSize = Number(event.currentTarget.value);
+                                  setState((current) => ({ ...current, playSize }));
+                                }}
+                              />
+                            </label>
+                            <p className="helper">Scales just the triangle inside the button.</p>
+                          </>
+                        )}
+                      </fieldset>
+                      <fieldset className="field">
+                        <label className="toggle">
+                          <span>Loom logo</span>
+                          <input
+                            type="checkbox"
+                            checked={state.loom}
+                            onChange={(event) => {
+                              const loom = event.currentTarget.checked;
+                              // Play and Loom are alternative icons for the same
+                              // Watch-me button: switching one on switches the
+                              // other off. The Loom logo only lives inside the
+                              // labelled button, so turning it on shows the
+                              // button label too.
+                              setState((current) => ({
+                                ...current,
+                                loom,
+                                play: loom ? false : current.play,
+                                overlayLabel: loom ? true : current.overlayLabel,
+                              }));
+                            }}
+                          />
+                        </label>
+                        {state.loom && (
+                          <>
+                            <div className="field">
+                              <label htmlFor="loom-variant">Logo style</label>
+                              <select
+                                id="loom-variant"
+                                value={state.loomVariant}
+                                onChange={(event) => {
+                                  const loomVariant = event.currentTarget
+                                    .value as ThumbnailState["loomVariant"];
+                                  setState((current) => ({ ...current, loomVariant }));
+                                }}
+                              >
+                                <option value="light">Light mode (dark mark on white)</option>
+                                <option value="dark">Dark mode (white mark on dark)</option>
+                                <option value="image">Image (full-colour badge)</option>
+                              </select>
+                            </div>
+                            <label className="range-control">
+                              <span className="field-label">
+                                Logo size <output>{state.loomSize}%</output>
+                              </span>
+                              <input
+                                type="range"
+                                min={50}
+                                max={200}
+                                step={5}
+                                value={state.loomSize}
+                                aria-label="Logo size"
+                                onChange={(event) => {
+                                  const loomSize = Number(event.currentTarget.value);
+                                  setState((current) => ({ ...current, loomSize }));
+                                }}
+                              />
+                            </label>
+                            <p className="helper">
+                              The Loom logo sits inside the labelled Watch-me button in place of the
+                              play triangle, so it shows the button label. It never appears anywhere
+                              else on the artwork.
+                            </p>
+                          </>
+                        )}
+                      </fieldset>
+                    </section>
+                  </>
                 )}
                 <div className="mobile-download">{downloadButton}</div>
               </div>

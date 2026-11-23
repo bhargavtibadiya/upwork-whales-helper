@@ -164,7 +164,7 @@ h2 { font-size: 12px; line-height: 1.5; font-weight: var(--ds-label-weight); let
 input[type="range"] { width: 100%; margin: 0; accent-color: var(--ds-color-primary); min-height: 24px; }
 .field { display: block; padding: 0; margin: 0; border: 0; min-width: 0; }
 .field+.field { margin-top: 16px; }
-.field input[type="text"],.field textarea,.field select { display: block; width: 100%; min-width: 0; padding: 10px 14px; border: 1px solid var(--ds-color-border-medium); border-radius: var(--ds-radius-md); color: var(--ds-color-text-primary); background: var(--ds-color-bg-surface); font-size: 16px; }
+.field input:not([type]),.field input[type="text"],.field input[type="url"],.field textarea,.field select { display: block; width: 100%; min-width: 0; padding: 10px 14px; border: 1px solid var(--ds-color-border-medium); border-radius: var(--ds-radius-md); color: var(--ds-color-text-primary); background: var(--ds-color-bg-surface); font-size: 16px; }
 .field input:focus,.field textarea:focus,.field select:focus { outline: none; border-color: var(--ds-color-primary); box-shadow: var(--ds-focus-ring); }
 .field .helper { margin-top: 4px; }
 .field-pair { display: grid; grid-template-columns: minmax(0,.8fr) minmax(0,1.2fr); gap: 8px; margin-bottom: 8px; }

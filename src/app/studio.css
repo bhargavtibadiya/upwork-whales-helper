@@ -618,3 +618,30 @@ fieldset.mode-tabs,
   border-top: 1px solid var(--ds-color-border-light);
   margin: 20px 0;
 }
+
+/* Editable fields stay visibly distinct from labels in either theme. */
+.studio-panel .field input:not([type]),
+.studio-panel .field input[type="text"],
+.studio-panel .field input[type="url"],
+.studio-panel .field textarea,
+.studio-panel .field select {
+  background: var(--ds-color-bg-sunken);
+  border: 1px solid var(--ds-color-border-strong);
+  min-height: 44px;
+}
+.studio-panel .field input::placeholder,
+.studio-panel .field textarea::placeholder {
+  color: var(--ds-color-text-muted);
+  opacity: 1;
+}
+.studio-panel .field input:not([type]):hover,
+.studio-panel .field input[type="text"]:hover,
+.studio-panel .field input[type="url"]:hover,
+.studio-panel .field textarea:hover,
+.studio-panel .field select:hover {
+  border-color: var(--ds-color-primary);
+}
+/* Each overlay toggle owns its dependent controls without a duplicate title. */
+.studio-panel fieldset.field > * + * {
+  margin-top: 12px;
+}
