@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { SiteAnalytics } from "@/components/SiteAnalytics";
 import { applicationSchema, existingDescription, existingTitle, siteUrl } from "@/lib/seo";
 import "./globals.css";
 import "./theme.css";
@@ -52,6 +53,7 @@ export default function RootLayout({ children }: Readonly<RootLayoutProps>): Rea
           }}
         />
         {children}
+        <SiteAnalytics />
       </body>
     </html>
   );
