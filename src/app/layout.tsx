@@ -1,12 +1,29 @@
 import type { Metadata } from "next";
+import { applicationSchema, existingDescription, existingTitle, siteUrl } from "@/lib/seo";
 import "./globals.css";
 import "./theme.css";
 import "./studio.css";
 
 export const metadata: Metadata = {
-  title: "Upwork Helper | Profile Picture, Portfolio & Intro Covers",
-  description:
-    "Make a ringed profile picture, portfolio thumbnail or intro-video thumbnail. Your images stay in your browser.",
+  metadataBase: new URL(siteUrl),
+  alternates: { canonical: siteUrl },
+  title: existingTitle,
+  description: existingDescription,
+  openGraph: {
+    type: "website",
+    locale: "en_US",
+    url: siteUrl,
+    siteName: "Upwork Helper",
+    title: existingTitle,
+    description: existingDescription,
+    images: [{ url: "/social-preview.png", width: 1200, height: 630, alt: existingTitle }],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: existingTitle,
+    description: existingDescription,
+    images: ["/social-preview.png"],
+  },
 };
 
 interface RootLayoutProps {
@@ -26,7 +43,16 @@ export default function RootLayout({ children }: Readonly<RootLayoutProps>): Rea
           }}
         />
       </head>
-      <body>{children}</body>
+      <body>
+        <script
+          type="application/ld+json"
+          // biome-ignore lint/security/noDangerouslySetInnerHtml: static application metadata, no user input
+          dangerouslySetInnerHTML={{
+            __html: JSON.stringify(applicationSchema).replace(/</g, "\\u003c"),
+          }}
+        />
+        {children}
+      </body>
     </html>
   );
 }
