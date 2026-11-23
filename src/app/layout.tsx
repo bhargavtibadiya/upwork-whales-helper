@@ -1,5 +1,4 @@
 import type { Metadata } from "next";
-import { SiteAnalytics } from "@/components/SiteAnalytics";
 import { applicationSchema, existingDescription, existingTitle, siteUrl } from "@/lib/seo";
 import "./globals.css";
 import "./theme.css";
@@ -53,7 +52,7 @@ export default function RootLayout({ children }: Readonly<RootLayoutProps>): Rea
           }}
         />
         {children}
-        <SiteAnalytics />
+        {/* Analytics is installed but collection is paused until the hosting plan is confirmed. */}
       </body>
     </html>
   );
